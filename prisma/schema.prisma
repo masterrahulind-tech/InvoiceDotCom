@@ -1,0 +1,243 @@
+// InvoiceDotCom — Prisma Schema (Vyapar & Khatabook Style Upgrade)
+// Supports GST Billing, HSN/SAC, Inventory & Stock Movement, Khatabook Party Ledgers, Expenses
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String            @id @default(uuid())
+  phone            String            @unique
+  name             String
+  email            String?
+  createdAt        DateTime          @default(now())
+  businessProfiles BusinessProfile[]
+}
+
+model OtpToken {
+  id        String   @id @default(uuid())
+  phone     String
+  otpHash   String
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+}
+
+model BusinessProfile {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  businessName String
+  businessType String   // individual | registered
+  vertical     String   // retail | real_estate | restaurant | school | freelance | healthcare | logistics | events | other
+  gstin        String?
+  pan          String?
+  stateCode    String?  @default("27") // Indian State Code (e.g. 27 = Maharashtra, 07 = Delhi)
+  address      String?
+  logoUrl      String?
+  signatureUrl String?
+  
+  // Bank & UPI Details for Invoice
+  bankName      String?
+  bankAccountNo String?
+  ifscCode      String?
+  branchName    String?
+  upiId         String?
+
+  createdAt DateTime @default(now())
+
+  paymentMethods   PaymentMethod[]
+  clients          Client[]
+  items            Item[]
+  invoices         Invoice[]
+  expenses         Expense[]
+  partyTransactions PartyTransaction[]
+}
+
+model PaymentMethod {
+  id                String          @id @default(uuid())
+  businessProfileId String
+  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
+  type              String          // upi | bank | qr_upload | gateway_link
+  value             String          // upi id, bank details JSON string, image url, or link
+  isDefault         Boolean         @default(false)
+}
+
+model Client {
+  id                String          @id @default(uuid())
+  businessProfileId String
+  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
+  name              String
+  partyType         String          @default("customer") // customer | supplier | both
+  phone             String?
+  email             String?
+  address           String?
+  gstin             String?
+  stateCode         String?         @default("27")
+  openingBalance    Float           @default(0)
+  balanceType       String          @default("receivable") // receivable ("You'll get") | payable ("You'll give")
+  creditLimit       Float?
+  createdAt         DateTime        @default(now())
+
+  invoices          Invoice[]
+  partyTransactions PartyTransaction[]
+}
+
+model Item {
+  id                String          @id @default(uuid())
+  businessProfileId String
+  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
+  sku               String?
+  name              String
+  category          String?         @default("General")
+  unit              String          @default("Pcs") // Pcs, Kg, Box, Mtr, Ltr, Set
+  hsnCode           String?         @default("8517")
+  salePrice         Float           @default(0)
+  purchasePrice     Float           @default(0)
+  taxRate           Float           @default(18) // GST tax slab % (0, 5, 12, 18, 28)
+  stockQty          Float           @default(0)
+  lowStockThreshold Float           @default(10)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  stockMovements StockMovement[]
+  lineItems      InvoiceLineItem[]
+}
+
+model StockMovement {
+  id           String   @id @default(uuid())
+  itemId       String
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  changeQty    Float    // positive for restock/purchase, negative for sale
+  movementType String   // sale | purchase | adjustment
+  referenceId  String?  // invoiceId or billId
+  notes        String?
+  createdAt    DateTime @default(now())
+}
+
+model Expense {
+  id                String          @id @default(uuid())
+  businessProfileId String
+  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
+  category          String          // Rent, Utility, Salary, Transport, Office, Maintenance, Purchase, Other
+  amount            Float
+  taxAmount         Float           @default(0) // Input GST
+  vendorName        String?
+  gstin             String?
+  paymentMode       String          @default("cash") // cash | bank | upi
+  date              DateTime        @default(now())
+  notes             String?
+  createdAt         DateTime        @default(now())
+}
+
+model InvoiceTemplate {
+  id         String    @id @default(uuid())
+  name       String
+  vertical   String
+  schemaJson String    // JSON string
+  invoices   Invoice[]
+}
+
+model Invoice {
+  id                String           @id @default(uuid())
+  invoiceNo         String
+  businessProfileId String
+  businessProfile   BusinessProfile  @relation(fields: [businessProfileId], references: [id])
+  clientId          String
+  client            Client           @relation(fields: [clientId], references: [id])
+  templateId        String?
+  template          InvoiceTemplate? @relation(fields: [templateId], references: [id])
+  billingType       String           @default("B2B") // B2B | B2C | EXPORT
+  placeOfSupply     String?          @default("27")
+  status            String           @default("draft") // draft | pending | partially_paid | paid | overdue | refunded
+  taxableAmount     Float            @default(0)
+  cgstAmount        Float            @default(0)
+  sgstAmount        Float            @default(0)
+  igstAmount        Float            @default(0)
+  discountAmount    Float            @default(0)
+  totalAmount       Float
+  paidAmount        Float            @default(0)
+  currency          String           @default("INR")
+  dueDate           DateTime?
+  publicToken       String           @unique @default(uuid())
+  notes             String?
+  terms             String?          @default("Payment due within 15 days of invoice date.")
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  lineItems         InvoiceLineItem[]
+  customFields      InvoiceCustomField[]
+  payments          Payment[]
+  partyTransactions PartyTransaction[]
+  activityLogs      ActivityLog[]
+}
+
+model InvoiceLineItem {
+  id              String  @id @default(uuid())
+  invoiceId       String
+  invoice         Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  itemId          String?
+  item            Item?   @relation(fields: [itemId], references: [id])
+  description     String
+  hsnCode         String? @default("8517")
+  qty             Float
+  unit            String? @default("Pcs")
+  rate            Float
+  discountPercent Float   @default(0)
+  taxPercent      Float   @default(0)
+  cgstAmount      Float   @default(0)
+  sgstAmount      Float   @default(0)
+  igstAmount      Float   @default(0)
+  amount          Float
+}
+
+model InvoiceCustomField {
+  id         String  @id @default(uuid())
+  invoiceId  String
+  invoice    Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  fieldKey   String
+  fieldValue String
+}
+
+model Payment {
+  id             String   @id @default(uuid())
+  invoiceId      String
+  invoice        Invoice  @relation(fields: [invoiceId], references: [id])
+  amount         Float
+  mode           String   // upi | bank | cash | gateway
+  transactionRef String?
+  status         String   // success | pending | failed
+  paidAt         DateTime @default(now())
+}
+
+model PartyTransaction {
+  id                String          @id @default(uuid())
+  businessProfileId String
+  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
+  clientId          String
+  client            Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type              String          // GAVE (Udhaar/Debit) | GOT (Payment Received/Credit)
+  amount            Float
+  paymentMode       String          @default("cash") // cash | upi | bank | cheque
+  invoiceId         String?
+  invoice           Invoice?        @relation(fields: [invoiceId], references: [id])
+  notes             String?
+  date              DateTime        @default(now())
+  createdAt         DateTime        @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  invoiceId String
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+  action    String   // viewed | paid | commented | signed | reminder_sent
+  actor     String?  // "sender" | "recipient"
+  timestamp DateTime @default(now())
+}
