@@ -184,24 +184,24 @@ function InvoiceBuilderForm() {
   };
 
   if (loading) {
-    return <div className="p-12 text-center text-xs text-slate-400">Loading invoice form...</div>;
+    return <div className="p-12 text-center text-xs text-[#999]">Loading invoice form...</div>;
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 text-xs">
       {/* Customer & Billing Details */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-        <h2 className="text-sm font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
+      <div className="bg-white border border-[#e8ecf1] rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] space-y-4">
+        <h2 className="text-sm font-bold text-[#1f2029] flex items-center gap-2 border-b border-[#e8ecf1] pb-3">
           <Users className="w-4 h-4 text-emerald-400" /> Customer & GST Information
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-slate-400 mb-1 font-semibold">Select Customer / Party *</label>
+            <label className="block text-[#999] mb-1 font-semibold">Select Customer / Party *</label>
             <select
               value={selectedClientId}
               onChange={(e) => setSelectedClientId(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:outline-none focus:border-indigo-500"
+              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
             >
               {parties.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -212,11 +212,11 @@ function InvoiceBuilderForm() {
           </div>
 
           <div>
-            <label className="block text-slate-400 mb-1 font-semibold">Billing Type</label>
+            <label className="block text-[#999] mb-1 font-semibold">Billing Type</label>
             <select
               value={billingType}
               onChange={(e) => setBillingType(e.target.value as any)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:outline-none focus:border-indigo-500"
+              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
             >
               <option value="B2B">B2B (Registered Buyer with GSTIN)</option>
               <option value="B2C">B2C (Retail Consumer)</option>
@@ -225,31 +225,31 @@ function InvoiceBuilderForm() {
           </div>
 
           <div>
-            <label className="block text-slate-400 mb-1 font-semibold">Invoice No (Optional)</label>
+            <label className="block text-[#999] mb-1 font-semibold">Invoice No (Optional)</label>
             <input
               type="text"
               placeholder="Auto-generated if empty"
               value={invoiceNo}
               onChange={(e) => setInvoiceNo(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-indigo-500"
+              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-mono focus:outline-none focus:border-[#6730e3]"
             />
           </div>
         </div>
 
         {selectedParty && (
-          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between text-slate-300">
+          <div className="p-3 bg-[#f8f9fa] rounded-xl border border-[#e8ecf1] flex items-center justify-between text-[#666]">
             <div>
-              <span className="font-bold text-white">{selectedParty.name}</span>
+              <span className="font-bold text-[#1f2029]">{selectedParty.name}</span>
               {selectedParty.gstin && (
-                <span className="ml-2 font-mono text-[11px] bg-indigo-500/10 text-indigo-300 px-2 py-0.5 rounded border border-indigo-500/20">
+                <span className="ml-2 font-mono text-[11px] bg-[#f3f0ff] text-[#6730e3] px-2 py-0.5 rounded border border-[#e0d5ff]">
                   GSTIN: {selectedParty.gstin}
                 </span>
               )}
-              {selectedParty.address && <p className="text-[11px] text-slate-400">{selectedParty.address}</p>}
+              {selectedParty.address && <p className="text-[11px] text-[#999]">{selectedParty.address}</p>}
             </div>
 
             <div className="text-right">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold">GST Tax Mode</span>
+              <span className="text-[10px] text-[#999] uppercase font-semibold">GST Tax Mode</span>
               <div className={`font-bold ${isIntraState ? "text-emerald-400" : "text-amber-400"}`}>
                 {isIntraState ? "Intra-State (CGST + SGST)" : "Inter-State (IGST)"}
               </div>
@@ -259,15 +259,15 @@ function InvoiceBuilderForm() {
       </div>
 
       {/* Line Items Builder */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-          <h2 className="text-sm font-bold text-white flex items-center gap-2">
-            <Package className="w-4 h-4 text-indigo-400" /> Line Items & HSN Tax Rates
+      <div className="bg-white border border-[#e8ecf1] rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] space-y-4">
+        <div className="flex items-center justify-between border-b border-[#e8ecf1] pb-3">
+          <h2 className="text-sm font-bold text-[#1f2029] flex items-center gap-2">
+            <Package className="w-4 h-4 text-[#6730e3]" /> Line Items & HSN Tax Rates
           </h2>
           <button
             type="button"
             onClick={addLineItem}
-            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600/30 border border-indigo-500/30 flex items-center gap-1"
+            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#6730e3]/20 text-[#6730e3] hover:bg-[#6730e3]/30 border border-[#e0d5ff] flex items-center gap-1"
           >
             <Plus className="w-3.5 h-3.5" /> Add Line
           </button>
@@ -279,15 +279,15 @@ function InvoiceBuilderForm() {
             const availableStock = matchedInvItem ? matchedInvItem.stockQty : null;
 
             return (
-              <div key={idx} className="p-4 bg-slate-950 rounded-xl border border-slate-800/80 space-y-3">
+              <div key={idx} className="p-4 bg-[#f8f9fa] rounded-xl border border-[#e8ecf1] space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                   <div className="md:col-span-2">
-                    <label className="block text-slate-400 mb-1 font-semibold">Pick from Inventory OR Type Description *</label>
+                    <label className="block text-[#999] mb-1 font-semibold">Pick from Inventory OR Type Description *</label>
                     <div className="flex gap-2">
                       <select
                         value={item.itemId}
                         onChange={(e) => handleItemSelect(idx, e.target.value)}
-                        className="bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1.5 text-slate-200 text-xs focus:outline-none"
+                        className="bg-white border border-[#e8ecf1] rounded-xl px-2.5 py-1.5 text-[#333] text-xs focus:outline-none"
                       >
                         <option value="">Custom Item</option>
                         {items.map((i) => (
@@ -302,28 +302,28 @@ function InvoiceBuilderForm() {
                         placeholder="Item Description"
                         value={item.description}
                         onChange={(e) => handleLineChange(idx, "description", e.target.value)}
-                        className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-white font-medium focus:outline-none focus:border-indigo-500"
+                        className="flex-1 bg-white border border-[#e8ecf1] rounded-xl px-3 py-1.5 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-slate-400 mb-1 font-semibold">HSN Code</label>
+                    <label className="block text-[#999] mb-1 font-semibold">HSN Code</label>
                     <input
                       type="text"
                       placeholder="8517"
                       value={item.hsnCode}
                       onChange={(e) => handleLineChange(idx, "hsnCode", e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-white font-mono focus:outline-none"
+                      className="w-full bg-white border border-[#e8ecf1] rounded-xl px-3 py-1.5 text-[#1f2029] font-mono focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-400 mb-1 font-semibold">GST Rate (%)</label>
+                    <label className="block text-[#999] mb-1 font-semibold">GST Rate (%)</label>
                     <select
                       value={item.taxPercent}
                       onChange={(e) => handleLineChange(idx, "taxPercent", parseFloat(e.target.value))}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-white focus:outline-none"
+                      className="w-full bg-white border border-[#e8ecf1] rounded-xl px-3 py-1.5 text-[#1f2029] focus:outline-none"
                     >
                       <option value="0">0%</option>
                       <option value="5">5%</option>
@@ -336,35 +336,35 @@ function InvoiceBuilderForm() {
 
                 <div className="grid grid-cols-4 gap-3 items-center">
                   <div>
-                    <label className="block text-slate-400 mb-1 font-semibold">Quantity</label>
+                    <label className="block text-[#999] mb-1 font-semibold">Quantity</label>
                     <input
                       type="number"
                       min="1"
                       value={item.qty}
                       onChange={(e) => handleLineChange(idx, "qty", parseFloat(e.target.value))}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-white font-bold focus:outline-none"
+                      className="w-full bg-white border border-[#e8ecf1] rounded-xl px-3 py-1.5 text-[#1f2029] font-bold focus:outline-none"
                     />
                     {availableStock !== null && (
-                      <span className={`text-[10px] ${availableStock < item.qty ? "text-amber-400 font-bold" : "text-slate-400"}`}>
+                      <span className={`text-[10px] ${availableStock < item.qty ? "text-amber-400 font-bold" : "text-[#999]"}`}>
                         Available Stock: {availableStock}
                       </span>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-slate-400 mb-1 font-semibold">Rate (₹)</label>
+                    <label className="block text-[#999] mb-1 font-semibold">Rate (₹)</label>
                     <input
                       type="number"
                       step="0.01"
                       value={item.rate}
                       onChange={(e) => handleLineChange(idx, "rate", parseFloat(e.target.value))}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-white font-bold focus:outline-none"
+                      className="w-full bg-white border border-[#e8ecf1] rounded-xl px-3 py-1.5 text-[#1f2029] font-bold focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-400 mb-1 font-semibold">Taxable Value</label>
-                    <div className="text-sm font-black text-white pt-1">
+                    <label className="block text-[#999] mb-1 font-semibold">Taxable Value</label>
+                    <div className="text-sm font-black text-[#1f2029] pt-1">
                       ₹{(item.amount || 0).toLocaleString("en-IN")}
                     </div>
                   </div>
@@ -387,63 +387,63 @@ function InvoiceBuilderForm() {
 
       {/* Calculation Totals & Upfront Payment Card */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-          <h2 className="text-sm font-bold text-white">Invoice Notes & Payment Received</h2>
+        <div className="bg-white border border-[#e8ecf1] rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] space-y-3">
+          <h2 className="text-sm font-bold text-[#1f2029]">Invoice Notes & Payment Received</h2>
           <div>
-            <label className="block text-slate-400 mb-1 font-semibold">Upfront Payment Received Now (₹)</label>
+            <label className="block text-[#999] mb-1 font-semibold">Upfront Payment Received Now (₹)</label>
             <input
               type="number"
               step="0.01"
               placeholder="0"
               value={paidAmount}
               onChange={(e) => setPaidAmount(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-white font-bold text-sm focus:outline-none focus:border-indigo-500"
+              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3.5 py-2 text-[#1f2029] font-bold text-sm focus:outline-none focus:border-[#6730e3]"
             />
           </div>
           <div>
-            <label className="block text-slate-400 mb-1 font-semibold">Invoice Footnote</label>
+            <label className="block text-[#999] mb-1 font-semibold">Invoice Footnote</label>
             <input
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none"
+              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] focus:outline-none"
             />
           </div>
         </div>
 
-        <div className="bg-slate-900/80 border border-indigo-500/30 rounded-2xl p-5 shadow-xl space-y-2 bg-gradient-to-br from-indigo-950/20 to-slate-900">
-          <div className="flex justify-between text-slate-300">
+        <div className="bg-white border border-[#e0d5ff] rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] space-y-2 bg-gradient-to-br from-indigo-950/20 to-slate-900">
+          <div className="flex justify-between text-[#666]">
             <span>Total Taxable Subtotal:</span>
-            <span className="font-bold text-white">₹{totalTaxable.toLocaleString("en-IN")}</span>
+            <span className="font-bold text-[#1f2029]">₹{totalTaxable.toLocaleString("en-IN")}</span>
           </div>
 
           {isIntraState ? (
             <>
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between text-[#999]">
                 <span>CGST (9% / 2.5%):</span>
                 <span>₹{(totalTax / 2).toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between text-[#999]">
                 <span>SGST (9% / 2.5%):</span>
                 <span>₹{(totalTax / 2).toLocaleString("en-IN")}</span>
               </div>
             </>
           ) : (
-            <div className="flex justify-between text-slate-400">
+            <div className="flex justify-between text-[#999]">
               <span>IGST (18% / 12%):</span>
               <span>₹{totalTax.toLocaleString("en-IN")}</span>
             </div>
           )}
 
-          <div className="flex justify-between text-lg font-black text-white pt-2 border-t border-slate-800">
+          <div className="flex justify-between text-lg font-black text-[#1f2029] pt-2 border-t border-[#e8ecf1]">
             <span>Grand Total:</span>
-            <span className="text-indigo-400">₹{grandTotal.toLocaleString("en-IN")}</span>
+            <span className="text-[#6730e3]">₹{grandTotal.toLocaleString("en-IN")}</span>
           </div>
 
           <div className="flex items-center justify-end space-x-3 pt-3">
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-extrabold shadow-lg shadow-indigo-600/30 transition-all active:scale-95 text-sm"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-[#1f2029] font-extrabold shadow-lg shadow-[#6730e340] transition-all active:scale-95 text-sm"
             >
               Save & Generate Vyapar GST Invoice
             </button>
@@ -458,27 +458,27 @@ export default function NewGstInvoicePage() {
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       <div>
-        <Link href="/invoices" className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white">
+        <Link href="/invoices" className="inline-flex items-center gap-1.5 text-xs text-[#999] hover:text-[#1f2029]">
           <ArrowLeft className="w-4 h-4" /> Back to Invoices
         </Link>
       </div>
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
-            <Receipt className="w-6 h-6 text-indigo-400" /> Create GST Sales Invoice
+          <h1 className="text-2xl font-extrabold text-[#1f2029] tracking-tight flex items-center gap-2">
+            <Receipt className="w-6 h-6 text-[#6730e3]" /> Create GST Sales Invoice
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#999] mt-1">
             Auto-calculates CGST/SGST vs IGST, deducts item stock, and posts to Khatabook party ledger.
           </p>
         </div>
 
-        <span className="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 flex items-center gap-1">
+        <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#f3f0ff] text-[#6730e3] border border-[#e0d5ff] flex items-center gap-1">
           <Sparkles className="w-3.5 h-3.5" /> Vyapar GST Engine
         </span>
       </div>
 
-      <Suspense fallback={<div className="p-12 text-center text-xs text-slate-400">Loading invoice form...</div>}>
+      <Suspense fallback={<div className="p-12 text-center text-xs text-[#999]">Loading invoice form...</div>}>
         <InvoiceBuilderForm />
       </Suspense>
     </div>

@@ -79,7 +79,7 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
   };
 
   if (loading || !partyData) {
-    return <div className="p-12 text-center text-xs text-slate-400">Loading party ledger...</div>;
+    return <div className="p-12 text-center text-xs text-[#999]">Loading party ledger...</div>;
   }
 
   const isReceivable = partyData.balanceStatus === "receivable";
@@ -88,37 +88,37 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
     <div className="space-y-6">
       {/* Back Button */}
       <div>
-        <Link href="/parties" className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white">
+        <Link href="/parties" className="inline-flex items-center gap-1.5 text-xs text-[#999] hover:text-[#1f2029]">
           <ArrowLeft className="w-4 h-4" /> Back to Parties
         </Link>
       </div>
 
       {/* Party Info Header Card */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
+      <div className="bg-white border border-[#e8ecf1] rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-extrabold text-white">{partyData.name}</h1>
-              <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-indigo-500/10 text-indigo-300 uppercase border border-indigo-500/20">
+              <h1 className="text-2xl font-extrabold text-[#1f2029]">{partyData.name}</h1>
+              <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#f3f0ff] text-[#6730e3] uppercase border border-[#e0d5ff]">
                 {partyData.partyType}
               </span>
             </div>
-            <div className="flex flex-wrap items-center gap-4 mt-2 text-xs text-slate-400">
+            <div className="flex flex-wrap items-center gap-4 mt-2 text-xs text-[#999]">
               {partyData.phone && (
                 <div className="flex items-center gap-1">
-                  <Phone className="w-3.5 h-3.5 text-slate-500" /> {partyData.phone}
+                  <Phone className="w-3.5 h-3.5 text-[#aaa]" /> {partyData.phone}
                 </div>
               )}
               {partyData.gstin && (
                 <div className="flex items-center gap-1">
-                  <span className="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-mono bg-[#f8f9fa] text-[#666] px-2 py-0.5 rounded">
                     GSTIN: {partyData.gstin}
                   </span>
                 </div>
               )}
               {partyData.address && (
                 <div className="flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-slate-500" /> {partyData.address}
+                  <MapPin className="w-3.5 h-3.5 text-[#aaa]" /> {partyData.address}
                 </div>
               )}
             </div>
@@ -135,7 +135,7 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
                 )}`}
                 target="_blank"
                 rel="noreferrer"
-                className="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all"
+                className="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-[#1f2029] shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all"
               >
                 <Send className="w-4 h-4" /> Send WhatsApp Reminder
               </a>
@@ -145,7 +145,7 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
                 setTxType("GAVE");
                 setShowTxModal(true);
               }}
-              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/30 flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-[#1f2029] shadow-lg shadow-rose-600/30 flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" /> You Gave (Udhaar)
             </button>
@@ -154,7 +154,7 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
                 setTxType("GOT");
                 setShowTxModal(true);
               }}
-              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/30 flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-[#1f2029] shadow-lg shadow-emerald-600/30 flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" /> You Got (Payment In)
             </button>
@@ -162,16 +162,16 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
         </div>
 
         {/* Current Net Balance Banner */}
-        <div className="mt-6 p-4 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between">
+        <div className="mt-6 p-4 rounded-xl bg-[#f8f9fa]/80 border border-[#e8ecf1] flex items-center justify-between">
           <div>
-            <span className="text-xs text-slate-400 uppercase font-semibold">Net Passbook Balance</span>
+            <span className="text-xs text-[#999] uppercase font-semibold">Net Passbook Balance</span>
             <div className={`text-2xl font-black ${isReceivable ? "text-emerald-400" : "text-rose-400"}`}>
               {isReceivable ? "You Will Get: " : "You Will Give: "} ₹{partyData.calculatedBalance.toLocaleString("en-IN")}
             </div>
           </div>
           <Link
             href={`/invoices/new?clientId=${partyData.id}`}
-            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#6730e3] hover:bg-[#6730e3] text-[#1f2029] flex items-center gap-1.5"
           >
             <Receipt className="w-4 h-4" /> Create GST Invoice
           </Link>
@@ -179,21 +179,21 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
       </div>
 
       {/* Khatabook Passbook Statement Table */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-          <h2 className="text-sm font-bold text-white flex items-center gap-2">
+      <div className="bg-white border border-[#e8ecf1] rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+        <div className="p-4 border-b border-[#e8ecf1] flex items-center justify-between">
+          <h2 className="text-sm font-bold text-[#1f2029] flex items-center gap-2">
             <Users className="w-4 h-4 text-emerald-400" /> Passbook Transaction Statement
           </h2>
-          <span className="text-xs text-slate-400">{statement.length} Records</span>
+          <span className="text-xs text-[#999]">{statement.length} Records</span>
         </div>
 
         {statement.length === 0 ? (
-          <div className="p-10 text-center text-xs text-slate-400">No transactions recorded yet.</div>
+          <div className="p-10 text-center text-xs text-[#999]">No transactions recorded yet.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="text-[11px] font-semibold text-slate-400 bg-slate-950/60 border-b border-slate-800 uppercase tracking-wider">
+                <tr className="text-[11px] font-semibold text-[#999] bg-[#fafbfc] border-b border-[#e8ecf1] uppercase tracking-wider">
                   <th className="py-3 px-4">Date & Time</th>
                   <th className="py-3 px-4">Transaction / Note</th>
                   <th className="py-3 px-4">Payment Mode</th>
@@ -202,24 +202,24 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
                   <th className="py-3 px-4 text-right">Running Balance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-xs">
+              <tbody className="divide-y divide-[#f0f0f0] text-xs">
                 {statement.map((entry) => {
                   const isGave = entry.type === "GAVE";
                   return (
-                    <tr key={entry.id} className="hover:bg-slate-800/40 transition-colors">
-                      <td className="py-3.5 px-4 text-slate-400">
+                    <tr key={entry.id} className="hover:bg-[#f8f9fa] transition-colors">
+                      <td className="py-3.5 px-4 text-[#999]">
                         {new Date(entry.date).toLocaleDateString("en-IN", {
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
                         })}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-white">
+                      <td className="py-3.5 px-4 font-semibold text-[#1f2029]">
                         <div>{entry.title}</div>
-                        {entry.notes && <div className="text-[10px] text-slate-400 font-normal">{entry.notes}</div>}
+                        {entry.notes && <div className="text-[10px] text-[#999] font-normal">{entry.notes}</div>}
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300 uppercase">
+                        <span className="px-2 py-0.5 rounded bg-[#f8f9fa] text-[10px] text-[#666] uppercase">
                           {entry.paymentMode}
                         </span>
                       </td>
@@ -229,7 +229,7 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
                       <td className="py-3.5 px-4 text-right font-bold text-emerald-400">
                         {!isGave ? `₹${entry.amount.toLocaleString("en-IN")}` : "-"}
                       </td>
-                      <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-200">
+                      <td className="py-3.5 px-4 text-right font-mono font-bold text-[#333]">
                         ₹{entry.runningBalance.toLocaleString("en-IN")}
                       </td>
                     </tr>
@@ -243,20 +243,20 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
 
       {/* Record Entry Modal */}
       {showTxModal && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-            <div className="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-[#e8ecf1] rounded-2xl w-full max-w-md overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.12)]">
+            <div className="p-5 border-b border-[#e8ecf1] flex items-center justify-between">
               <h3 className={`text-base font-bold flex items-center gap-2 ${txType === "GAVE" ? "text-rose-400" : "text-emerald-400"}`}>
                 {txType === "GAVE" ? "Record You Gave (Udhaar)" : "Record You Got (Payment In)"}
               </h3>
-              <button onClick={() => setShowTxModal(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setShowTxModal(false)} className="text-[#999] hover:text-[#1f2029]">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleRecordTransaction} className="p-5 space-y-4 text-xs">
               <div>
-                <label className="block text-slate-400 mb-1 font-semibold">Amount (₹) *</label>
+                <label className="block text-[#999] mb-1 font-semibold">Amount (₹) *</label>
                 <input
                   type="number"
                   required
@@ -264,16 +264,16 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
                   placeholder="e.g. 5000"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white font-mono text-base focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3.5 py-2.5 text-[#1f2029] font-mono text-base focus:outline-none focus:border-[#6730e3]"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1 font-semibold">Payment Mode</label>
+                <label className="block text-[#999] mb-1 font-semibold">Payment Mode</label>
                 <select
                   value={paymentMode}
                   onChange={(e) => setPaymentMode(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] focus:outline-none focus:border-[#6730e3]"
                 >
                   <option value="cash">Cash</option>
                   <option value="upi">UPI (GPay / PhonePe / Paytm)</option>
@@ -283,27 +283,27 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1 font-semibold">Notes / Description</label>
+                <label className="block text-[#999] mb-1 font-semibold">Notes / Description</label>
                 <input
                   type="text"
                   placeholder="e.g. Received partial cash against pending bill"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] focus:outline-none focus:border-[#6730e3]"
                 />
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end space-x-3 pt-3 border-t border-[#e8ecf1]">
                 <button
                   type="button"
                   onClick={() => setShowTxModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700"
+                  className="px-4 py-2 rounded-xl bg-[#f8f9fa] text-[#666] hover:bg-[#f0f0f0]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className={`px-4 py-2 rounded-xl font-bold text-white ${
+                  className={`px-4 py-2 rounded-xl font-bold text-[#1f2029] ${
                     txType === "GAVE" ? "bg-rose-600 hover:bg-rose-500" : "bg-emerald-600 hover:bg-emerald-500"
                   }`}
                 >

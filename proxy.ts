@@ -17,7 +17,7 @@ const protectedPaths = [
 // Routes that should redirect to dashboard if already authenticated
 const authPaths = ["/login", "/signup"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
 
