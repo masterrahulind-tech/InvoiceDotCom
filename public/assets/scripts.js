@@ -237,8 +237,8 @@ jQuery(function ($) {
 
 
   //countdown one
-
-  $('#clock').countdown('2022/01/30', function(event) {
+  if ($('#clock').length && $.fn.countdown) {
+    $('#clock').countdown('2022/01/30', function(event) {
     $(this).html(event.strftime('' +
       '<div class="row">' +
       '<div class="col">' +

@@ -26,6 +26,8 @@ export default function PublicLayout({
       <Script src="/assets/jquery.easing.min.js" strategy="afterInteractive" />
       <Script src="/assets/jquery.magnific-popup.min.js" strategy="afterInteractive" />
       <Script src="/assets/owl.carousel.min.js" strategy="afterInteractive" />
+      <Script src="/assets/jquery.countdown.min.js" strategy="afterInteractive" />
+      <Script src="/assets/validator.min.js" strategy="afterInteractive" />
       <Script src="/assets/wow.min.js" strategy="afterInteractive" />
       <Script src="/assets/scripts.js" strategy="afterInteractive" />
     </>
