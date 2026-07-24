@@ -1,35 +1,21 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import fs from "fs";
+import path from "path";
 
 export default function LandingPage() {
-  const [mounted, setMounted] = useState(false);
-  const [htmlContent, setHtmlContent] = useState<string>("");
+  const filePath = path.join(process.cwd(), "public", "landing.html");
+  const htmlContent = fs.readFileSync(filePath, "utf8");
 
-  useEffect(() => {
-    setMounted(true);
-    fetch("/landing.html")
-      .then((res) => res.text())
-      .then((text) => {
-        const bodyMatch = text.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-        const body = bodyMatch ? bodyMatch[1] : text;
-        setHtmlContent(body.replace(/\r\n/g, "\n"));
-      })
-      .catch((err) => console.error("Failed to load landing.html", err));
-  }, []);
+  // Extract all <style> tags AND <body> content so no CSS rules are stripped
+  const styles = htmlContent.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
+  const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+  const body = bodyMatch ? bodyMatch[1] : htmlContent;
 
-  if (!mounted || !htmlContent) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center text-white" suppressHydrationWarning>
-        <div className="animate-pulse font-sans text-sm font-semibold">Loading AppCo...</div>
-      </div>
-    );
-  }
+  const fullRenderHtml = styles.join("\n") + "\n" + body.replace(/\r\n/g, "\n");
 
   return (
     <div
       suppressHydrationWarning={true}
-      dangerouslySetInnerHTML={{ __html: htmlContent }}
+      dangerouslySetInnerHTML={{ __html: fullRenderHtml }}
     />
   );
 }
