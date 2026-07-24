@@ -239,26 +239,27 @@ jQuery(function ($) {
   //countdown one
   if ($('#clock').length && $.fn.countdown) {
     $('#clock').countdown('2022/01/30', function(event) {
-    $(this).html(event.strftime('' +
-      '<div class="row">' +
-      '<div class="col">' +
-      '<h2 class="mb-1">%-D</h2>' +
-      '<h5>Day%!d</h5>' +
-      '</div>' +
-      '<div class="col">' +
-      '<h2 class="mb-1">%H</h2>' +
-      '<h5>Hours</h5>' +
-      '</div>' +
-      '<div class="col">' +
-      '<h2 class="mb-1">%M</h2>' +
-      '<h5>Minutes</h5>' +
-      '</div>' +
-      '<div class="col">' +
-      '<h2 class="mb-1">%S</h2>' +
-      '<h5>Seconds</h5>' +
-      '</div>' +
-      '</div>'));
-  });
+      $(this).html(event.strftime('' +
+        '<div class="row">' +
+        '<div class="col">' +
+        '<h2 class="mb-1">%-D</h2>' +
+        '<h5>Day%!d</h5>' +
+        '</div>' +
+        '<div class="col">' +
+        '<h2 class="mb-1">%H</h2>' +
+        '<h5>Hours</h5>' +
+        '</div>' +
+        '<div class="col">' +
+        '<h2 class="mb-1">%M</h2>' +
+        '<h5>Minutes</h5>' +
+        '</div>' +
+        '<div class="col">' +
+        '<h2 class="mb-1">%S</h2>' +
+        '<h5>Seconds</h5>' +
+        '</div>' +
+        '</div>'));
+    });
+  }
 
   // Subscription
   if($("#getQuoteFrm").length) {
