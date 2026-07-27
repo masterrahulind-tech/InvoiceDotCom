@@ -149,7 +149,7 @@ export default function GstReportsPage() {
           <div className="p-10 text-center text-xs text-[#999]">No HSN items recorded.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse whitespace-nowrap min-w-[800px]">
               <thead>
                 <tr className="text-[11px] font-semibold text-[#999] bg-[#fafbfc] border-b border-[#e8ecf1] uppercase tracking-wider">
                   <th className="py-3 px-4">HSN Code</th>
@@ -204,7 +204,7 @@ export default function GstReportsPage() {
           <div className="p-10 text-center text-xs text-[#999]">No B2B invoices recorded yet.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse whitespace-nowrap min-w-[800px]">
               <thead>
                 <tr className="text-[11px] font-semibold text-[#999] bg-[#fafbfc] border-b border-[#e8ecf1] uppercase tracking-wider">
                   <th className="py-3 px-4">Invoice No</th>

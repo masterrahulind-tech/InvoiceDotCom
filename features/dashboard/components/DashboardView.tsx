@@ -152,12 +152,12 @@ export function DashboardView() {
                 >
                   <Sparkles className="w-3 h-3" /> GST Ready
                 </span>
-                <span style={{ fontSize: 12, opacity: 0.7 }}>Apex Digital Solutions & Traders</span>
+                <span style={{ fontSize: 12, opacity: 0.7 }}>Business Profile</span>
               </div>
               <h1
+                className="text-xl sm:text-2xl"
                 style={{
                   fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                  fontSize: 26,
                   fontWeight: 800,
                   margin: 0,
                   letterSpacing: "-0.3px",
@@ -170,9 +170,10 @@ export function DashboardView() {
               </p>
             </div>
 
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, width: '100%' }} className="sm:w-auto">
               <Link
                 href="/invoices/new"
+                className="flex-1 sm:flex-none justify-center"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -189,10 +190,11 @@ export function DashboardView() {
                   transition: "all 0.2s",
                 }}
               >
-                <Plus className="w-4 h-4" /> Create GST Invoice
+                <Plus className="w-4 h-4" /> Create Invoice
               </Link>
               <Link
                 href="/parties"
+                className="flex-1 sm:flex-none justify-center"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -209,7 +211,7 @@ export function DashboardView() {
                   transition: "all 0.2s",
                 }}
               >
-                <Users className="w-4 h-4" /> Khatabook Ledger
+                <Users className="w-4 h-4" /> Ledger
               </Link>
             </div>
           </div>
@@ -217,7 +219,7 @@ export function DashboardView() {
       </div>
 
       {/* ═══════ KPI Cards Grid ═══════ */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard
           label="Total GST Sales"
           value={`₹${stats.totalSales.toLocaleString("en-IN")}`}
@@ -226,11 +228,11 @@ export function DashboardView() {
           iconColor="#6730e3"
           borderHover="#6730e3"
           sub={
-            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: "#999", marginTop: 4 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 4, fontSize: 11, color: "#999", marginTop: 4 }}>
               <span style={{ color: "#2e7d32", fontWeight: 600, display: "flex", alignItems: "center" }}>
                 <ArrowUpRight className="w-3 h-3" style={{ marginRight: 2 }} /> ₹{stats.paidSales.toLocaleString("en-IN")} Paid
               </span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span style={{ color: "#ed6c02" }}>₹{stats.pendingSales.toLocaleString("en-IN")} Pending</span>
             </div>
           }
@@ -311,33 +313,33 @@ export function DashboardView() {
                 </Link>
               </div>
             ) : (
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+              <div className="overflow-x-auto w-full no-scrollbar pb-2">
+                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "500px" }}>
                   <thead>
                     <tr style={{ fontSize: 11, fontWeight: 600, color: "#999", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #f0f0f0" }}>
-                      <th style={{ padding: "10px 8px" }}>Invoice No</th>
-                      <th style={{ padding: "10px 8px" }}>Party Name</th>
-                      <th style={{ padding: "10px 8px" }}>Amount</th>
-                      <th style={{ padding: "10px 8px" }}>Status</th>
-                      <th style={{ padding: "10px 8px", textAlign: "right" }}>Action</th>
+                      <th className="whitespace-nowrap" style={{ padding: "10px 8px" }}>Invoice No</th>
+                      <th className="whitespace-nowrap" style={{ padding: "10px 8px" }}>Party Name</th>
+                      <th className="whitespace-nowrap" style={{ padding: "10px 8px" }}>Amount</th>
+                      <th className="whitespace-nowrap" style={{ padding: "10px 8px" }}>Status</th>
+                      <th className="whitespace-nowrap" style={{ padding: "10px 8px", textAlign: "right" }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {stats.recentInvoices.map((inv: any) => (
                       <tr key={inv.id} style={{ borderBottom: "1px solid #f8f8f8", fontSize: 13, transition: "background 0.15s" }}>
-                        <td style={{ padding: "12px 8px", fontFamily: "monospace", fontWeight: 600, color: "#6730e3" }}>
+                        <td className="whitespace-nowrap" style={{ padding: "12px 8px", fontFamily: "monospace", fontWeight: 600, color: "#6730e3" }}>
                           {inv.invoiceNo}
                         </td>
-                        <td style={{ padding: "12px 8px", fontWeight: 600, color: "#333" }}>
+                        <td className="whitespace-nowrap" style={{ padding: "12px 8px", fontWeight: 600, color: "#333" }}>
                           {inv.client?.name || "Client"}
                         </td>
-                        <td style={{ padding: "12px 8px", fontWeight: 700, color: "#1f2029" }}>
+                        <td className="whitespace-nowrap" style={{ padding: "12px 8px", fontWeight: 700, color: "#1f2029" }}>
                           ₹{inv.totalAmount.toLocaleString("en-IN")}
                         </td>
-                        <td style={{ padding: "12px 8px" }}>
+                        <td className="whitespace-nowrap" style={{ padding: "12px 8px" }}>
                           <StatusBadge status={inv.status} />
                         </td>
-                        <td style={{ padding: "12px 8px", textAlign: "right" }}>
+                        <td className="whitespace-nowrap" style={{ padding: "12px 8px", textAlign: "right" }}>
                           <Link
                             href={`/invoices/${inv.id}`}
                             style={{ fontSize: 12, fontWeight: 700, color: "#6730e3", textDecoration: "none" }}

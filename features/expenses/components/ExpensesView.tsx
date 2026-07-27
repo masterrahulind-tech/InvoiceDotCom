@@ -134,44 +134,44 @@ export function ExpensesView() {
         ) : expenses.length === 0 ? (
           <div className="p-12 text-center text-[#999] text-xs">No business expenses recorded yet.</div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto w-full no-scrollbar">
+            <table className="w-full text-left border-collapse min-w-[600px]">
               <thead>
                 <tr className="text-[11px] font-semibold text-[#999] bg-[#fafbfc] border-b border-[#e8ecf1] uppercase tracking-wider">
-                  <th className="py-3 px-4">Date</th>
-                  <th className="py-3 px-4">Category</th>
-                  <th className="py-3 px-4">Vendor Name & GSTIN</th>
-                  <th className="py-3 px-4">Payment Mode</th>
-                  <th className="py-3 px-4 text-right">Input GST</th>
-                  <th className="py-3 px-4 text-right">Total Amount</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Date</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Category</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Vendor Name & GSTIN</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Payment Mode</th>
+                  <th className="py-3 px-4 text-right whitespace-nowrap">Input GST</th>
+                  <th className="py-3 px-4 text-right whitespace-nowrap">Total Amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#f0f0f0] text-xs">
                 {expenses.map((exp) => (
                   <tr key={exp.id} className="hover:bg-[#f8f9fa] transition-colors">
-                    <td className="py-3.5 px-4 text-[#999]">
+                    <td className="py-3.5 px-4 text-[#999] whitespace-nowrap">
                       {new Date(exp.date).toLocaleDateString("en-IN", {
                         day: "2-digit",
                         month: "short",
                         year: "numeric",
                       })}
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-3.5 px-4 whitespace-nowrap">
                       <span className="px-2.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-semibold border border-purple-500/20">
                         {exp.category}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-3.5 px-4 whitespace-nowrap">
                       <div className="font-bold text-[#1f2029]">{exp.vendorName || "General Vendor"}</div>
                       {exp.gstin && <div className="text-[10px] font-mono text-[#999]">GSTIN: {exp.gstin}</div>}
                     </td>
-                    <td className="py-3.5 px-4 uppercase text-[#666] text-[11px]">
+                    <td className="py-3.5 px-4 uppercase text-[#666] text-[11px] whitespace-nowrap">
                       {exp.paymentMode}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-semibold text-purple-400">
+                    <td className="py-3.5 px-4 text-right font-semibold text-purple-400 whitespace-nowrap">
                       ₹{exp.taxAmount.toLocaleString("en-IN")}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-black text-[#1f2029]">
+                    <td className="py-3.5 px-4 text-right font-black text-[#1f2029] whitespace-nowrap">
                       ₹{exp.amount.toLocaleString("en-IN")}
                     </td>
                   </tr>
@@ -185,7 +185,7 @@ export function ExpensesView() {
       {/* Record Expense Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-[#e8ecf1] rounded-2xl w-full max-w-lg overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.12)]">
+          <div className="bg-white border border-[#e8ecf1] rounded-2xl w-full max-w-[95vw] sm:max-w-lg overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.12)]">
             <div className="p-5 border-b border-[#e8ecf1] flex items-center justify-between">
               <h3 className="text-base font-bold text-[#1f2029] flex items-center gap-2">
                 <Wallet className="w-5 h-5 text-purple-400" /> Record Business Expense
@@ -195,8 +195,8 @@ export function ExpensesView() {
               </button>
             </div>
 
-            <form onSubmit={handleCreateExpense} className="p-5 space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleCreateExpense} className="p-5 space-y-4 text-xs max-h-[75vh] overflow-y-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[#999] mb-1 font-semibold">Expense Category *</label>
                   <select
@@ -228,7 +228,7 @@ export function ExpensesView() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[#999] mb-1 font-semibold">Vendor / Beneficiary Name</label>
                   <input
@@ -251,7 +251,7 @@ export function ExpensesView() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[#999] mb-1 font-semibold">Input GST Tax Amount (₹)</label>
                   <input

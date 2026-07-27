@@ -205,7 +205,7 @@ function InvoiceBuilderForm() {
           <Users className="w-4 h-4 text-emerald-400" /> Customer & GST Information
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-[#999] mb-1 font-semibold">Select Customer / Party *</label>
             <select
@@ -261,7 +261,7 @@ function InvoiceBuilderForm() {
         </div>
 
         {selectedParty && (
-          <div className="p-3 bg-[#f8f9fa] rounded-xl border border-[#e8ecf1] flex items-center justify-between text-[#666]">
+          <div className="p-3 bg-[#f8f9fa] rounded-xl border border-[#e8ecf1] flex flex-col sm:flex-row sm:items-center justify-between text-[#666] gap-3">
             <div>
               <span className="font-bold text-[#1f2029]">{selectedParty.name}</span>
               {selectedParty.gstin && (
@@ -272,7 +272,7 @@ function InvoiceBuilderForm() {
               {selectedParty.address && <p className="text-[11px] text-[#999]">{selectedParty.address}</p>}
             </div>
 
-            <div className="text-right">
+            <div className="text-left sm:text-right">
               <span className="text-[10px] text-[#999] uppercase font-semibold">GST Tax Mode</span>
               <div className={`font-bold ${isIntraState ? "text-emerald-400" : "text-amber-400"}`}>
                 {isIntraState ? "Intra-State (CGST + SGST)" : "Inter-State (IGST)"}
@@ -284,7 +284,7 @@ function InvoiceBuilderForm() {
 
       {/* Line Items Builder */}
       <div className="bg-white border border-[#e8ecf1] rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] space-y-4">
-        <div className="flex items-center justify-between border-b border-[#e8ecf1] pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e8ecf1] pb-3">
           <h2 className="text-sm font-bold text-[#1f2029] flex items-center gap-2">
             <Package className="w-4 h-4 text-[#6730e3]" /> Line Items & HSN Tax Rates
           </h2>
@@ -307,11 +307,11 @@ function InvoiceBuilderForm() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                   <div className="md:col-span-2">
                     <label className="block text-[#999] mb-1 font-semibold">Pick from Inventory OR Type Description *</label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <select
                         value={item.itemId}
                         onChange={(e) => handleItemSelect(idx, e.target.value)}
-                        className="bg-white border border-[#e8ecf1] rounded-xl px-2.5 py-1.5 text-[#333] text-xs focus:outline-none"
+                        className="bg-white border border-[#e8ecf1] rounded-xl px-2.5 py-1.5 text-[#333] text-xs focus:outline-none sm:w-1/3"
                       >
                         <option value="">Custom Item</option>
                         {items.map((i) => (
@@ -358,7 +358,7 @@ function InvoiceBuilderForm() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-4 gap-3 items-center">
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3 items-center">
                   <div>
                     <label className="block text-[#999] mb-1 font-semibold">Quantity</label>
                     <input
@@ -406,13 +406,13 @@ function InvoiceBuilderForm() {
                     />
                   </div>
 
-                  <div className="text-right pt-4">
+                  <div className="col-span-2 sm:col-span-4 md:col-span-1 text-right pt-2 md:pt-4">
                     <button
                       type="button"
                       onClick={() => removeLineItem(idx)}
                       className="p-2 rounded-lg text-rose-400 hover:bg-rose-500/10 transition-colors"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4 inline" />
                     </button>
                   </div>
                 </div>
@@ -427,7 +427,7 @@ function InvoiceBuilderForm() {
         <h2 className="text-sm font-bold text-[#1f2029] flex items-center gap-2 border-b border-[#e8ecf1] pb-3">
           <Package className="w-4 h-4 text-amber-500" /> Shipping & Logistics Details
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label className="block text-[#999] mb-1 font-semibold">Vehicle No (Optional)</label>
             <input

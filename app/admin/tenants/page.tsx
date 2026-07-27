@@ -32,31 +32,31 @@ export default async function AdminTenantsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                <th className="py-4 px-6">Business Details</th>
-                <th className="py-4 px-6">Owner</th>
-                <th className="py-4 px-6">Vertical</th>
-                <th className="py-4 px-6">Status</th>
-                <th className="py-4 px-6">Plan</th>
-                <th className="py-4 px-6 text-right">Actions</th>
+                <th className="py-4 px-6 whitespace-nowrap">Business Details</th>
+                <th className="py-4 px-6 whitespace-nowrap">Owner</th>
+                <th className="py-4 px-6 whitespace-nowrap">Vertical</th>
+                <th className="py-4 px-6 whitespace-nowrap">Status</th>
+                <th className="py-4 px-6 whitespace-nowrap">Plan</th>
+                <th className="py-4 px-6 text-right whitespace-nowrap">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 text-sm">
               {tenants.map((tenant) => (
                 <tr key={tenant.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="py-4 px-6">
+                  <td className="py-4 px-6 whitespace-nowrap">
                     <div className="font-medium text-gray-900">{tenant.businessName}</div>
                     <div className="text-xs text-gray-500 mt-0.5">GST: {tenant.gstin || 'N/A'}</div>
                   </td>
-                  <td className="py-4 px-6">
+                  <td className="py-4 px-6 whitespace-nowrap">
                     <div className="font-medium text-gray-900">{tenant.user.name}</div>
                     <div className="text-xs text-gray-500 mt-0.5">{tenant.user.phone}</div>
                   </td>
-                  <td className="py-4 px-6">
+                  <td className="py-4 px-6 whitespace-nowrap">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 capitalize">
                       {tenant.vertical}
                     </span>
                   </td>
-                  <td className="py-4 px-6">
+                  <td className="py-4 px-6 whitespace-nowrap">
                     {tenant.isVerified ? (
                       <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-600">
                         <CheckCircle2 className="w-4 h-4" /> Verified
@@ -67,12 +67,12 @@ export default async function AdminTenantsPage() {
                       </span>
                     )}
                   </td>
-                  <td className="py-4 px-6">
+                  <td className="py-4 px-6 whitespace-nowrap">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                       {tenant.subscription?.plan?.name || "Free Trial"}
                     </span>
                   </td>
-                  <td className="py-4 px-6 text-right">
+                  <td className="py-4 px-6 text-right whitespace-nowrap">
                     <button className="text-sm font-medium text-black hover:underline">
                       Manage
                     </button>

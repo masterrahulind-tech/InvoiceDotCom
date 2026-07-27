@@ -191,7 +191,7 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
           <div className="p-10 text-center text-xs text-[#999]">No transactions recorded yet.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse whitespace-nowrap min-w-[600px]">
               <thead>
                 <tr className="text-[11px] font-semibold text-[#999] bg-[#fafbfc] border-b border-[#e8ecf1] uppercase tracking-wider">
                   <th className="py-3 px-4">Date & Time</th>
@@ -244,8 +244,8 @@ export default function PartyDetailPage({ params }: { params: Promise<{ id: stri
       {/* Record Entry Modal */}
       {showTxModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-[#e8ecf1] rounded-2xl w-full max-w-md overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.12)]">
-            <div className="p-5 border-b border-[#e8ecf1] flex items-center justify-between">
+          <div className="bg-white border border-[#e8ecf1] rounded-2xl w-full max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto shadow-[0_10px_40px_rgba(0,0,0,0.12)]">
+            <div className="p-5 border-b border-[#e8ecf1] flex items-center justify-between sticky top-0 bg-white z-10">
               <h3 className={`text-base font-bold flex items-center gap-2 ${txType === "GAVE" ? "text-rose-400" : "text-emerald-400"}`}>
                 {txType === "GAVE" ? "Record You Gave (Udhaar)" : "Record You Got (Payment In)"}
               </h3>

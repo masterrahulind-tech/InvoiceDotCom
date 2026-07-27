@@ -173,8 +173,8 @@ export function InvoicesView() {
             <p style={{ fontSize: 13 }}>No invoices found.</p>
           </div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+          <div className="overflow-x-auto w-full no-scrollbar pb-2">
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "800px" }}>
               <thead>
                 <tr
                   style={{
@@ -187,32 +187,32 @@ export function InvoicesView() {
                     letterSpacing: "0.05em",
                   }}
                 >
-                  <th style={{ padding: "12px 16px" }}>Invoice No</th>
-                  <th style={{ padding: "12px 16px" }}>Date</th>
-                  <th style={{ padding: "12px 16px" }}>Customer Party</th>
-                  <th style={{ padding: "12px 16px" }}>GST Type</th>
-                  <th style={{ padding: "12px 16px", textAlign: "right" }}>Taxable</th>
-                  <th style={{ padding: "12px 16px", textAlign: "right" }}>Total Amount</th>
-                  <th style={{ padding: "12px 16px", textAlign: "center" }}>Status</th>
-                  <th style={{ padding: "12px 16px", textAlign: "right" }}>Action</th>
+                  <th className="whitespace-nowrap" style={{ padding: "12px 16px" }}>Invoice No</th>
+                  <th className="whitespace-nowrap" style={{ padding: "12px 16px" }}>Date</th>
+                  <th className="whitespace-nowrap" style={{ padding: "12px 16px" }}>Customer Party</th>
+                  <th className="whitespace-nowrap" style={{ padding: "12px 16px" }}>GST Type</th>
+                  <th className="whitespace-nowrap" style={{ padding: "12px 16px", textAlign: "right" }}>Taxable</th>
+                  <th className="whitespace-nowrap" style={{ padding: "12px 16px", textAlign: "right" }}>Total Amount</th>
+                  <th className="whitespace-nowrap" style={{ padding: "12px 16px", textAlign: "center" }}>Status</th>
+                  <th className="whitespace-nowrap" style={{ padding: "12px 16px", textAlign: "right" }}>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredInvoices.map((inv) => (
                   <tr key={inv.id} style={{ borderBottom: "1px solid #f8f8f8", fontSize: 13, transition: "background 0.15s" }}>
-                    <td style={{ padding: "14px 16px", fontFamily: "monospace", fontWeight: 700, color: "#6730e3" }}>
+                    <td className="whitespace-nowrap" style={{ padding: "14px 16px", fontFamily: "monospace", fontWeight: 700, color: "#6730e3" }}>
                       {inv.invoiceNo}
                     </td>
-                    <td style={{ padding: "14px 16px", color: "#999" }}>
+                    <td className="whitespace-nowrap" style={{ padding: "14px 16px", color: "#999" }}>
                       {new Date(inv.createdAt).toLocaleDateString("en-IN")}
                     </td>
-                    <td style={{ padding: "14px 16px" }}>
+                    <td className="whitespace-nowrap" style={{ padding: "14px 16px" }}>
                       <div style={{ fontWeight: 700, color: "#333" }}>{inv.client?.name || "Client"}</div>
                       {inv.client?.gstin && (
                         <div style={{ fontSize: 10, fontFamily: "monospace", color: "#2e7d32" }}>GSTIN: {inv.client.gstin}</div>
                       )}
                     </td>
-                    <td style={{ padding: "14px 16px" }}>
+                    <td className="whitespace-nowrap" style={{ padding: "14px 16px" }}>
                       <span
                         style={{
                           padding: "3px 8px",
@@ -227,16 +227,16 @@ export function InvoicesView() {
                         {inv.billingType || "B2B"}
                       </span>
                     </td>
-                    <td style={{ padding: "14px 16px", textAlign: "right", color: "#666" }}>
+                    <td className="whitespace-nowrap" style={{ padding: "14px 16px", textAlign: "right", color: "#666" }}>
                       ₹{inv.taxableAmount.toLocaleString("en-IN")}
                     </td>
-                    <td style={{ padding: "14px 16px", textAlign: "right", fontWeight: 800, color: "#1f2029" }}>
+                    <td className="whitespace-nowrap" style={{ padding: "14px 16px", textAlign: "right", fontWeight: 800, color: "#1f2029" }}>
                       ₹{inv.totalAmount.toLocaleString("en-IN")}
                     </td>
-                    <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                    <td className="whitespace-nowrap" style={{ padding: "14px 16px", textAlign: "center" }}>
                       <StatusBadge status={inv.status} />
                     </td>
-                    <td style={{ padding: "14px 16px", textAlign: "right" }}>
+                    <td className="whitespace-nowrap" style={{ padding: "14px 16px", textAlign: "right" }}>
                       <Link
                         href={`/invoices/${inv.id}`}
                         style={{

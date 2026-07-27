@@ -69,7 +69,7 @@ export default function AppLayout({
           boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
         }}
       >
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px" }}>
+        <div className="px-3 sm:px-5" style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
             {/* Brand + Profile */}
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -84,11 +84,12 @@ export default function AppLayout({
                     alignItems: "center",
                     justifyContent: "center",
                     boxShadow: "0 4px 12px rgba(103,48,227,0.3)",
+                    flexShrink: 0,
                   }}
                 >
                   <Receipt className="w-[18px] h-[18px] text-white" />
                 </div>
-                <div style={{ display: "flex", flexDirection: "column" }}>
+                <div className="hidden sm:flex" style={{ flexDirection: "column" }}>
                   <span
                     style={{
                       fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
@@ -100,7 +101,7 @@ export default function AppLayout({
                   >
                     Invoice<span style={{ fontWeight: 400, color: "#6730e3" }}>DotCom</span>
                   </span>
-                  <span style={{ fontSize: 10, fontWeight: 600, color: "#6730e3", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  <span style={{ fontSize: 10, fontWeight: 600, color: "#6730e3", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
                     Vyapar & Khatabook Edition
                   </span>
                 </div>
@@ -108,7 +109,7 @@ export default function AppLayout({
 
               {/* Active Business Pill — desktop only */}
               <div
-                className="hidden md:flex"
+                className="hidden lg:flex"
                 style={{
                   alignItems: "center",
                   gap: 8,
@@ -279,7 +280,7 @@ export default function AppLayout({
       </header>
 
       {/* ═══════ Main Content ═══════ */}
-      <main style={{ flex: 1, maxWidth: 1200, width: "100%", margin: "0 auto", padding: "24px 20px" }}>
+      <main className="px-3 py-4 sm:px-5 sm:py-6" style={{ flex: 1, maxWidth: 1200, width: "100%", margin: "0 auto" }}>
         {children}
       </main>
 

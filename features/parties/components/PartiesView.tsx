@@ -298,7 +298,7 @@ export function PartiesView() {
       {/* Add Party Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-[#e8ecf1] rounded-2xl w-full max-w-lg overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.12)]">
+          <div className="bg-white border border-[#e8ecf1] rounded-2xl w-full max-w-[95vw] sm:max-w-lg overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.12)]">
             <div className="p-5 border-b border-[#e8ecf1] flex items-center justify-between">
               <h3 className="text-base font-bold text-[#1f2029] flex items-center gap-2">
                 <Users className="w-5 h-5 text-emerald-400" /> Add New Party / Customer
@@ -308,8 +308,8 @@ export function PartiesView() {
               </button>
             </div>
 
-            <form onSubmit={handleCreateParty} className="p-5 space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleCreateParty} className="p-5 space-y-4 text-xs max-h-[75vh] overflow-y-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[#999] mb-1 font-semibold">Party Name *</label>
                   <input
@@ -335,7 +335,7 @@ export function PartiesView() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[#999] mb-1 font-semibold">Phone Number</label>
                   <input
@@ -369,7 +369,7 @@ export function PartiesView() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[#999] mb-1 font-semibold">Opening Udhaar Balance (₹)</label>
                   <input

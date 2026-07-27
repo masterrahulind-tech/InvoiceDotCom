@@ -29,8 +29,8 @@ export default function BranchesSettingsPage() {
         </button>
       </div>
 
-      <div className="rounded-lg border border-gray-200">
-        <table className="w-full text-left text-sm">
+      <div className="rounded-lg border border-gray-200 overflow-x-auto">
+        <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-gray-50 text-gray-500">
             <tr>
               <th className="px-4 py-3 font-medium">Branch Name</th>

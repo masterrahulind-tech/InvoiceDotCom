@@ -109,8 +109,8 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
       {/* Record Payment Settlement Modal */}
       {showPayModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-[#e8ecf1] rounded-2xl w-full max-w-md overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.12)]">
-            <div className="p-5 border-b border-[#e8ecf1] flex items-center justify-between">
+          <div className="bg-white border border-[#e8ecf1] rounded-2xl w-full max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto shadow-[0_10px_40px_rgba(0,0,0,0.12)]">
+            <div className="p-5 border-b border-[#e8ecf1] flex items-center justify-between sticky top-0 bg-white z-10">
               <h3 className="text-base font-bold text-[#1f2029] flex items-center gap-2">
                 <CreditCard className="w-5 h-5 text-emerald-400" /> Settle Payment for #{invoice.invoiceNo}
               </h3>

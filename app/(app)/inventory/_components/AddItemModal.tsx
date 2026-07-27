@@ -84,7 +84,7 @@ export function AddItemModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-xl flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-[95vw] sm:max-w-lg overflow-hidden rounded-2xl bg-white shadow-xl flex flex-col max-h-[90vh]">
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="text-lg font-semibold text-gray-900">Add New Item</h2>
           <button onClick={onClose} className="rounded-full p-1 hover:bg-gray-100">
@@ -92,7 +92,7 @@ export function AddItemModal({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           <form id="add-item-form" onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
@@ -113,7 +113,7 @@ export function AddItemModal({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">SKU / Code</label>
                 <input
@@ -137,7 +137,7 @@ export function AddItemModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">Sale Price (₹) *</label>
                 <input
@@ -165,7 +165,7 @@ export function AddItemModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">Tax Rate (%)</label>
                 <select
@@ -203,7 +203,7 @@ export function AddItemModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">Opening Stock</label>
                 <input

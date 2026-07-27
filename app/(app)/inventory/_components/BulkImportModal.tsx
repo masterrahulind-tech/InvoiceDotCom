@@ -207,7 +207,7 @@ export function BulkImportModal({
                   </div>
                   <div className="rounded-lg border border-gray-200 overflow-hidden">
                     <div className="overflow-x-auto max-h-[250px]">
-                      <table className="w-full text-left text-sm">
+                      <table className="w-full text-left text-sm whitespace-nowrap min-w-[500px]">
                         <thead className="bg-gray-50 text-gray-500 sticky top-0">
                           <tr>
                             <th className="px-4 py-2 font-medium">Name</th>
