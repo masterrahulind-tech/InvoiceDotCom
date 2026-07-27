@@ -3,12 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { 
-  Globe, 
-  Store, 
-  Building2, 
-  UserCircle, 
-  ShieldCheck, 
-  CreditCard,
   CheckCircle2,
   ChevronRight,
   ArrowLeft,
@@ -20,13 +14,14 @@ import {
   HeartPulse,
   Utensils,
   Truck,
-  Monitor
+  Monitor,
+  Store
 } from "lucide-react";
 import Link from "next/link";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
-export default function OnboardingWizard() {
+function OnboardingForm() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
   const [loading, setLoading] = useState(false);
@@ -77,309 +72,287 @@ export default function OnboardingWizard() {
   ];
 
   return (
-    <div className="min-h-screen flex w-full bg-white font-sans">
-      
-      {/* Left Column - Branding (Zoho Style) */}
-      <div className="hidden lg:flex w-[45%] bg-[#1a1b23] text-white flex-col justify-between p-12 xl:p-16 relative overflow-hidden">
-        <div className="relative z-10 flex flex-col h-full">
-          {/* Logo */}
-          <div className="flex items-center gap-3 mb-16">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#6730e3] to-[#4a1fb8] rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
-              <span className="font-bold text-xl text-white">I</span>
-            </div>
-            <span className="text-2xl font-bold tracking-tight">InvoiceDotCom</span>
-          </div>
+    <div className="card login-signup-card shadow-lg mb-0" style={{ maxWidth: '100%' }}>
+      <div className="card-body px-md-5 py-5" style={{ minHeight: '500px' }}>
+        
+        {/* Progress Bar */}
+        <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4" style={{ backgroundColor: '#e2e8f0' }}>
+          <div className="bg-primary h-1.5 rounded-full transition-all duration-500 ease-out" style={{ width: `${(step / 5) * 100}%`, backgroundColor: '#6730e3' }}></div>
+        </div>
 
-          <div className="mt-auto mb-auto">
-            <h1 className="text-[2.75rem] leading-[1.15] font-bold mb-6 tracking-tight">
-              Manage your entire <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">business</span> in one place.
-            </h1>
-            <p className="text-gray-400 text-lg mb-12 max-w-md leading-relaxed">
-              Join thousands of businesses who trust InvoiceDotCom for their billing, inventory, compliance, and growth.
-            </p>
+        {step > 1 && step < 5 && (
+          <button 
+            onClick={handlePrev} 
+            className="btn btn-link text-muted p-0 border-0 mb-4 d-flex align-items-center gap-2"
+            style={{ fontSize: "0.85rem", textDecoration: "none" }}
+          >
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
+        )}
+
+        {error && (
+          <div className="alert alert-danger py-2 mb-4 text-sm">
+            {error}
+          </div>
+        )}
+
+        {/* STEP 1: Country */}
+        {step === 1 && (
+          <div className="animate-in fade-in duration-500 mt-4">
+            <h5 className="h3 mb-2 font-weight-bold">Business Location</h5>
+            <p className="text-muted mb-4">This helps us apply the correct tax rules and currency.</p>
             
-            <div className="space-y-6">
-              {[
-                "GST Billing & E-Invoicing",
-                "Real-time Inventory Management",
-                "Automated Payment Reminders",
-                "Multi-branch & User Access Control"
-              ].map((feature, idx) => (
-                <div key={idx} className="flex items-center gap-4">
-                  <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center shrink-0">
-                    <CheckCircle2 className="text-purple-400 w-4 h-4" />
-                  </div>
-                  <span className="font-medium text-gray-300 text-lg">{feature}</span>
+            <div className="row g-3">
+              {["India", "United States", "United Kingdom", "Australia", "UAE", "Singapore"].map(c => (
+                <div className="col-6 mb-3" key={c}>
+                  <button
+                    onClick={() => { setCountry(c); setTimeout(handleNext, 150); }}
+                    className={`w-100 p-3 rounded border text-left transition-all d-flex align-items-center gap-2 ${
+                      country === c 
+                        ? 'border-primary bg-primary-light text-primary' 
+                        : 'border-gray-200 hover:border-gray-300 bg-white text-gray-700'
+                    }`}
+                    style={country === c ? { backgroundColor: '#f8f5ff', borderColor: '#6730e3', color: '#6730e3' } : {}}
+                  >
+                    <MapPin className={`w-4 h-4 ${country === c ? 'text-primary' : 'text-gray-400'}`} style={country === c ? { color: '#6730e3' } : {}} />
+                    <span className="font-weight-bold" style={{ fontSize: '0.9rem' }}>{c}</span>
+                  </button>
                 </div>
               ))}
             </div>
           </div>
+        )}
 
-          <div className="mt-16 text-sm text-gray-500 flex items-center gap-4">
-            <span>© 2026 InvoiceDotCom Inc.</span>
-            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
-          </div>
-        </div>
-        
-        {/* Decorative background elements */}
-        <div className="absolute -bottom-[200px] -left-[200px] w-[600px] h-[600px] bg-[#6730e3] rounded-full mix-blend-screen filter blur-[150px] opacity-30 pointer-events-none"></div>
-        <div className="absolute -top-[100px] -right-[100px] w-[400px] h-[400px] bg-blue-500 rounded-full mix-blend-screen filter blur-[120px] opacity-20 pointer-events-none"></div>
-      </div>
-
-      {/* Right Column - Wizard */}
-      <div className="flex-1 flex flex-col bg-white relative h-screen overflow-y-auto">
-        
-        {/* Progress Bar */}
-        <div className="fixed top-0 right-0 left-0 lg:left-[45%] h-1.5 bg-gray-100 z-50">
-          <div 
-            className="h-full bg-gradient-to-r from-[#6730e3] to-blue-500 transition-all duration-500 ease-out" 
-            style={{ width: `${(step / 5) * 100}%` }}
-          />
-        </div>
-
-        {/* Mobile Header */}
-        <div className="lg:hidden p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white/80 backdrop-blur-md z-40">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#6730e3] rounded-lg flex items-center justify-center">
-              <span className="font-bold text-white text-sm">I</span>
-            </div>
-            <span className="font-bold text-lg">InvoiceDotCom</span>
-          </div>
-          <span className="text-sm font-medium text-gray-500">Step {step} of 5</span>
-        </div>
-
-        <div className="flex-1 flex flex-col max-w-[560px] mx-auto w-full px-6 py-12 lg:py-24">
-          
-          {step > 1 && step < 5 && (
-            <button 
-              onClick={handlePrev} 
-              className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors w-fit mb-8 group"
-            >
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-              Back
-            </button>
-          )}
-          {step === 1 && <div className="mb-12"></div>}
-
-          {error && (
-            <div className="mb-8 p-4 bg-red-50 text-red-600 rounded-xl text-sm border border-red-100 flex items-start gap-3">
-              <ShieldCheck className="w-5 h-5 shrink-0 mt-0.5" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {/* STEP 1: Country */}
-          {step === 1 && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Where is your business located?</h2>
-              <p className="text-gray-500 mb-10 text-lg">This helps us apply the correct tax rules and currency.</p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {["India", "United States", "United Kingdom", "Australia", "UAE", "Singapore"].map(c => (
+        {/* STEP 2: Business Type */}
+        {step === 2 && (
+          <div className="animate-in fade-in duration-500 mt-2">
+            <h5 className="h3 mb-2 font-weight-bold">Business Type</h5>
+            <p className="text-muted mb-4">We'll customize your dashboard based on your industry.</p>
+            
+            <div className="row g-3">
+              {businessTypes.map(type => (
+                <div className="col-4 mb-3" key={type.id}>
                   <button
-                    key={c}
-                    onClick={() => { setCountry(c); setTimeout(handleNext, 150); }}
-                    className={`p-5 rounded-2xl border-2 text-left transition-all flex items-center gap-4 group ${
-                      country === c 
-                        ? 'border-[#6730e3] bg-[#f8f5ff] text-[#6730e3] ring-4 ring-[#6730e3]/10' 
-                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700'
-                    }`}
-                  >
-                    <MapPin className={`w-5 h-5 ${country === c ? 'text-[#6730e3]' : 'text-gray-400 group-hover:text-gray-600'}`} />
-                    <span className="font-semibold text-base">{c}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2: Business Type */}
-          {step === 2 && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">What best describes your business?</h2>
-              <p className="text-gray-500 mb-10 text-lg">We'll customize your dashboard based on your industry.</p>
-              
-              <div className="grid grid-cols-2 gap-4">
-                {businessTypes.map(type => (
-                  <button
-                    key={type.id}
                     onClick={() => { setBusinessType(type.id); setTimeout(handleNext, 150); }}
-                    className={`p-5 rounded-2xl border-2 text-left transition-all flex flex-col gap-3 group ${
+                    className={`w-100 p-3 rounded border text-center transition-all d-flex flex-column align-items-center gap-2 ${
                       businessType === type.id 
-                        ? 'border-[#6730e3] bg-[#f8f5ff] text-[#6730e3] ring-4 ring-[#6730e3]/10' 
-                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700'
+                        ? 'border-primary bg-primary-light text-primary' 
+                        : 'border-gray-200 hover:border-gray-300 bg-white text-gray-700'
                     }`}
+                    style={businessType === type.id ? { backgroundColor: '#f8f5ff', borderColor: '#6730e3', color: '#6730e3' } : {}}
                   >
-                    <type.icon className={`w-6 h-6 ${businessType === type.id ? 'text-[#6730e3]' : 'text-gray-400 group-hover:text-gray-600'}`} />
-                    <span className="font-semibold">{type.label}</span>
+                    <type.icon className={`w-5 h-5 ${businessType === type.id ? 'text-primary' : 'text-gray-400'}`} style={businessType === type.id ? { color: '#6730e3' } : {}} />
+                    <span className="font-weight-bold" style={{ fontSize: '0.75rem' }}>{type.label}</span>
                   </button>
-                ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: Organization Info */}
+        {step === 3 && (
+          <div className="animate-in fade-in duration-500 mt-2">
+            <h5 className="h3 mb-2 font-weight-bold">Organization Details</h5>
+            <p className="text-muted mb-4">You can always update these details later in settings.</p>
+            
+            <div className="form-group mb-4">
+              <label className="pb-1 font-weight-bold">Organization Name</label>
+              <div className="input-group input-group-merge">
+                <div className="input-icon">
+                  <span className="ti-briefcase color-primary"></span>
+                </div>
+                <input 
+                  type="text" 
+                  value={orgInfo.name} 
+                  onChange={e => setOrgInfo({...orgInfo, name: e.target.value})}
+                  className="form-control form-control-lg"
+                  placeholder="e.g. Acme Corporation"
+                  autoFocus
+                />
               </div>
             </div>
-          )}
-
-          {/* STEP 3: Organization Info */}
-          {step === 3 && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 h-full flex flex-col">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Tell us about your organization</h2>
-              <p className="text-gray-500 mb-10 text-lg">You can always update these details later in settings.</p>
-              
-              <div className="space-y-6 flex-1">
-                <div className="group">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Organization Name</label>
+            
+            <div className="row">
+              <div className="col-md-6 mb-4">
+                <label className="pb-1 font-weight-bold">Base Currency</label>
+                <div className="input-group input-group-merge">
+                  <div className="input-icon">
+                    <span className="ti-money color-primary"></span>
+                  </div>
+                  <select 
+                    value={orgInfo.currency} 
+                    onChange={e => setOrgInfo({...orgInfo, currency: e.target.value})}
+                    className="form-control form-control-lg"
+                  >
+                    <option value="INR">INR (₹)</option>
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="AED">AED (د.إ)</option>
+                  </select>
+                </div>
+              </div>
+              <div className="col-md-6 mb-4">
+                <label className="pb-1 font-weight-bold">Tax Registration</label>
+                <div className="input-group input-group-merge">
+                  <div className="input-icon">
+                    <span className="ti-receipt color-primary"></span>
+                  </div>
                   <input 
                     type="text" 
-                    value={orgInfo.name} 
-                    onChange={e => setOrgInfo({...orgInfo, name: e.target.value})}
-                    className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#6730e3]/20 focus:border-[#6730e3] transition-all outline-none text-gray-900 text-lg"
-                    placeholder="e.g. Acme Corporation"
-                    autoFocus
+                    value={orgInfo.gstin} 
+                    onChange={e => setOrgInfo({...orgInfo, gstin: e.target.value})}
+                    className="form-control form-control-lg text-uppercase"
+                    placeholder="e.g. GSTIN / VAT"
                   />
                 </div>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Base Currency</label>
-                    <select 
-                      value={orgInfo.currency} 
-                      onChange={e => setOrgInfo({...orgInfo, currency: e.target.value})}
-                      className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#6730e3]/20 focus:border-[#6730e3] transition-all outline-none text-gray-900 text-lg appearance-none"
-                    >
-                      <option value="INR">INR (₹)</option>
-                      <option value="USD">USD ($)</option>
-                      <option value="EUR">EUR (€)</option>
-                      <option value="AED">AED (د.إ)</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Tax Registration (Optional)</label>
-                    <input 
-                      type="text" 
-                      value={orgInfo.gstin} 
-                      onChange={e => setOrgInfo({...orgInfo, gstin: e.target.value})}
-                      className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#6730e3]/20 focus:border-[#6730e3] transition-all outline-none text-gray-900 text-lg uppercase"
-                      placeholder="e.g. GSTIN / VAT"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-10">
-                <button 
-                  onClick={handleNext} 
-                  disabled={!orgInfo.name} 
-                  className="w-full sm:w-auto px-8 py-4 bg-[#6730e3] hover:bg-[#5527ba] text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
-                >
-                  Continue <ChevronRight className="w-5 h-5" />
-                </button>
               </div>
             </div>
-          )}
 
-          {/* STEP 4: Subscription */}
-          {step === 4 && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col h-full">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Choose your plan</h2>
-              <p className="text-gray-500 mb-8 text-lg">Select a plan that scales with your business.</p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 flex-1">
-                
-                {/* Free Plan */}
+            <button 
+              onClick={handleNext} 
+              disabled={!orgInfo.name} 
+              className="btn btn-lg d-block w-100 solid-btn border-radius mt-2 mb-3 d-flex align-items-center justify-content-center gap-2"
+            >
+              Continue <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* STEP 4: Subscription */}
+        {step === 4 && (
+          <div className="animate-in fade-in duration-500 mt-2">
+            <h5 className="h3 mb-2 font-weight-bold">Choose your plan</h5>
+            <p className="text-muted mb-4">Select a plan that scales with your business.</p>
+            
+            <div className="row g-3 mb-4">
+              {/* Free Plan */}
+              <div className="col-sm-6">
                 <div 
                   onClick={() => setPlanId("free")}
-                  className={`relative p-6 rounded-3xl border-2 cursor-pointer transition-all ${
+                  className={`p-4 rounded border cursor-pointer transition-all h-100 ${
                     planId === "free" 
-                      ? "border-[#6730e3] bg-[#f8f5ff] ring-4 ring-[#6730e3]/10" 
-                      : "border-gray-200 hover:border-gray-300 bg-white"
+                      ? "border-primary" 
+                      : "border-gray-200 hover:border-gray-300"
                   }`}
+                  style={planId === "free" ? { backgroundColor: '#f8f5ff', borderColor: '#6730e3' } : { backgroundColor: '#fff' }}
                 >
-                  <div className="flex justify-between items-start mb-4">
-                    <h4 className="font-bold text-xl text-gray-900">Starter</h4>
-                    {planId === "free" && <div className="w-5 h-5 bg-[#6730e3] rounded-full flex items-center justify-center"><CheckCircle2 className="w-3 h-3 text-white" /></div>}
+                  <div className="d-flex justify-content-between align-items-start mb-2">
+                    <h6 className="font-weight-bold mb-0">Starter</h6>
+                    {planId === "free" && <CheckCircle2 className="w-4 h-4 text-primary" style={{ color: '#6730e3' }} />}
                   </div>
-                  <p className="text-4xl font-black text-gray-900 mb-1">₹0</p>
-                  <p className="text-sm font-medium text-gray-500 mb-6">Free forever</p>
+                  <h3 className="font-weight-bold mb-1">₹0</h3>
+                  <small className="text-muted d-block mb-3">Free forever</small>
                   
-                  <ul className="space-y-3 text-sm text-gray-700 font-medium">
-                    <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Unlimited Invoices</li>
-                    <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Up to 100 Clients</li>
-                    <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0"/> Single User</li>
+                  <ul className="list-unstyled small mb-0" style={{ fontSize: '0.8rem' }}>
+                    <li className="mb-2"><CheckCircle2 className="w-3 h-3 text-success me-1 d-inline"/> Unlimited Invoices</li>
+                    <li className="mb-2"><CheckCircle2 className="w-3 h-3 text-success me-1 d-inline"/> Up to 100 Clients</li>
+                    <li><CheckCircle2 className="w-3 h-3 text-success me-1 d-inline"/> Single User</li>
                   </ul>
                 </div>
-                
-                {/* Pro Plan */}
+              </div>
+              
+              {/* Pro Plan */}
+              <div className="col-sm-6">
                 <div 
                   onClick={() => setPlanId("pro")}
-                  className={`relative p-6 rounded-3xl border-2 cursor-pointer transition-all ${
+                  className={`position-relative p-4 rounded border cursor-pointer transition-all h-100 ${
                     planId === "pro" 
-                      ? "border-[#1a1b23] bg-gray-900 text-white shadow-xl shadow-gray-900/10 ring-4 ring-gray-900/10" 
-                      : "border-gray-200 hover:border-gray-300 bg-white"
+                      ? "border-dark text-white" 
+                      : "border-gray-200 hover:border-gray-300"
                   }`}
+                  style={planId === "pro" ? { backgroundColor: '#1a1b23', borderColor: '#1a1b23' } : { backgroundColor: '#fff' }}
                 >
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold rounded-full uppercase tracking-wider shadow-sm">
-                    Most Popular
+                  <span className="badge bg-warning position-absolute top-0 start-50 translate-middle" style={{ fontSize: '0.6rem' }}>MOST POPULAR</span>
+                  <div className="d-flex justify-content-between align-items-start mb-2">
+                    <h6 className={`font-weight-bold mb-0 ${planId === "pro" ? 'text-white' : ''}`}>Professional</h6>
+                    {planId === "pro" && <CheckCircle2 className="w-4 h-4 text-white" />}
                   </div>
-                  <div className="flex justify-between items-start mb-4">
-                    <h4 className={`font-bold text-xl ${planId === "pro" ? 'text-white' : 'text-gray-900'}`}>Professional</h4>
-                    {planId === "pro" && <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center"><CheckCircle2 className="w-3 h-3 text-gray-900" /></div>}
-                  </div>
-                  <p className={`text-4xl font-black mb-1 ${planId === "pro" ? 'text-white' : 'text-gray-900'}`}>₹499</p>
-                  <p className={`text-sm font-medium mb-6 ${planId === "pro" ? 'text-gray-400' : 'text-gray-500'}`}>per month, billed annually</p>
+                  <h3 className={`font-weight-bold mb-1 ${planId === "pro" ? 'text-white' : ''}`}>₹499</h3>
+                  <small className={`d-block mb-3 ${planId === "pro" ? 'text-light' : 'text-muted'}`}>per month</small>
                   
-                  <ul className={`space-y-3 text-sm font-medium ${planId === "pro" ? 'text-gray-300' : 'text-gray-700'}`}>
-                    <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0"/> Everything in Starter</li>
-                    <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0"/> Multi-branch & Staff Roles</li>
-                    <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0"/> Advanced Inventory & POS</li>
-                    <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0"/> Dedicated Support</li>
+                  <ul className="list-unstyled small mb-0" style={{ fontSize: '0.8rem' }}>
+                    <li className="mb-2"><CheckCircle2 className="w-3 h-3 text-success me-1 d-inline"/> Everything in Starter</li>
+                    <li className="mb-2"><CheckCircle2 className="w-3 h-3 text-success me-1 d-inline"/> Multi-branch & Roles</li>
+                    <li><CheckCircle2 className="w-3 h-3 text-success me-1 d-inline"/> Adv. Inventory</li>
                   </ul>
                 </div>
               </div>
+            </div>
 
-              <div className="pt-10">
-                <button 
-                  onClick={handleNext} 
-                  className="w-full sm:w-auto px-8 py-4 bg-[#6730e3] hover:bg-[#5527ba] text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 text-lg"
-                >
-                  Continue to Final Step <ChevronRight className="w-5 h-5" />
-                </button>
+            <button 
+              onClick={handleNext} 
+              className="btn btn-lg d-block w-100 solid-btn border-radius mt-4 d-flex align-items-center justify-content-center gap-2"
+            >
+              Continue to Final Step <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* STEP 5: Workspace Creation */}
+        {step === 5 && (
+          <div className="animate-in fade-in zoom-in-95 duration-500 d-flex flex-column align-items-center justify-content-center text-center py-4 mt-4">
+            <div className="mb-4">
+              <div className="d-inline-flex align-items-center justify-content-center rounded-circle" style={{ width: '80px', height: '80px', backgroundColor: '#e8f5e9' }}>
+                <CheckCircle2 className="w-10 h-10 text-success" />
               </div>
             </div>
-          )}
+            
+            <h4 className="font-weight-bold mb-2 h3">You're all set!</h4>
+            <p className="text-muted mb-5 px-3">
+              We are ready to provision your secure workspace for <span className="font-weight-bold text-dark">{orgInfo.name}</span> on the <span className="font-weight-bold text-dark text-capitalize">{planId === 'free' ? 'Starter' : 'Professional'}</span> plan.
+            </p>
+            
+            <button 
+              onClick={handleComplete} 
+              disabled={loading}
+              className="btn btn-lg d-block w-100 border-radius d-flex align-items-center justify-content-center gap-2"
+              style={{ backgroundColor: '#1a1b23', color: 'white' }}
+            >
+              {loading ? (
+                <><Loader2 className="w-5 h-5 animate-spin" /> Provisioning...</>
+              ) : (
+                'Launch Workspace'
+              )}
+            </button>
+            <small className="text-muted d-block mt-4">By launching, you agree to our Terms & Privacy Policy.</small>
+          </div>
+        )}
 
-          {/* STEP 5: Workspace Creation */}
-          {step === 5 && (
-            <div className="animate-in zoom-in-95 duration-500 flex flex-col items-center justify-center h-full text-center py-12">
-              <div className="relative mb-8">
-                <div className="absolute inset-0 bg-emerald-500 rounded-full blur-xl opacity-20 animate-pulse"></div>
-                <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-emerald-100 relative z-10">
-                  <CheckCircle2 className="w-12 h-12 text-emerald-600" />
-                </div>
-              </div>
-              
-              <h2 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">You're all set!</h2>
-              <p className="text-gray-500 text-lg max-w-md mx-auto mb-12">
-                We are ready to provision your secure workspace for <span className="font-semibold text-gray-900">{orgInfo.name}</span> on the <span className="font-semibold text-gray-900 capitalize">{planId === 'free' ? 'Starter' : 'Professional'}</span> plan.
+      </div>
+    </div>
+  );
+}
+
+export default function OnboardingWizardPage() {
+  return (
+    <section
+      className="hero-section ptb-100 background-img full-screen"
+      style={{ background: "url('/assets/hero-bg-1.jpg') no-repeat center center / cover" }}
+    >
+      <div className="container">
+        <div className="row align-items-center justify-content-between pt-5 pt-sm-5 pt-md-5 pt-lg-0">
+          <div className="col-md-5 col-lg-5 mb-5 mb-md-0">
+            <div className="hero-content-left text-white">
+              <h1 className="text-white">Setup Your Workspace</h1>
+              <p className="lead">
+                Customize your experience to get the most out of InvoiceDotCom. Let's get your business profile ready.
               </p>
-              
-              <button 
-                onClick={handleComplete} 
-                disabled={loading}
-                className="w-full max-w-sm px-8 py-4 bg-gray-900 hover:bg-black text-white font-bold rounded-xl shadow-2xl shadow-gray-900/20 flex items-center justify-center gap-3 text-lg transition-all active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100"
-              >
-                {loading ? (
-                  <><Loader2 className="w-6 h-6 animate-spin" /> Provisioning...</>
-                ) : (
-                  'Launch Workspace'
-                )}
-              </button>
-              <p className="mt-6 text-sm text-gray-400">By launching, you agree to our Terms of Service & Privacy Policy.</p>
+              <ul className="list-unstyled text-white mt-5" style={{ opacity: 0.9 }}>
+                <li className="mb-4 d-flex align-items-center gap-3 font-weight-bold"><CheckCircle2 className="w-6 h-6 text-success"/> Tailored Tax & Currency settings</li>
+                <li className="mb-4 d-flex align-items-center gap-3 font-weight-bold"><CheckCircle2 className="w-6 h-6 text-success"/> Industry-specific Dashboard</li>
+                <li className="d-flex align-items-center gap-3 font-weight-bold"><CheckCircle2 className="w-6 h-6 text-success"/> Flexible Subscription Plans</li>
+              </ul>
             </div>
-          )}
-
+          </div>
+          <div className="col-md-7 col-lg-6">
+            <OnboardingForm />
+          </div>
         </div>
       </div>
-      
-    </div>
+      <div className="bottom-img-absolute">
+        <img src="/assets/hero-bg-shape-1.svg" alt="wave shape" className="img-fluid" />
+      </div>
+    </section>
   );
 }
