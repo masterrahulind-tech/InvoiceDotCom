@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { country, businessType, orgInfo, ownerInfo, planId } = body;
+    const { country, businessType, orgInfo, planId } = body;
 
     // 1. Create or ensure SubscriptionPlan exists (basic mock if it doesn't)
     let plan = await prisma.subscriptionPlan.findFirst({ where: { name: planId === 'pro' ? 'Professional' : 'Free' } });

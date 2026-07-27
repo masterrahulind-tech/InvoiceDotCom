@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+type Step = 1 | 2 | 3 | 4 | 5;
 
 export default function OnboardingWizard() {
   const router = useRouter();
@@ -36,48 +36,10 @@ export default function OnboardingWizard() {
   const [country, setCountry] = useState("India");
   const [businessType, setBusinessType] = useState("retail");
   const [orgInfo, setOrgInfo] = useState({ name: "", gstin: "", currency: "INR" });
-  const [ownerInfo, setOwnerInfo] = useState({ name: "", phone: "" });
-  const [otp, setOtp] = useState("");
   const [planId, setPlanId] = useState("free");
 
-  const handleNext = () => setStep((s) => Math.min(s + 1, 7) as Step);
+  const handleNext = () => setStep((s) => Math.min(s + 1, 5) as Step);
   const handlePrev = () => setStep((s) => Math.max(s - 1, 1) as Step);
-
-  const handleSendOtp = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/auth/otp/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: ownerInfo.phone, name: ownerInfo.name }),
-      });
-      if (!res.ok) throw new Error("Failed to send OTP. Please check your number.");
-      handleNext(); // Go to step 5 (Verification)
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/auth/otp/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: ownerInfo.phone, otp, name: ownerInfo.name }),
-      });
-      if (!res.ok) throw new Error("Invalid or expired OTP");
-      handleNext(); // Go to step 6 (Subscription)
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleComplete = async () => {
     setLoading(true);
@@ -90,7 +52,6 @@ export default function OnboardingWizard() {
           country,
           businessType,
           orgInfo,
-          ownerInfo,
           planId
         }),
       });
@@ -173,7 +134,7 @@ export default function OnboardingWizard() {
         <div className="fixed top-0 right-0 left-0 lg:left-[45%] h-1.5 bg-gray-100 z-50">
           <div 
             className="h-full bg-gradient-to-r from-[#6730e3] to-blue-500 transition-all duration-500 ease-out" 
-            style={{ width: `${(step / 7) * 100}%` }}
+            style={{ width: `${(step / 5) * 100}%` }}
           />
         </div>
 
@@ -185,12 +146,12 @@ export default function OnboardingWizard() {
             </div>
             <span className="font-bold text-lg">InvoiceDotCom</span>
           </div>
-          <span className="text-sm font-medium text-gray-500">Step {step} of 7</span>
+          <span className="text-sm font-medium text-gray-500">Step {step} of 5</span>
         </div>
 
         <div className="flex-1 flex flex-col max-w-[560px] mx-auto w-full px-6 py-12 lg:py-24">
           
-          {step > 1 && step < 7 && (
+          {step > 1 && step < 5 && (
             <button 
               onClick={handlePrev} 
               className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors w-fit mb-8 group"
@@ -316,89 +277,8 @@ export default function OnboardingWizard() {
             </div>
           )}
 
-          {/* STEP 4: Owner Account */}
+          {/* STEP 4: Subscription */}
           {step === 4 && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col h-full">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Create your admin profile</h2>
-              <p className="text-gray-500 mb-10 text-lg">We use your mobile number to keep your account secure.</p>
-              
-              <div className="space-y-6 flex-1">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
-                  <input 
-                    type="text" 
-                    value={ownerInfo.name} 
-                    onChange={e => setOwnerInfo({...ownerInfo, name: e.target.value})}
-                    className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#6730e3]/20 focus:border-[#6730e3] transition-all outline-none text-gray-900 text-lg"
-                    placeholder="John Doe"
-                    autoFocus
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Mobile Number</label>
-                  <div className="flex gap-3">
-                    <div className="px-4 py-3.5 bg-gray-100 border border-gray-200 rounded-xl text-gray-600 font-medium text-lg flex items-center justify-center shrink-0">
-                      +91
-                    </div>
-                    <input 
-                      type="tel" 
-                      value={ownerInfo.phone} 
-                      onChange={e => setOwnerInfo({...ownerInfo, phone: e.target.value.replace(/\D/g, "")})}
-                      className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#6730e3]/20 focus:border-[#6730e3] transition-all outline-none text-gray-900 text-lg tracking-wide"
-                      placeholder="98765 43210"
-                      maxLength={10}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-10">
-                <button 
-                  onClick={handleSendOtp} 
-                  disabled={loading || !ownerInfo.name || ownerInfo.phone.length < 10} 
-                  className="w-full sm:w-auto px-8 py-4 bg-[#1a1b23] hover:bg-black text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg shadow-xl shadow-gray-900/10"
-                >
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send Verification Code'}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 5: Verification */}
-          {step === 5 && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 h-full flex flex-col">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Check your phone</h2>
-              <p className="text-gray-500 mb-10 text-lg">We sent a 6-digit verification code to <span className="font-semibold text-gray-900">+91 {ownerInfo.phone.replace(/(\d{5})(\d{5})/, "$1 $2")}</span>.</p>
-              
-              <div className="flex-1">
-                <input 
-                  type="text" 
-                  value={otp} 
-                  onChange={e => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  className="w-full max-w-[320px] px-4 py-4 text-center text-3xl tracking-[0.5em] font-bold bg-gray-50 border-2 border-gray-200 rounded-2xl focus:bg-white focus:border-[#6730e3] transition-all outline-none text-gray-900"
-                  placeholder="------"
-                  autoFocus
-                />
-                
-                <p className="mt-6 text-sm text-gray-500">
-                  Didn't receive the code? <button onClick={handleSendOtp} className="text-[#6730e3] font-semibold hover:underline">Resend OTP</button>
-                </p>
-              </div>
-
-              <div className="pt-10">
-                <button 
-                  onClick={handleVerifyOtp} 
-                  disabled={loading || otp.length !== 6} 
-                  className="w-full sm:w-auto px-8 py-4 bg-[#6730e3] hover:bg-[#5527ba] text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
-                >
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Continue'}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 6: Subscription */}
-          {step === 6 && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col h-full">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Choose your plan</h2>
               <p className="text-gray-500 mb-8 text-lg">Select a plan that scales with your business.</p>
@@ -467,8 +347,8 @@ export default function OnboardingWizard() {
             </div>
           )}
 
-          {/* STEP 7: Workspace Creation */}
-          {step === 7 && (
+          {/* STEP 5: Workspace Creation */}
+          {step === 5 && (
             <div className="animate-in zoom-in-95 duration-500 flex flex-col items-center justify-center h-full text-center py-12">
               <div className="relative mb-8">
                 <div className="absolute inset-0 bg-emerald-500 rounded-full blur-xl opacity-20 animate-pulse"></div>
