@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
@@ -24,6 +24,24 @@ export default function AppLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [businessName, setBusinessName] = useState("Loading...");
+  const [gstin, setGstin] = useState("...");
+
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const res = await fetch("/api/business-profiles");
+        const data = await res.json();
+        if (data.profiles && data.profiles.length > 0) {
+          setBusinessName(data.profiles[0].businessName || "My Business");
+          setGstin(data.profiles[0].gstin || "N/A");
+        }
+      } catch (err) {
+        console.error("Failed to load business profile for header", err);
+      }
+    }
+    fetchProfile();
+  }, []);
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -102,20 +120,22 @@ export default function AppLayout({
                 }}
               >
                 <Building2 className="w-[14px] h-[14px]" style={{ color: "#6730e3" }} />
-                <span style={{ fontWeight: 600, color: "#1f2029" }}>Apex Digital Solutions</span>
-                <span
-                  style={{
-                    fontSize: 10,
-                    background: "#f3f0ff",
-                    color: "#6730e3",
-                    fontFamily: "monospace",
-                    padding: "2px 8px",
-                    borderRadius: 4,
-                    border: "1px solid #e0d5ff",
-                  }}
-                >
-                  27AAACA1234A1Z5
-                </span>
+                <span style={{ fontWeight: 600, color: "#1f2029" }}>{businessName}</span>
+                {gstin !== "N/A" && gstin !== "" && (
+                  <span
+                    style={{
+                      fontSize: 10,
+                      background: "#f3f0ff",
+                      color: "#6730e3",
+                      fontFamily: "monospace",
+                      padding: "2px 8px",
+                      borderRadius: 4,
+                      border: "1px solid #e0d5ff",
+                    }}
+                  >
+                    {gstin}
+                  </span>
+                )}
               </div>
             </div>
 
