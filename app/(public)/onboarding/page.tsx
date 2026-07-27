@@ -16,7 +16,9 @@ import {
   Truck,
   Monitor,
   Store,
-  LayoutGrid
+  LayoutGrid,
+  Banknote,
+  Receipt
 } from "lucide-react";
 import Link from "next/link";
 
@@ -162,35 +164,35 @@ function OnboardingForm() {
             
             <div className="flex-grow-1">
               <div className="form-group mb-4">
-                <label className="pb-1 font-weight-bold text-dark small text-uppercase tracking-wider">Organization Name</label>
-                <div className="input-group input-group-merge shadow-sm rounded-lg overflow-hidden">
-                  <div className="input-icon bg-light border-right-0">
-                    <span className="ti-briefcase color-primary"></span>
+                <label className="pb-2 font-weight-bold text-dark small text-uppercase tracking-wider">Organization Name</label>
+                <div className="position-relative">
+                  <div className="position-absolute d-flex align-items-center justify-content-center" style={{ width: '45px', height: '100%', left: 0, top: 0, color: '#6730e3' }}>
+                    <Briefcase className="w-5 h-5" />
                   </div>
                   <input 
                     type="text" 
                     value={orgInfo.name} 
                     onChange={e => setOrgInfo({...orgInfo, name: e.target.value})}
-                    className="form-control form-control-lg border-left-0 pl-0"
+                    className="form-control form-control-lg border-gray-200 shadow-sm"
                     placeholder="e.g. Acme Corporation"
                     autoFocus
-                    style={{ backgroundColor: '#f8f9fa', fontSize: '1.1rem' }}
+                    style={{ backgroundColor: '#f8f9fa', fontSize: '1.05rem', paddingLeft: '45px', borderRadius: '0.5rem' }}
                   />
                 </div>
               </div>
               
               <div className="row">
                 <div className="col-md-6 mb-4">
-                  <label className="pb-1 font-weight-bold text-dark small text-uppercase tracking-wider">Base Currency</label>
-                  <div className="input-group input-group-merge shadow-sm rounded-lg overflow-hidden">
-                    <div className="input-icon bg-light border-right-0">
-                      <span className="ti-money color-primary"></span>
+                  <label className="pb-2 font-weight-bold text-dark small text-uppercase tracking-wider">Base Currency</label>
+                  <div className="position-relative">
+                    <div className="position-absolute d-flex align-items-center justify-content-center" style={{ width: '45px', height: '100%', left: 0, top: 0, color: '#6730e3' }}>
+                      <Banknote className="w-5 h-5" />
                     </div>
                     <select 
                       value={orgInfo.currency} 
                       onChange={e => setOrgInfo({...orgInfo, currency: e.target.value})}
-                      className="form-control form-control-lg border-left-0 pl-0 font-weight-bold"
-                      style={{ backgroundColor: '#f8f9fa' }}
+                      className="form-control form-control-lg border-gray-200 shadow-sm font-weight-bold"
+                      style={{ backgroundColor: '#f8f9fa', paddingLeft: '45px', borderRadius: '0.5rem' }}
                     >
                       <option value="INR">INR (₹)</option>
                       <option value="USD">USD ($)</option>
@@ -200,21 +202,21 @@ function OnboardingForm() {
                   </div>
                 </div>
                 <div className="col-md-6 mb-4">
-                  <label className="pb-1 font-weight-bold text-dark small text-uppercase tracking-wider">Tax Registration</label>
-                  <div className="input-group input-group-merge shadow-sm rounded-lg overflow-hidden">
-                    <div className="input-icon bg-light border-right-0">
-                      <span className="ti-receipt color-primary"></span>
+                  <label className="pb-2 font-weight-bold text-dark small text-uppercase tracking-wider">Tax Registration</label>
+                  <div className="position-relative">
+                    <div className="position-absolute d-flex align-items-center justify-content-center" style={{ width: '45px', height: '100%', left: 0, top: 0, color: '#6730e3' }}>
+                      <Receipt className="w-5 h-5" />
                     </div>
                     <input 
                       type="text" 
                       value={orgInfo.gstin} 
                       onChange={e => setOrgInfo({...orgInfo, gstin: e.target.value})}
-                      className="form-control form-control-lg text-uppercase border-left-0 pl-0 font-weight-bold"
+                      className="form-control form-control-lg border-gray-200 shadow-sm text-uppercase font-weight-bold"
                       placeholder="e.g. GSTIN / VAT"
-                      style={{ backgroundColor: '#f8f9fa', letterSpacing: '1px' }}
+                      style={{ backgroundColor: '#f8f9fa', letterSpacing: '1px', paddingLeft: '45px', borderRadius: '0.5rem' }}
                     />
                   </div>
-                  <small className="text-muted mt-1 d-block">Optional for now</small>
+                  <small className="text-muted mt-2 d-block">Optional for now</small>
                 </div>
               </div>
             </div>
@@ -222,8 +224,8 @@ function OnboardingForm() {
             <button 
               onClick={handleNext} 
               disabled={!orgInfo.name} 
-              className="btn btn-lg d-block w-100 solid-btn border-radius mt-auto mb-2 d-flex align-items-center justify-content-center gap-2 shadow-lg"
-              style={{ padding: '1rem', fontSize: '1.1rem' }}
+              className={`btn btn-lg d-block w-100 border-radius mt-auto mb-2 d-flex align-items-center justify-content-center gap-2 shadow-sm transition-all ${!orgInfo.name ? 'btn-light text-muted' : 'solid-btn text-white'}`}
+              style={{ padding: '1rem', fontSize: '1.1rem', backgroundColor: orgInfo.name ? '#6730e3' : '#e9ecef', color: orgInfo.name ? '#fff' : '#6c757d' }}
             >
               Continue <ChevronRight className="w-5 h-5" />
             </button>
@@ -297,8 +299,8 @@ function OnboardingForm() {
 
             <button 
               onClick={handleNext} 
-              className="btn btn-lg d-block w-100 solid-btn border-radius mt-auto mb-2 d-flex align-items-center justify-content-center gap-2 shadow-lg"
-              style={{ padding: '1rem', fontSize: '1.1rem' }}
+              className="btn btn-lg d-block w-100 border-radius mt-auto mb-2 d-flex align-items-center justify-content-center gap-2 shadow-sm transition-all"
+              style={{ padding: '1rem', fontSize: '1.1rem', backgroundColor: '#6730e3', color: '#fff' }}
             >
               Continue to Final Step <ChevronRight className="w-5 h-5" />
             </button>
