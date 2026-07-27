@@ -18,11 +18,12 @@ import {
   Store,
   LayoutGrid,
   Banknote,
-  Receipt
+  Receipt,
+  User
 } from "lucide-react";
 import Link from "next/link";
 
-type Step = 1 | 2 | 3 | 4 | 5;
+type Step = 1 | 2 | 3 | 4 | 5 | 6;
 
 function OnboardingForm() {
   const router = useRouter();
@@ -32,11 +33,12 @@ function OnboardingForm() {
 
   // Form State
   const [country, setCountry] = useState("India");
+  const [entityType, setEntityType] = useState<"individual" | "registered">("registered");
   const [businessType, setBusinessType] = useState("retail");
   const [orgInfo, setOrgInfo] = useState({ name: "", gstin: "", currency: "INR" });
   const [planId, setPlanId] = useState("free");
 
-  const handleNext = () => setStep((s) => Math.min(s + 1, 5) as Step);
+  const handleNext = () => setStep((s) => Math.min(s + 1, 6) as Step);
   const handlePrev = () => setStep((s) => Math.max(s - 1, 1) as Step);
 
   const handleComplete = async () => {
@@ -48,6 +50,7 @@ function OnboardingForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           country,
+          entityType,
           businessType,
           orgInfo,
           planId
@@ -81,10 +84,10 @@ function OnboardingForm() {
         
         {/* Progress Bar */}
         <div className="w-full bg-gray-200 rounded-full h-2 mb-4" style={{ backgroundColor: '#f1f5f9' }}>
-          <div className="bg-primary h-2 rounded-full transition-all duration-500 ease-out shadow-sm" style={{ width: `${(step / 5) * 100}%`, backgroundColor: '#6730e3' }}></div>
+          <div className="bg-primary h-2 rounded-full transition-all duration-500 ease-out shadow-sm" style={{ width: `${(step / 6) * 100}%`, backgroundColor: '#6730e3' }}></div>
         </div>
 
-        {step > 1 && step < 5 && (
+        {step > 1 && step < 6 && (
           <button 
             onClick={handlePrev} 
             className="btn btn-link text-muted p-0 border-0 mb-4 d-flex align-items-center gap-2 transition-all hover-primary"
@@ -129,10 +132,60 @@ function OnboardingForm() {
           </div>
         )}
 
-        {/* STEP 2: Business Type */}
+        {/* STEP 2: Entity Type */}
         {step === 2 && (
           <div className="animate-in fade-in duration-500 mt-2 flex-grow-1">
-            <h5 className="h3 mb-2 font-weight-bold text-dark">Business Type</h5>
+            <h5 className="h3 mb-2 font-weight-bold text-dark">Entity Type</h5>
+            <p className="text-muted mb-4" style={{ fontSize: '0.95rem' }}>Are you an individual or a registered business?</p>
+            
+            <div className="row g-3">
+              <div className="col-12 mb-3">
+                <button
+                  onClick={() => { setEntityType("individual"); setTimeout(handleNext, 150); }}
+                  className={`w-100 p-4 rounded-lg border text-left transition-all d-flex align-items-center gap-4 ${
+                    entityType === "individual" 
+                      ? 'border-primary bg-primary-light text-primary shadow-sm' 
+                      : 'border-light hover:border-gray-300 bg-white text-secondary hover-shadow'
+                  }`}
+                  style={entityType === "individual" ? { backgroundColor: '#f4efff', borderColor: '#6730e3', color: '#6730e3' } : { backgroundColor: '#f8f9fa', borderColor: '#e9ecef' }}
+                >
+                  <div className="rounded-circle p-3 d-flex align-items-center justify-content-center" style={entityType === "individual" ? { backgroundColor: 'rgba(103,48,227,0.1)' } : { backgroundColor: '#e9ecef' }}>
+                    <User className={`w-6 h-6 ${entityType === "individual" ? 'text-primary' : 'text-gray-500'}`} style={entityType === "individual" ? { color: '#6730e3' } : {}} />
+                  </div>
+                  <div>
+                    <h6 className="font-weight-bold mb-1" style={{ fontSize: '1.1rem' }}>Individual</h6>
+                    <span className="text-muted" style={{ fontSize: '0.85rem' }}>Freelancer, broker, tutor, vendor</span>
+                  </div>
+                </button>
+              </div>
+
+              <div className="col-12 mb-3">
+                <button
+                  onClick={() => { setEntityType("registered"); setTimeout(handleNext, 150); }}
+                  className={`w-100 p-4 rounded-lg border text-left transition-all d-flex align-items-center gap-4 ${
+                    entityType === "registered" 
+                      ? 'border-primary bg-primary-light text-primary shadow-sm' 
+                      : 'border-light hover:border-gray-300 bg-white text-secondary hover-shadow'
+                  }`}
+                  style={entityType === "registered" ? { backgroundColor: '#f4efff', borderColor: '#6730e3', color: '#6730e3' } : { backgroundColor: '#f8f9fa', borderColor: '#e9ecef' }}
+                >
+                  <div className="rounded-circle p-3 d-flex align-items-center justify-content-center" style={entityType === "registered" ? { backgroundColor: 'rgba(103,48,227,0.1)' } : { backgroundColor: '#e9ecef' }}>
+                    <Building className={`w-6 h-6 ${entityType === "registered" ? 'text-primary' : 'text-gray-500'}`} style={entityType === "registered" ? { color: '#6730e3' } : {}} />
+                  </div>
+                  <div>
+                    <h6 className="font-weight-bold mb-1" style={{ fontSize: '1.1rem' }}>Registered Business</h6>
+                    <span className="text-muted" style={{ fontSize: '0.85rem' }}>Pvt Ltd, LLP, Proprietorship</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: Business Type / Industry */}
+        {step === 3 && (
+          <div className="animate-in fade-in duration-500 mt-2 flex-grow-1">
+            <h5 className="h3 mb-2 font-weight-bold text-dark">Business Category</h5>
             <p className="text-muted mb-4" style={{ fontSize: '0.95rem' }}>We'll customize your dashboard based on your industry.</p>
             
             <div className="row g-2">
@@ -156,15 +209,15 @@ function OnboardingForm() {
           </div>
         )}
 
-        {/* STEP 3: Organization Info */}
-        {step === 3 && (
+        {/* STEP 4: Organization Info */}
+        {step === 4 && (
           <div className="animate-in fade-in duration-500 mt-2 flex-grow-1 d-flex flex-column">
             <h5 className="h3 mb-2 font-weight-bold text-dark">Organization Details</h5>
             <p className="text-muted mb-4" style={{ fontSize: '0.95rem' }}>You can always update these details later in settings.</p>
             
             <div className="flex-grow-1">
               <div className="form-group mb-4">
-                <label className="pb-2 font-weight-bold text-dark small text-uppercase tracking-wider">Organization Name</label>
+                <label className="pb-2 font-weight-bold text-dark small text-uppercase tracking-wider">Organization Name <span className="text-danger">*</span></label>
                 <div className="position-relative">
                   <div className="position-absolute d-flex align-items-center justify-content-center" style={{ width: '45px', height: '100%', left: 0, top: 0, color: '#6730e3' }}>
                     <Briefcase className="w-5 h-5" />
@@ -202,7 +255,9 @@ function OnboardingForm() {
                   </div>
                 </div>
                 <div className="col-md-6 mb-4">
-                  <label className="pb-2 font-weight-bold text-dark small text-uppercase tracking-wider">Tax Registration</label>
+                  <label className="pb-2 font-weight-bold text-dark small text-uppercase tracking-wider">
+                    Tax Registration (GSTIN) {entityType === "registered" && <span className="text-danger">*</span>}
+                  </label>
                   <div className="position-relative">
                     <div className="position-absolute d-flex align-items-center justify-content-center" style={{ width: '45px', height: '100%', left: 0, top: 0, color: '#6730e3' }}>
                       <Receipt className="w-5 h-5" />
@@ -212,28 +267,28 @@ function OnboardingForm() {
                       value={orgInfo.gstin} 
                       onChange={e => setOrgInfo({...orgInfo, gstin: e.target.value})}
                       className="form-control form-control-lg border-gray-200 shadow-sm text-uppercase font-weight-bold"
-                      placeholder="e.g. GSTIN / VAT"
+                      placeholder="e.g. 22AAAAA0000A1Z5"
                       style={{ backgroundColor: '#f8f9fa', letterSpacing: '1px', paddingLeft: '45px', borderRadius: '0.5rem' }}
                     />
                   </div>
-                  <small className="text-muted mt-2 d-block">Optional for now</small>
+                  {entityType === "individual" && <small className="text-muted mt-2 d-block">Optional for individuals</small>}
                 </div>
               </div>
             </div>
 
             <button 
               onClick={handleNext} 
-              disabled={!orgInfo.name} 
-              className={`btn btn-lg d-block w-100 border-radius mt-auto mb-2 d-flex align-items-center justify-content-center gap-2 shadow-sm transition-all ${!orgInfo.name ? 'btn-light text-muted' : 'solid-btn text-white'}`}
-              style={{ padding: '1rem', fontSize: '1.1rem', backgroundColor: orgInfo.name ? '#6730e3' : '#e9ecef', color: orgInfo.name ? '#fff' : '#6c757d' }}
+              disabled={!orgInfo.name || (entityType === "registered" && !orgInfo.gstin)} 
+              className={`btn btn-lg d-block w-100 border-radius mt-auto mb-2 d-flex align-items-center justify-content-center gap-2 shadow-sm transition-all ${!orgInfo.name || (entityType === "registered" && !orgInfo.gstin) ? 'btn-light text-muted' : 'solid-btn text-white'}`}
+              style={{ padding: '1rem', fontSize: '1.1rem', backgroundColor: orgInfo.name && (entityType === "individual" || orgInfo.gstin) ? '#6730e3' : '#e9ecef', color: orgInfo.name && (entityType === "individual" || orgInfo.gstin) ? '#fff' : '#6c757d' }}
             >
               Continue <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         )}
 
-        {/* STEP 4: Subscription */}
-        {step === 4 && (
+        {/* STEP 5: Subscription */}
+        {step === 5 && (
           <div className="animate-in fade-in duration-500 mt-2 flex-grow-1 d-flex flex-column">
             <h5 className="h3 mb-2 font-weight-bold text-dark">Choose your plan</h5>
             <p className="text-muted mb-4" style={{ fontSize: '0.95rem' }}>Select a plan that scales with your business.</p>
@@ -307,8 +362,8 @@ function OnboardingForm() {
           </div>
         )}
 
-        {/* STEP 5: Workspace Creation */}
-        {step === 5 && (
+        {/* STEP 6: Workspace Creation */}
+        {step === 6 && (
           <div className="animate-in fade-in zoom-in-95 duration-500 d-flex flex-column align-items-center justify-content-center text-center py-5 mt-3 flex-grow-1">
             <div className="position-relative mb-5">
               <div className="position-absolute w-100 h-100 bg-success rounded-circle blur-2xl opacity-20" style={{ filter: 'blur(30px)', transform: 'scale(1.5)' }}></div>
