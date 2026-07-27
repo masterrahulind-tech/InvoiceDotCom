@@ -170,6 +170,31 @@ export default function AppLayout({
                   }}
                 />
               </button>
+              <button
+                onClick={async () => {
+                  await fetch("/api/auth/logout", { method: "POST" });
+                  window.location.href = "/login";
+                }}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "8px 16px",
+                  borderRadius: 10,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  fontFamily: "var(--font-montserrat), sans-serif",
+                  background: "#fee2e2",
+                  color: "#dc2626",
+                  textDecoration: "none",
+                  border: "1px solid #fca5a5",
+                  transition: "all 0.2s",
+                  cursor: "pointer",
+                }}
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Logout</span>
+              </button>
               <Link
                 href="/invoices/new"
                 style={{
