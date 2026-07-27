@@ -23,6 +23,7 @@ export const invoiceCreateSchema = z.object({
   businessProfileId: z.string().optional(),
   clientId: z.string().min(1, "Client is required"),
   templateId: z.string().optional().nullable(),
+  documentType: z.enum(["INVOICE", "QUOTATION", "PROFORMA", "CHALLAN"]).optional().default("INVOICE"),
   invoiceNo: z.string().optional(),
   billingType: z.enum(["B2B", "B2C", "EXPORT"]).optional().default("B2B"),
   placeOfSupply: z.string().optional().default("27"),
@@ -35,6 +36,9 @@ export const invoiceCreateSchema = z.object({
   dueDate: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
   terms: z.string().optional().nullable(),
+  vehicleNo: z.string().optional().nullable(),
+  ewayBillNo: z.string().optional().nullable(),
+  transportMode: z.enum(["road", "rail", "air", "ship"]).optional().default("road"),
   lineItems: z.array(lineItemSchema).min(1, "At least one line item is required"),
   customFields: z.array(customFieldSchema).optional(),
 });

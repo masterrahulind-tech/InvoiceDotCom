@@ -16,6 +16,7 @@ import {
   Search,
   LogOut
 } from "lucide-react";
+import { CommandPalette } from "@/components/CommandPalette";
 
 export default function AppLayout({
   children,
@@ -33,6 +34,11 @@ export default function AppLayout({
     { name: "GST Reports", href: "/reports/gst", icon: FilePieChart },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
+
+  const openSearch = () => {
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }));
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }));
+  };
 
   return (
     <div className="min-h-screen flex flex-col" style={{ fontFamily: "var(--font-open-sans), 'Open Sans', sans-serif", background: "#f4f7fa" }}>
@@ -116,6 +122,7 @@ export default function AppLayout({
             {/* Right Actions */}
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <button
+                onClick={openSearch}
                 style={{
                   width: 36,
                   height: 36,
@@ -129,7 +136,7 @@ export default function AppLayout({
                   color: "#6c757d",
                   transition: "all 0.2s",
                 }}
-                title="Search"
+                title="Search (Ctrl+K)"
               >
                 <Search className="w-4 h-4" />
               </button>
@@ -230,6 +237,9 @@ export default function AppLayout({
       <main style={{ flex: 1, maxWidth: 1200, width: "100%", margin: "0 auto", padding: "24px 20px" }}>
         {children}
       </main>
+
+      {/* Command Palette Overlay */}
+      <CommandPalette />
     </div>
   );
 }

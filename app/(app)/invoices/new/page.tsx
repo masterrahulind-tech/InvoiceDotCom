@@ -27,9 +27,15 @@ function InvoiceBuilderForm() {
   const [billingType, setBillingType] = useState<"B2B" | "B2C" | "EXPORT">("B2B");
   const [placeOfSupply, setPlaceOfSupply] = useState("27");
   const [invoiceNo, setInvoiceNo] = useState("");
+  const [documentType, setDocumentType] = useState<"INVOICE" | "QUOTATION" | "PROFORMA" | "CHALLAN">("INVOICE");
   const [notes, setNotes] = useState("Thank you for your business!");
   const [terms, setTerms] = useState("Payment due within 15 days of invoice date.");
   const [paidAmount, setPaidAmount] = useState("0");
+  
+  // Logistics
+  const [vehicleNo, setVehicleNo] = useState("");
+  const [ewayBillNo, setEwayBillNo] = useState("");
+  const [transportMode, setTransportMode] = useState<"road" | "rail" | "air" | "ship">("road");
 
   const [lineItems, setLineItems] = useState<any[]>([
     {
@@ -160,6 +166,7 @@ function InvoiceBuilderForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           clientId: selectedClientId,
+          documentType,
           billingType,
           placeOfSupply: partyStateCode,
           invoiceNo: invoiceNo || undefined,
@@ -168,6 +175,9 @@ function InvoiceBuilderForm() {
           paidAmount: parseFloat(paidAmount) || 0,
           notes,
           terms,
+          vehicleNo: vehicleNo || undefined,
+          ewayBillNo: ewayBillNo || undefined,
+          transportMode,
         }),
       });
 
@@ -233,6 +243,20 @@ function InvoiceBuilderForm() {
               onChange={(e) => setInvoiceNo(e.target.value)}
               className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-mono focus:outline-none focus:border-[#6730e3]"
             />
+          </div>
+
+          <div>
+            <label className="block text-[#999] mb-1 font-semibold">Document Type</label>
+            <select
+              value={documentType}
+              onChange={(e) => setDocumentType(e.target.value as any)}
+              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
+            >
+              <option value="INVOICE">Tax Invoice</option>
+              <option value="QUOTATION">Quotation / Estimate</option>
+              <option value="PROFORMA">Proforma Invoice</option>
+              <option value="CHALLAN">Delivery Challan</option>
+            </select>
           </div>
         </div>
 
@@ -369,6 +393,19 @@ function InvoiceBuilderForm() {
                     </div>
                   </div>
 
+                  <div>
+                    <label className="block text-[#999] mb-1 font-semibold">Discount (%)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="100"
+                      value={item.discountPercent}
+                      onChange={(e) => handleLineChange(idx, "discountPercent", parseFloat(e.target.value) || 0)}
+                      className="w-full bg-white border border-[#e8ecf1] rounded-xl px-3 py-1.5 text-[#1f2029] font-bold focus:outline-none text-rose-500"
+                    />
+                  </div>
+
                   <div className="text-right pt-4">
                     <button
                       type="button"
@@ -382,6 +419,48 @@ function InvoiceBuilderForm() {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* Logistics & E-Way Bill Section */}
+      <div className="bg-white border border-[#e8ecf1] rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] space-y-4">
+        <h2 className="text-sm font-bold text-[#1f2029] flex items-center gap-2 border-b border-[#e8ecf1] pb-3">
+          <Package className="w-4 h-4 text-amber-500" /> Shipping & Logistics Details
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-[#999] mb-1 font-semibold">Vehicle No (Optional)</label>
+            <input
+              type="text"
+              placeholder="e.g. MH 12 AB 1234"
+              value={vehicleNo}
+              onChange={(e) => setVehicleNo(e.target.value)}
+              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
+            />
+          </div>
+          <div>
+            <label className="block text-[#999] mb-1 font-semibold">E-Way Bill No (Optional)</label>
+            <input
+              type="text"
+              placeholder="e.g. 123456789012"
+              value={ewayBillNo}
+              onChange={(e) => setEwayBillNo(e.target.value)}
+              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
+            />
+          </div>
+          <div>
+            <label className="block text-[#999] mb-1 font-semibold">Transport Mode</label>
+            <select
+              value={transportMode}
+              onChange={(e) => setTransportMode(e.target.value as any)}
+              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
+            >
+              <option value="road">Road</option>
+              <option value="rail">Rail</option>
+              <option value="air">Air</option>
+              <option value="ship">Ship</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -445,7 +524,7 @@ function InvoiceBuilderForm() {
               type="submit"
               className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-[#1f2029] font-extrabold shadow-lg shadow-[#6730e340] transition-all active:scale-95 text-sm"
             >
-              Save & Generate Vyapar GST Invoice
+              Save & Generate {documentType === "INVOICE" ? "GST Invoice" : documentType}
             </button>
           </div>
         </div>

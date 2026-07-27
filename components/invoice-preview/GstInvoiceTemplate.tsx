@@ -6,6 +6,7 @@ import { Building2, Phone, Mail, MapPin, QrCode, CheckCircle2 } from "lucide-rea
 export interface GstInvoiceProps {
   invoice: {
     invoiceNo: string;
+    documentType?: string;
     createdAt: string | Date;
     dueDate?: string | Date | null;
     billingType?: string;
@@ -19,6 +20,9 @@ export interface GstInvoiceProps {
     paidAmount: number;
     notes?: string | null;
     terms?: string | null;
+    vehicleNo?: string | null;
+    ewayBillNo?: string | null;
+    transportMode?: string | null;
     businessProfile: {
       businessName: string;
       gstin?: string | null;
@@ -47,6 +51,7 @@ export interface GstInvoiceProps {
       qty: number;
       unit?: string | null;
       rate: number;
+      discountPercent?: number;
       taxPercent: number;
       cgstAmount?: number;
       sgstAmount?: number;
@@ -103,7 +108,11 @@ export default function GstInvoiceTemplate({ invoice }: GstInvoiceProps) {
             )}
             <div>
               <h1 className="text-2xl font-black tracking-tight text-slate-900">{businessProfile.businessName}</h1>
-              <span className="text-xs font-extrabold uppercase text-indigo-700 tracking-wider">TAX INVOICE</span>
+              <span className="text-xs font-extrabold uppercase text-indigo-700 tracking-wider">
+                {invoice.documentType === "QUOTATION" ? "QUOTATION" : 
+                 invoice.documentType === "PROFORMA" ? "PROFORMA INVOICE" : 
+                 invoice.documentType === "CHALLAN" ? "DELIVERY CHALLAN" : "TAX INVOICE"}
+              </span>
             </div>
           </div>
           <div className="mt-3 text-xs text-slate-600 space-y-0.5 max-w-sm">
@@ -137,6 +146,18 @@ export default function GstInvoiceTemplate({ invoice }: GstInvoiceProps) {
               {invoice.billingType || "B2B"}
             </span>
           </div>
+          {invoice.ewayBillNo && (
+            <div className="flex justify-between pt-2 border-t border-slate-200">
+              <span className="text-slate-500 font-medium">E-Way Bill:</span>
+              <span className="font-mono font-bold text-slate-900">{invoice.ewayBillNo}</span>
+            </div>
+          )}
+          {invoice.vehicleNo && (
+            <div className="flex justify-between">
+              <span className="text-slate-500 font-medium">Vehicle / Mode:</span>
+              <span className="font-semibold text-slate-900 uppercase">{invoice.vehicleNo} ({invoice.transportMode || "road"})</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -187,6 +208,9 @@ export default function GstInvoiceTemplate({ invoice }: GstInvoiceProps) {
               <th className="py-2.5 px-2 text-center">HSN</th>
               <th className="py-2.5 px-2 text-center">Qty</th>
               <th className="py-2.5 px-2 text-right">Rate</th>
+              {lineItems.some(item => item.discountPercent && item.discountPercent > 0) && (
+                <th className="py-2.5 px-2 text-right">Disc %</th>
+              )}
               <th className="py-2.5 px-2 text-right">GST %</th>
               <th className="py-2.5 px-3 text-right rounded-r-lg">Taxable Value</th>
             </tr>
@@ -199,6 +223,9 @@ export default function GstInvoiceTemplate({ invoice }: GstInvoiceProps) {
                 <td className="py-3 px-2 text-center font-mono text-slate-600">{item.hsnCode || "8517"}</td>
                 <td className="py-3 px-2 text-center font-bold text-slate-900">{item.qty} {item.unit || "Pcs"}</td>
                 <td className="py-3 px-2 text-right text-slate-700">₹{item.rate.toLocaleString("en-IN")}</td>
+                {lineItems.some(i => i.discountPercent && i.discountPercent > 0) && (
+                  <td className="py-3 px-2 text-right text-rose-600 font-semibold">{item.discountPercent || 0}%</td>
+                )}
                 <td className="py-3 px-2 text-right font-semibold text-emerald-700">{item.taxPercent}%</td>
                 <td className="py-3 px-3 text-right font-black text-slate-900">₹{item.amount.toLocaleString("en-IN")}</td>
               </tr>

@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- SEO Meta description -->
-    <meta name="description" content="InvoiceDotCom — Vyapar & Khatabook Edition GST Billing, CRM, Inventory & Accounting Platform for Indian Businesses.">
+    <meta name="description"
+        content="InvoiceDotCom — Vyapar & Khatabook Edition GST Billing, CRM, Inventory & Accounting Platform for Indian Businesses.">
     <meta name="author" content="InvoiceDotCom">
 
     <title>InvoiceDotCom — Vyapar & Khatabook Edition GST Billing & Accounting</title>
@@ -15,7 +17,9 @@
     <link rel="icon" href="/assets/basic.svg" type="image/svg+xml">
 
     <!--google fonts-->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet">
 
     <!--Bootstrap css-->
     <link rel="stylesheet" href="/assets/bootstrap.min.css">
@@ -28,79 +32,102 @@
     <link rel="stylesheet" href="/assets/responsive.css">
 
     <style>
+        /* Fix for Tailwind CSS conflicting with Bootstrap collapse */
+        .collapse.navbar-collapse {
+            visibility: visible !important;
+        }
+
         /* Header Navbar Desktop & Mobile High-Visibility Overrides */
         @media (min-width: 992px) {
             .navbar-expand-lg .navbar-collapse {
                 display: flex !important;
                 flex-basis: auto !important;
             }
+
             .navbar-toggler {
                 display: none !important;
             }
+
             .navbar-nav {
                 flex-direction: row !important;
                 align-items: center !important;
             }
+
             .navbar-nav .nav-item {
                 margin-left: 3px !important;
                 margin-right: 3px !important;
             }
         }
 
+        .navbar {
+            transition: all 0.3s ease-in-out !important;
+            padding-top: 4px !important;
+            padding-bottom: 4px !important;
+        }
+
         .navbar-nav .nav-link {
-            color: #ffffff !important;
-            font-weight: 600 !important;
-            font-size: 14px !important;
-            opacity: 0.95 !important;
-            padding: 8px 14px !important;
+            color: rgba(255, 255, 255, 0.75) !important;
+            font-weight: 500 !important;
+            font-size: 14.5px !important;
+            padding: 8px 16px !important;
             transition: all 0.2s ease-in-out !important;
         }
+
         .navbar-nav .nav-link:hover {
-            color: #a5b4fc !important;
-            opacity: 1 !important;
+            color: #ffffff !important;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3) !important;
         }
+
         .nav-btn-login {
             color: #ffffff !important;
-            border: 2px solid rgba(255, 255, 255, 0.85) !important;
-            background: rgba(255, 255, 255, 0.15) !important;
-            border-radius: 30px !important;
-            padding: 8px 24px !important;
-            font-weight: 700 !important;
-            font-size: 13.5px !important;
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            background: transparent !important;
+            border-radius: 8px !important;
+            padding: 8px 18px !important;
+            font-weight: 500 !important;
+            font-size: 14px !important;
             text-decoration: none !important;
             display: inline-block !important;
             transition: all 0.2s ease-in-out !important;
         }
+
         .nav-btn-login:hover {
             background: #ffffff !important;
             color: #1e1b4b !important;
             border-color: #ffffff !important;
         }
+
         .nav-btn-signup {
             color: #ffffff !important;
             background: #4f46e5 !important;
-            border: 2px solid #4f46e5 !important;
-            border-radius: 30px !important;
-            padding: 8px 26px !important;
-            font-weight: 700 !important;
-            font-size: 13.5px !important;
+            border: 1px solid #4f46e5 !important;
+            border-radius: 8px !important;
+            padding: 8px 20px !important;
+            font-weight: 500 !important;
+            font-size: 14px !important;
             text-decoration: none !important;
             display: inline-block !important;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.5) !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06) !important;
             transition: all 0.2s ease-in-out !important;
         }
+
         .nav-btn-signup:hover {
             background: #4338ca !important;
             border-color: #4338ca !important;
             color: #ffffff !important;
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.7) !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
         }
+
         .navbar.affix {
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
-            padding-top: 10px !important;
-            padding-bottom: 10px !important;
+            background: rgba(30, 27, 75, 0.85) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            padding-top: 4px !important;
+            padding-bottom: 4px !important;
         }
+
         @media (max-width: 991px) {
             .navbar-collapse {
                 background: #1e1b4b !important;
@@ -110,12 +137,15 @@
                 box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4) !important;
                 border: 1px solid rgba(255, 255, 255, 0.12) !important;
             }
+
             .navbar-nav .nav-item {
                 width: 100% !important;
                 text-align: center !important;
                 padding: 6px 0 !important;
             }
-            .nav-btn-login, .nav-btn-signup {
+
+            .nav-btn-login,
+            .nav-btn-signup {
                 width: 100% !important;
                 text-align: center !important;
                 margin-top: 8px !important;
@@ -124,912 +154,1030 @@
         }
     </style>
 </head>
+
 <body>
 
-<!--header section start-->
-<header class="header">
-    <!--start navbar-->
-    <nav class="navbar navbar-expand-lg fixed-top bg-transparent">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <h3 style="color: white; font-weight: 800; margin: 0; font-family: Montserrat, sans-serif; letter-spacing: -0.5px;">
-                    Invoice<span style="font-weight: 300; color: #a5b4fc;">DotCom</span>
-                </h3>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="ti-menu" style="color: #fff; font-size: 20px;"></span>
-            </button>
+    <!--header section start-->
+    <header class="header">
+        <!--start navbar-->
+        <nav class="navbar navbar-expand-lg fixed-top bg-transparent">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <h3
+                        style="color: white; font-weight: 800; margin: 0; font-family: Montserrat, sans-serif; letter-spacing: -0.5px;">
+                        Invoice<span style="font-weight: 300; color: #a5b4fc;">DotCom</span>
+                    </h3>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="ti-menu" style="color: #fff; font-size: 20px;"></span>
+                </button>
 
-            <div class="collapse navbar-collapse main-menu justify-content-end" id="navbarSupportedContent">
-                <ul class="navbar-nav align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="#hero">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="#features">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="#about">About System</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="#pricing">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="#screenshots">Screenshots</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="#blog">Resources</a>
-                    </li>
-                    <li class="nav-item me-lg-3">
-                        <a class="nav-link page-scroll" href="#contact">Contact</a>
-                    </li>
-                    <li class="nav-item my-2 my-lg-0 me-2">
-                        <a href="/login" class="nav-btn-login">Login</a>
-                    </li>
-                    <li class="nav-item my-2 my-lg-0">
-                        <a href="/signup" class="nav-btn-signup">Sign Up</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <!--end navbar-->
-</header>
-<!--header section end-->
-
-<!--body content wrap start-->
-<div class="main">
-
-    <!--hero section start-->
-    <section id="hero" class="hero-section pt-100 background-img"
-             style="background: url('/assets/hero-bg-1.jpg') no-repeat center center / cover">
-        <div class="container">
-            <div class="row align-items-center justify-content-between g-4">
-                <div class="col-md-6 col-lg-6">
-                    <div class="hero-content-left text-white mt-5">
-                        <span class="text-uppercase h6" style="background: rgba(255,255,255,0.15); padding: 4px 14px; border-radius: 20px; font-size: 11px; letter-spacing: 1px;">
-                            Official GST &amp; Khatabook Edition
-                        </span>
-                        <h1 class="text-white fw-bold mt-3">Simplify Your GST Billing, Inventory &amp; Party Ledgers</h1>
-                        <p class="lead">Create tax-compliant GST invoices in seconds, track inventory in real-time, record Khatabook-style udhaar passbooks, and auto-generate GSTR-1 reports for filing.</p>
-
-                        <div class="d-flex flex-wrap gap-2 mt-4">
-                            <a href="/invoices/new" class="btn solid-btn me-2" style="background: #4f46e5; border-color: #4f46e5;">Create Free GST Invoice</a>
-                            <a href="/dashboard" class="btn outline-btn" style="color: #fff; border-color: rgba(255,255,255,0.8);">Open Dashboard</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-5">
-                    <div class="hero-animation-img">
-                        <img src="/assets/image-14.png" alt="InvoiceDotCom Dashboard Preview" class="img-fluid">
-                    </div>
+                <div class="collapse navbar-collapse main-menu justify-content-end" id="navbarSupportedContent">
+                    <ul class="navbar-nav align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link page-scroll" href="#hero">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link page-scroll" href="#features">Features</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link page-scroll" href="#about">About System</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link page-scroll" href="#pricing">Pricing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link page-scroll" href="#blog">Resources</a>
+                        </li>
+                        <li class="nav-item me-lg-4">
+                            <a class="nav-link page-scroll" href="#contact">Contact</a>
+                        </li>
+                        <li class="nav-item my-2 my-lg-0 me-3">
+                            <a href="/login" class="nav-btn-login">Login</a>
+                        </li>
+                        <li class="nav-item my-2 my-lg-0">
+                            <a href="/signup" class="nav-btn-signup">Sign Up</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-            <!--counter start-->
-            <div class="row">
-                <ul class="list-inline counter-wrap">
-                    <li class="list-inline-item">
-                        <div class="single-counter text-center">
-                            <span>50000</span>
-                            <h6>Happy Businesses</h6>
-                        </div>
-                    </li>
-                    <li class="list-inline-item">
-                        <div class="single-counter text-center">
-                            <span>1000000</span>
-                            <h6>Invoices Created</h6>
-                        </div>
-                    </li>
-                    <li class="list-inline-item">
-                        <div class="single-counter text-center">
-                            <span>500</span>
-                            <h6>Crores Processed</h6>
-                        </div>
-                    </li>
-                    <li class="list-inline-item">
-                        <div class="single-counter text-center">
-                            <span>100</span>
-                            <h6>GST Compliant</h6>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <!--counter end-->
-        </div>
-    </section>
-    <!--hero section end-->
+        </nav>
+        <!--end navbar-->
+    </header>
+    <!--header section end-->
 
-    <!--promo section start-->
-    <section id="features" class="promo-section mt-5 ptb-100">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 col-md-10">
-                    <div class="section-heading mb-5">
-                        <span class="text-uppercase color-secondary sub-title">Core System Capabilities</span>
-                        <h2 class="mb-6">Everything You Need to Run Your Enterprise</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="row g-4">
-                <div class="col-lg-3 col-sm-6">
-                    <div class="card single-promo-card single-promo-hover">
-                        <div class="card-body">
-                            <div class="pb-2">
-                                <span class="ti-receipt icon-md color-secondary"></span>
-                            </div>
-                            <div class="pt-2 pb-3">
-                                <h5>GST Billing Suite</h5>
-                                <p class="text-muted mb-0">Instant CGST, SGST, IGST, HSN/SAC codes calculation and thermal/A4 invoice prints.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="card single-promo-card single-promo-hover">
-                        <div class="card-body">
-                            <div class="pb-2">
-                                <span class="ti-package icon-md color-secondary"></span>
-                            </div>
-                            <div class="pt-2 pb-3">
-                                <h5>Real-Time Inventory</h5>
-                                <p class="text-muted mb-0">Automated stock tracking, item barcode management, and low-stock alerts.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="card single-promo-card single-promo-hover">
-                        <div class="card-body">
-                            <div class="pb-2">
-                                <span class="ti-book icon-md color-secondary"></span>
-                            </div>
-                            <div class="pt-2 pb-3">
-                                <h5>Party Ledger (CRM)</h5>
-                                <p class="text-muted mb-0">Khatabook-style GAVE/GOT udhaar passbook with instant WhatsApp reminder links.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="card single-promo-card single-promo-hover">
-                        <div class="card-body">
-                            <div class="pb-2">
-                                <span class="ti-bar-chart icon-md color-secondary"></span>
-                            </div>
-                            <div class="pt-2 pb-3">
-                                <h5>GSTR-1 Auto-Reports</h5>
-                                <p class="text-muted mb-0">Auto-generated GSTR-1, HSN summary, and B2B/B2C filing exports for your CA.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!--promo section end-->
+    <!--body content wrap start-->
+    <div class="main">
 
-    <!--about us section start-->
-    <section id="about" class="about-us ptb-100 gray-light-bg">
-        <div class="container">
-            <div class="row align-items-center justify-content-between g-4">
-                <div class="col-lg-5">
-                    <span class="text-uppercase color-secondary sub-title">Built for Indian Merchants</span>
-                    <h2>All-in-One Vyapar &amp; Khatabook Accounting Suite</h2>
-                    <p class="mb-4 lh-190">InvoiceDotCom combines professional GST billing, stock management, and customer credit tracking into one simple, powerful cloud software.</p>
-                    <ul class="list-unstyled">
-                        <li class="py-2">
-                            <div class="d-flex align-items-center">
-                                <div>
-                                    <div class="badge badge-circle text-bg-primary me-3">
-                                        <span class="ti-check"></span>
-                                    </div>
-                                </div>
-                                <div><p class="mb-0">Automatic CGST/SGST vs IGST based on Place of Supply &amp; GSTIN</p></div>
+        <!--hero section start-->
+        <section id="hero" class="hero-section pt-100 background-img"
+            style="background: url('/assets/hero-bg-1.jpg') no-repeat center center / cover">
+            <div class="container">
+                <div class="row align-items-center justify-content-between g-4">
+                    <div class="col-md-6 col-lg-6">
+                        <div class="hero-content-left text-white mt-5">
+                            <span class="text-uppercase h6"
+                                style="background: rgba(255,255,255,0.15); padding: 4px 14px; border-radius: 20px; font-size: 11px; letter-spacing: 1px;">
+                                Official GST &amp; Khatabook Edition
+                            </span>
+                            <h1 class="text-white fw-bold mt-3">Simplify Your GST Billing, Inventory &amp; Party Ledgers
+                            </h1>
+                            <p class="lead">Create tax-compliant GST invoices in seconds, track inventory in real-time,
+                                record Khatabook-style udhaar passbooks, and auto-generate GSTR-1 reports for filing.
+                            </p>
+
+                            <div class="d-flex flex-wrap gap-2 mt-4">
+                                <a href="/invoices/new" class="btn solid-btn me-2"
+                                    style="background: #4f46e5; border-color: #4f46e5;">Create Free GST Invoice</a>
+                                <a href="/dashboard" class="btn outline-btn"
+                                    style="color: #fff; border-color: rgba(255,255,255,0.8);">Open Dashboard</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-5">
+                        <div class="hero-animation-img">
+                            <img src="/assets/image-14.png" alt="InvoiceDotCom Dashboard Preview" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+                <!--counter start-->
+                <div class="row">
+                    <ul class="list-inline counter-wrap">
+                        <li class="list-inline-item">
+                            <div class="single-counter text-center">
+                                <span>50000</span>
+                                <h6>Happy Businesses</h6>
                             </div>
                         </li>
-                        <li class="py-2">
-                            <div class="d-flex align-items-center">
-                                <div>
-                                    <div class="badge badge-circle text-bg-primary me-3">
-                                        <span class="ti-check"></span>
-                                    </div>
-                                </div>
-                                <div><p class="mb-0">Party passbook ledger with GAVE/GOT balance calculation &amp; WhatsApp reminders</p></div>
+                        <li class="list-inline-item">
+                            <div class="single-counter text-center">
+                                <span>1000000</span>
+                                <h6>Invoices Created</h6>
                             </div>
                         </li>
-                        <li class="py-2">
-                            <div class="d-flex align-items-center">
-                                <div>
-                                    <div class="badge badge-circle text-bg-primary me-3">
-                                        <span class="ti-check"></span>
-                                    </div>
-                                </div>
-                                <div><p class="mb-0">Multi-template invoice designs with thermal 3-inch, A4, and A5 PDF options</p></div>
+                        <li class="list-inline-item">
+                            <div class="single-counter text-center">
+                                <span>500</span>
+                                <h6>Crores Processed</h6>
                             </div>
                         </li>
-                        <li class="py-2">
-                            <div class="d-flex align-items-center">
-                                <div>
-                                    <div class="badge badge-circle text-bg-primary me-3">
-                                        <span class="ti-check"></span>
-                                    </div>
-                                </div>
-                                <div><p class="mb-0">Automated inventory stock sync on every invoice created or edited</p></div>
-                            </div>
-                        </li>
-                        <li class="py-2">
-                            <div class="d-flex align-items-center">
-                                <div>
-                                    <div class="badge badge-circle text-bg-primary me-3">
-                                        <span class="ti-check"></span>
-                                    </div>
-                                </div>
-                                <div><p class="mb-0">Expense tracking with GST Input Tax Credit (ITC) reconciliation</p></div>
+                        <li class="list-inline-item">
+                            <div class="single-counter text-center">
+                                <span>100</span>
+                                <h6>GST Compliant</h6>
                             </div>
                         </li>
                     </ul>
                 </div>
-                <div class="col-md-6">
-                    <div class="about-content-right">
-                        <img src="/assets/delivery-app.svg" width="500" alt="InvoiceDotCom Features" class="img-fluid">
-                    </div>
-                </div>
+                <!--counter end-->
             </div>
-        </div>
-    </section>
-    <!--about us section end-->
+        </section>
+        <!--hero section end-->
 
-    <!--features section start-->
-    <div class="feature-section ptb-100">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="section-heading text-center mb-5">
-                        <span class="text-uppercase color-secondary sub-title">Smart Workflows</span>
-                        <h2>Smart Features to Accelerate Cash Flow</h2>
-                        <p>Eliminate manual errors, collect payments faster with embedded UPI QR codes, and simplify tax returns with automated filing reports.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!--feature new style start-->
-            <div class="row row-grid align-items-center g-5">
-                <div class="col-lg-4">
-                    <div class="d-flex align-items-start mb-5">
-                        <div class="pe-4">
-                            <div class="icon icon-shape icon-color-1 rounded-circle">
-                                <span class="ti-mobile"></span>
-                            </div>
-                        </div>
-                        <div class="icon-text">
-                            <h5>Embedded Payment QR</h5>
-                            <p class="mb-0">Auto-generate dynamic UPI payment QR codes on every invoice for instant collection.</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-start mb-5">
-                        <div class="pe-4">
-                            <div class="icon icon-shape icon-color-2 rounded-circle">
-                                <span class="ti-printer"></span>
-                            </div>
-                        </div>
-                        <div class="icon-text">
-                            <h5>Thermal &amp; POS Print</h5>
-                            <p class="mb-0">Supports 2-inch &amp; 3-inch thermal POS printers alongside classic A4/A5 billing formats.</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-start">
-                        <div class="pe-4">
-                            <div class="icon icon-shape icon-color-3 rounded-circle">
-                                <span class="ti-user"></span>
-                            </div>
-                        </div>
-                        <div class="icon-text">
-                            <h5>CA &amp; Accountant Portal</h5>
-                            <p class="mb-0">Share read-only GSTR reports directly with your Chartered Accountant for one-click filing.</p>
+        <!--promo section start-->
+        <section id="features" class="promo-section mt-5 ptb-100">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-10">
+                        <div class="section-heading mb-5">
+                            <span class="text-uppercase color-secondary sub-title">Core System Capabilities</span>
+                            <h2 class="mb-6">Everything You Need to Run Your Enterprise</h2>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
-                    <div class="position-relative" style="z-index: 10;">
-                        <img alt="System Preview" src="/assets/image-10.png" class="img-center img-fluid">
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="d-flex align-items-start mb-5">
-                        <div class="pe-4">
-                            <div class="icon icon-shape icon-color-4 rounded-circle">
-                                <span class="ti-cloud-up"></span>
+                <div class="row g-4">
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card single-promo-card single-promo-hover">
+                            <div class="card-body">
+                                <div class="pb-2">
+                                    <span class="ti-receipt icon-md color-secondary"></span>
+                                </div>
+                                <div class="pt-2 pb-3">
+                                    <h5>GST Billing Suite</h5>
+                                    <p class="text-muted mb-0">Instant CGST, SGST, IGST, HSN/SAC codes calculation and
+                                        thermal/A4 invoice prints.</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="icon-text">
-                            <h5>100% Cloud Data Sync</h5>
-                            <p class="mb-0">Access your business data anywhere on desktop, tablet, or mobile with instant cloud backup.</p>
-                        </div>
                     </div>
-                    <div class="d-flex align-items-start mb-5">
-                        <div class="pe-4">
-                            <div class="icon icon-shape icon-color-5 rounded-circle">
-                                <span class="ti-bell"></span>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card single-promo-card single-promo-hover">
+                            <div class="card-body">
+                                <div class="pb-2">
+                                    <span class="ti-package icon-md color-secondary"></span>
+                                </div>
+                                <div class="pt-2 pb-3">
+                                    <h5>Real-Time Inventory</h5>
+                                    <p class="text-muted mb-0">Automated stock tracking, item barcode management, and
+                                        low-stock alerts.</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="icon-text">
-                            <h5>WhatsApp Payment Alerts</h5>
-                            <p class="mb-0">Send automatic payment reminders and invoice links directly to party WhatsApp numbers.</p>
-                        </div>
                     </div>
-                    <div class="d-flex align-items-start">
-                        <div class="pe-4">
-                            <div class="icon icon-shape icon-color-6 rounded-circle">
-                                <span class="ti-shield"></span>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card single-promo-card single-promo-hover">
+                            <div class="card-body">
+                                <div class="pb-2">
+                                    <span class="ti-book icon-md color-secondary"></span>
+                                </div>
+                                <div class="pt-2 pb-3">
+                                    <h5>Party Ledger (CRM)</h5>
+                                    <p class="text-muted mb-0">Khatabook-style GAVE/GOT udhaar passbook with instant
+                                        WhatsApp reminder links.</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="icon-text">
-                            <h5>Bank-Grade Security</h5>
-                            <p class="mb-0">Encrypted sessions, secure database, and multi-tenant profile isolation.</p>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card single-promo-card single-promo-hover">
+                            <div class="card-body">
+                                <div class="pb-2">
+                                    <span class="ti-bar-chart icon-md color-secondary"></span>
+                                </div>
+                                <div class="pt-2 pb-3">
+                                    <h5>GSTR-1 Auto-Reports</h5>
+                                    <p class="text-muted mb-0">Auto-generated GSTR-1, HSN summary, and B2B/B2C filing
+                                        exports for your CA.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!--feature new style end-->
-        </div>
-    </div>
-    <!--features section end-->
+        </section>
+        <!--promo section end-->
 
-    <!--our video promo section start-->
-    <section id="download" class="video-promo ptb-100 background-img"
-             style="background: url('/assets/video-bg.jpg') no-repeat center center / cover">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div class="video-promo-content mt-4 text-center">
-                        <a href="https://www.youtube.com/watch?v=9No-FiEInLA"
-                           class="popup-youtube video-play-icon d-inline-block"><span class="ti-control-play"></span> </a>
-                        <h5 class="mt-4 text-white">Watch InvoiceDotCom Demo Overview</h5>
-
-                        <div class="download-btn mt-5">
-                            <a href="/signup" class="btn google-play-btn me-3" style="background: #4f46e5; border-color: #4f46e5;"><span class="ti-desktop"></span> Get Started Free</a>
-                            <a href="/login" class="btn app-store-btn mt-3 mt-lg-0"><span class="ti-lock"></span> Merchant Login</a>
+        <!--about us section start-->
+        <section id="about" class="about-us ptb-100 gray-light-bg">
+            <div class="container">
+                <div class="row align-items-center justify-content-between g-4">
+                    <div class="col-lg-5">
+                        <span class="text-uppercase color-secondary sub-title">Built for Indian Merchants</span>
+                        <h2>All-in-One Vyapar &amp; Khatabook Accounting Suite</h2>
+                        <p class="mb-4 lh-190">InvoiceDotCom combines professional GST billing, stock management, and
+                            customer credit tracking into one simple, powerful cloud software.</p>
+                        <ul class="list-unstyled">
+                            <li class="py-2">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <div class="badge badge-circle text-bg-primary me-3">
+                                            <span class="ti-check"></span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0">Automatic CGST/SGST vs IGST based on Place of Supply &amp; GSTIN
+                                        </p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="py-2">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <div class="badge badge-circle text-bg-primary me-3">
+                                            <span class="ti-check"></span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0">Party passbook ledger with GAVE/GOT balance calculation &amp;
+                                            WhatsApp reminders</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="py-2">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <div class="badge badge-circle text-bg-primary me-3">
+                                            <span class="ti-check"></span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0">Multi-template invoice designs with thermal 3-inch, A4, and A5
+                                            PDF options</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="py-2">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <div class="badge badge-circle text-bg-primary me-3">
+                                            <span class="ti-check"></span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0">Automated inventory stock sync on every invoice created or
+                                            edited</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="py-2">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <div class="badge badge-circle text-bg-primary me-3">
+                                            <span class="ti-check"></span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0">Expense tracking with GST Input Tax Credit (ITC) reconciliation
+                                        </p>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="about-content-right">
+                            <img src="/assets/delivery-app.svg" width="500" alt="InvoiceDotCom Features"
+                                class="img-fluid">
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-    <!--our video promo section end-->
+        </section>
+        <!--about us section end-->
 
-    <!--overflow block start-->
-    <div class="overflow-hidden">
-        <!--our pricing packages section start-->
-        <section id="pricing" class="package-section background-shape-right ptb-100">
+        <!--features section start-->
+        <div class="feature-section ptb-100">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-md-8">
                         <div class="section-heading text-center mb-5">
-                            <span class="text-uppercase color-secondary sub-title">Transparent Pricing</span>
-                            <h2>Affordable Plans for Growing Indian Businesses</h2>
-                            <p>Choose the right plan for your business. No hidden fees. Upgrade or cancel anytime.</p>
+                            <span class="text-uppercase color-secondary sub-title">Smart Workflows</span>
+                            <h2>Smart Features to Accelerate Cash Flow</h2>
+                            <p>Eliminate manual errors, collect payments faster with embedded UPI QR codes, and simplify
+                                tax returns with automated filing reports.</p>
                         </div>
                     </div>
                 </div>
-                <div class="row justify-content-center g-4">
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card text-center single-pricing-pack p-5">
-                            <h5 class="mb-2">Basic</h5>
-                            <div class="pricing-img mt-3 mb-4">
-                                <img src="/assets/basic.svg" alt="Free Basic Plan" class="img-fluid">
-                            </div>
 
-                            <div class="card-body p-0">
-                                <ul class="list-unstyled text-sm pricing-feature-list">
-                                    <li>Up to 10 Invoices / Month</li>
-                                    <li>Basic GST Billing</li>
-                                    <li>Single Business Profile</li>
-                                    <li>Standard PDF Templates</li>
-                                    <li>Email Support</li>
-                                    <li>Basic Financial Summary</li>
-                                </ul>
-                                <div class="py-4 border-0 pricing-header">
-                                    <div class="h1 text-center mb-0 color-secondary">₹<span class="price fw-semibold">0</span></div>
+                <!--feature new style start-->
+                <div class="row row-grid align-items-center g-5">
+                    <div class="col-lg-4">
+                        <div class="d-flex align-items-start mb-5">
+                            <div class="pe-4">
+                                <div class="icon icon-shape icon-color-1 rounded-circle">
+                                    <span class="ti-mobile"></span>
                                 </div>
-                                <a href="/signup" class="btn outline-btn">Start Free</a>
+                            </div>
+                            <div class="icon-text">
+                                <h5>Embedded Payment QR</h5>
+                                <p class="mb-0">Auto-generate dynamic UPI payment QR codes on every invoice for instant
+                                    collection.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-5">
+                            <div class="pe-4">
+                                <div class="icon icon-shape icon-color-2 rounded-circle">
+                                    <span class="ti-printer"></span>
+                                </div>
+                            </div>
+                            <div class="icon-text">
+                                <h5>Thermal &amp; POS Print</h5>
+                                <p class="mb-0">Supports 2-inch &amp; 3-inch thermal POS printers alongside classic
+                                    A4/A5 billing formats.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start">
+                            <div class="pe-4">
+                                <div class="icon icon-shape icon-color-3 rounded-circle">
+                                    <span class="ti-user"></span>
+                                </div>
+                            </div>
+                            <div class="icon-text">
+                                <h5>CA &amp; Accountant Portal</h5>
+                                <p class="mb-0">Share read-only GSTR reports directly with your Chartered Accountant for
+                                    one-click filing.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card text-center popular-price single-pricing-pack p-5">
-                            <h5 class="mb-2">Standard</h5>
-                            <div class="pricing-img mt-3 mb-4">
-                                <img src="/assets/standard.svg" alt="Standard Plan" class="img-fluid">
-                            </div>
-
-                            <div class="card-body p-0">
-                                <ul class="list-unstyled text-sm pricing-feature-list">
-                                    <li>Unlimited GST Invoices</li>
-                                    <li>Party Ledger (Khatabook CRM)</li>
-                                    <li>Real-Time Inventory Management</li>
-                                    <li>WhatsApp Payment Reminders</li>
-                                    <li>Auto GSTR-1 &amp; HSN Reports</li>
-                                    <li>24/7 Phone &amp; Chat Support</li>
-                                </ul>
-                                <div class="py-4 border-0 pricing-header">
-                                    <div class="h1 text-center mb-0 color-secondary">₹<span class="price fw-semibold">999</span><span className="text-sm font-normal">/mo</span></div>
-                                </div>
-                                <a href="/signup" class="btn solid-btn" style="background: #4f46e5; border-color: #4f46e5;">Go Professional</a>
-                            </div>
+                    <div class="col-lg-4">
+                        <div class="position-relative" style="z-index: 10;">
+                            <img alt="System Preview" src="/assets/image-10.png" class="img-center img-fluid">
                         </div>
                     </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card text-center single-pricing-pack p-5">
-                            <h5 class="mb-2">Enterprise</h5>
-                            <div class="pricing-img mt-3 mb-4">
-                                <img src="/assets/unlimited.svg" alt="Enterprise Plan" class="img-fluid">
-                            </div>
-
-                            <div class="card-body p-0">
-                                <ul class="list-unstyled text-sm pricing-feature-list">
-                                    <li>Everything in Standard Plan</li>
-                                    <li>Multi-Branch &amp; Warehouse Support</li>
-                                    <li>Dedicated Account Manager</li>
-                                    <li>Custom API &amp; ERP Integration</li>
-                                    <li>Bulk GST Returns Export</li>
-                                    <li>Priority CA Consultation</li>
-                                </ul>
-                                <div class="py-4 border-0 pricing-header">
-                                    <div class="h1 text-center mb-0 color-secondary">₹<span class="price fw-semibold">2,499</span><span className="text-sm font-normal">/mo</span></div>
+                    <div class="col-lg-4">
+                        <div class="d-flex align-items-start mb-5">
+                            <div class="pe-4">
+                                <div class="icon icon-shape icon-color-4 rounded-circle">
+                                    <span class="ti-cloud-up"></span>
                                 </div>
-                                <a href="/signup" class="btn outline-btn">Go Enterprise</a>
+                            </div>
+                            <div class="icon-text">
+                                <h5>100% Cloud Data Sync</h5>
+                                <p class="mb-0">Access your business data anywhere on desktop, tablet, or mobile with
+                                    instant cloud backup.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-5">
+                            <div class="pe-4">
+                                <div class="icon icon-shape icon-color-5 rounded-circle">
+                                    <span class="ti-bell"></span>
+                                </div>
+                            </div>
+                            <div class="icon-text">
+                                <h5>WhatsApp Payment Alerts</h5>
+                                <p class="mb-0">Send automatic payment reminders and invoice links directly to party
+                                    WhatsApp numbers.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start">
+                            <div class="pe-4">
+                                <div class="icon icon-shape icon-color-6 rounded-circle">
+                                    <span class="ti-shield"></span>
+                                </div>
+                            </div>
+                            <div class="icon-text">
+                                <h5>Bank-Grade Security</h5>
+                                <p class="mb-0">Encrypted sessions, secure database, and multi-tenant profile isolation.
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="mt-5 text-center">
-                    <p class="mb-2">Need a custom plan or enterprise deployment? <a href="#contact" class="color-secondary font-weight-bold">Contact Our Sales Team</a></p>
+                <!--feature new style end-->
+            </div>
+        </div>
+        <!--features section end-->
+
+        <!--our video promo section start-->
+        <section id="download" class="video-promo ptb-100 background-img"
+            style="background: url('/assets/video-bg.jpg') no-repeat center center / cover">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="video-promo-content mt-4 text-center">
+                            <a href="https://www.youtube.com/watch?v=9No-FiEInLA"
+                                class="popup-youtube video-play-icon d-inline-block"><span
+                                    class="ti-control-play"></span> </a>
+                            <h5 class="mt-4 text-white">Watch InvoiceDotCom Demo Overview</h5>
+
+                            <div class="download-btn mt-5">
+                                <a href="/signup" class="btn google-play-btn me-3"
+                                    style="background: #4f46e5; border-color: #4f46e5;"><span class="ti-desktop"></span>
+                                    Get Started Free</a>
+                                <a href="/login" class="btn app-store-btn mt-3 mt-lg-0"><span class="ti-lock"></span>
+                                    Merchant Login</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
-        <!--our pricing packages section end-->
-    </div>
-    <!--overflow block end-->
+        <!--our video promo section end-->
 
-    <!--testimonial section start-->
-    <section class="testimonial-section ptb-100">
-        <div class="container">
-            <div class="row justify-content-between align-items-center">
-                <div class="col-md-6">
-                    <div class="section-heading mb-5">
-                        <span class="text-uppercase color-secondary sub-title">Merchant Feedback</span>
-                        <h2>Loved by 50,000+ Indian Businesses</h2>
-                        <p class="lead">See how InvoiceDotCom empowers store owners, distributors, CAs, and freelancers across India.</p>
-
-                        <div class="client-section-wrap d-flex flex-row align-items-center">
-                            <ul class="list-inline">
-                                <li class="list-inline-item"><img src="/assets/client-1-color.png" width="85" alt="client" class="img-fluid"></li>
-                                <li class="list-inline-item"><img src="/assets/client-6-color.png" width="85" alt="client" class="img-fluid"></li>
-                                <li class="list-inline-item"><img src="/assets/client-3-color.png" width="85" alt="client" class="img-fluid"></li>
-                            </ul>
+        <!--overflow block start-->
+        <div class="overflow-hidden">
+            <!--our pricing packages section start-->
+            <section id="pricing" class="package-section background-shape-right ptb-100">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="section-heading text-center mb-5">
+                                <span class="text-uppercase color-secondary sub-title">Transparent Pricing</span>
+                                <h2>Affordable Plans for Growing Indian Businesses</h2>
+                                <p>Choose the right plan for your business. No hidden fees. Upgrade or cancel anytime.
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-5">
-                    <div class="owl-carousel owl-theme client-testimonial arrow-indicator">
-                        <div class="item">
-                            <div class="testimonial-quote-wrap">
-                                <div class="media author-info mb-3">
-                                    <div class="author-img me-3">
-                                        <img src="/assets/client-1.jpg" alt="client" class="img-fluid rounded-circle">
+                    <div class="row justify-content-center g-4">
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card text-center single-pricing-pack p-5">
+                                <h5 class="mb-2">Basic</h5>
+                                <div class="pricing-img mt-3 mb-4">
+                                    <img src="/assets/basic.svg" alt="Free Basic Plan" class="img-fluid">
+                                </div>
+
+                                <div class="card-body p-0">
+                                    <ul class="list-unstyled text-sm pricing-feature-list">
+                                        <li>Up to 10 Invoices / Month</li>
+                                        <li>Basic GST Billing</li>
+                                        <li>Single Business Profile</li>
+                                        <li>Standard PDF Templates</li>
+                                        <li>Email Support</li>
+                                        <li>Basic Financial Summary</li>
+                                    </ul>
+                                    <div class="py-4 border-0 pricing-header">
+                                        <div class="h1 text-center mb-0 color-secondary">₹<span
+                                                class="price fw-semibold">0</span></div>
                                     </div>
-                                    <div class="media-body">
-                                        <h5 class="mb-0">Aarav Patel</h5>
-                                        <span>Tech Founder, Mumbai</span>
+                                    <a href="/signup" class="btn outline-btn">Start Free</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card text-center popular-price single-pricing-pack p-5">
+                                <h5 class="mb-2">Standard</h5>
+                                <div class="pricing-img mt-3 mb-4">
+                                    <img src="/assets/standard.svg" alt="Standard Plan" class="img-fluid">
+                                </div>
+
+                                <div class="card-body p-0">
+                                    <ul class="list-unstyled text-sm pricing-feature-list">
+                                        <li>Unlimited GST Invoices</li>
+                                        <li>Party Ledger (Khatabook CRM)</li>
+                                        <li>Real-Time Inventory Management</li>
+                                        <li>WhatsApp Payment Reminders</li>
+                                        <li>Auto GSTR-1 &amp; HSN Reports</li>
+                                        <li>24/7 Phone &amp; Chat Support</li>
+                                    </ul>
+                                    <div class="py-4 border-0 pricing-header">
+                                        <div class="h1 text-center mb-0 color-secondary">₹<span
+                                                class="price fw-semibold">999</span><span
+                                                className="text-sm font-normal">/mo</span></div>
                                     </div>
-                                </div>
-                                <div class="client-say">
-                                    <p><img src="/assets/quote.png" alt="quote" class="img-fluid"> InvoiceDotCom has transformed how we handle invoicing. The automatic GST calculation and WhatsApp reminders have cut our payment cycles by half. Highly recommend for any growing business.</p>
+                                    <a href="/signup" class="btn solid-btn"
+                                        style="background: #4f46e5; border-color: #4f46e5;">Go Professional</a>
                                 </div>
                             </div>
                         </div>
-                        <div class="item">
-                            <div class="testimonial-quote-wrap">
-                                <div class="media author-info mb-3">
-                                    <div class="author-img me-3">
-                                        <img src="/assets/client-2.jpg" alt="client" class="img-fluid rounded-circle">
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card text-center single-pricing-pack p-5">
+                                <h5 class="mb-2">Enterprise</h5>
+                                <div class="pricing-img mt-3 mb-4">
+                                    <img src="/assets/unlimited.svg" alt="Enterprise Plan" class="img-fluid">
+                                </div>
+
+                                <div class="card-body p-0">
+                                    <ul class="list-unstyled text-sm pricing-feature-list">
+                                        <li>Everything in Standard Plan</li>
+                                        <li>Multi-Branch &amp; Warehouse Support</li>
+                                        <li>Dedicated Account Manager</li>
+                                        <li>Custom API &amp; ERP Integration</li>
+                                        <li>Bulk GST Returns Export</li>
+                                        <li>Priority CA Consultation</li>
+                                    </ul>
+                                    <div class="py-4 border-0 pricing-header">
+                                        <div class="h1 text-center mb-0 color-secondary">₹<span
+                                                class="price fw-semibold">2,499</span><span
+                                                className="text-sm font-normal">/mo</span></div>
                                     </div>
-                                    <div class="media-body">
-                                        <h5 class="mb-0">Priya Sharma</h5>
-                                        <span>Boutique Owner, Delhi</span>
-                                    </div>
-                                </div>
-                                <div class="client-say">
-                                    <p><img src="/assets/quote.png" alt="quote" class="img-fluid"> The party ledger feature is exactly what I needed. I can track every udhaar entry and send polite reminders via WhatsApp. My cash flow has improved significantly since switching.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="testimonial-quote-wrap">
-                                <div class="media author-info mb-3">
-                                    <div class="author-img me-3">
-                                        <img src="/assets/client-1.jpg" alt="client" class="img-fluid rounded-circle">
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="mb-0">Vikram Mehta</h5>
-                                        <span>Chartered Accountant, Bangalore</span>
-                                    </div>
-                                </div>
-                                <div class="client-say">
-                                    <p><img src="/assets/quote.png" alt="quote" class="img-fluid"> As a CA, I recommend InvoiceDotCom to all my clients. The GSTR-1 auto-generation and HSN summary features save hours of manual work during filing season.</p>
+                                    <a href="/signup" class="btn outline-btn">Go Enterprise</a>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="mt-5 text-center">
+                        <p class="mb-2">Need a custom plan or enterprise deployment? <a href="#contact"
+                                class="color-secondary font-weight-bold">Contact Our Sales Team</a></p>
+                    </div>
                 </div>
-            </div>
+            </section>
+            <!--our pricing packages section end-->
         </div>
-    </section>
-    <!--testimonial section end-->
+        <!--overflow block end-->
 
-    <!--screenshots section start-->
-    <section id="screenshots" class="screenshots-section ptb-100 gray-light-bg">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="section-heading text-center">
-                        <span class="text-uppercase color-secondary sub-title">System Preview</span>
-                        <h2>Explore InvoiceDotCom Screens</h2>
-                        <p>Take a visual tour of our intuitive dashboard, invoice generator, stock manager, and party passbooks.</p>
-                    </div>
-                </div>
-            </div>
-            <!--start app screen carousel-->
-            <div class="screen-slider-content mt-5">
-                <div class="screenshot-frame"></div>
-                <div class="screen-carousel owl-carousel owl-theme dot-indicator">
-                    <img src="/assets/01.png" class="img-fluid" alt="Dashboard Screen">
-                    <img src="/assets/02.png" class="img-fluid" alt="Invoice Generator Screen">
-                    <img src="/assets/03.png" class="img-fluid" alt="Inventory Screen">
-                    <img src="/assets/04.png" class="img-fluid" alt="Party Ledger Screen">
-                    <img src="/assets/05.png" class="img-fluid" alt="Expenses Screen">
-                    <img src="/assets/06.png" class="img-fluid" alt="GST Reports Screen">
-                </div>
-            </div>
-            <!--end app screen carousel-->
-        </div>
-    </section>
-    <!--screenshots section end-->
+        <!--testimonial section start-->
+        <section class="testimonial-section ptb-100">
+            <div class="container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-md-6">
+                        <div class="section-heading mb-5">
+                            <span class="text-uppercase color-secondary sub-title">Merchant Feedback</span>
+                            <h2>Loved by 50,000+ Indian Businesses</h2>
+                            <p class="lead">See how InvoiceDotCom empowers store owners, distributors, CAs, and
+                                freelancers across India.</p>
 
-    <!--download section start-->
-    <section class="download-section pt-100 background-img"
-             style="background: url('/assets/app-hero-bg.jpg') no-repeat center center / cover">
-        <div class="container">
-            <div class="row align-items-center justify-content-between">
-                <div class="col-lg-6">
-                    <div id="accordion-1" class="accordion accordion-faq pb-100">
-                        <!-- Accordion card 1 -->
-                        <div class="card accordion-item">
-                            <div class="card-header accordion-header py-4" id="heading-1-1" data-bs-toggle="collapse" role="button"
-                                 data-bs-target="#collapse-1-1" aria-expanded="false" aria-controls="collapse-1-1">
-                                <h6 class="mb-0"><span class="ti-receipt me-3"></span> Is InvoiceDotCom fully GST compliant?</h6>
-                            </div>
-                            <div id="collapse-1-1" class="collapse show" aria-labelledby="heading-1-1"
-                                 data-bs-parent="#accordion-1">
-                                <div class="card-body accordion-body">
-                                    <p>Yes! Fully compliant with Indian GST regulations. We support CGST, SGST, IGST, and cess calculations with proper HSN/SAC code support meeting all government formatting rules.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Accordion card 2 -->
-                        <div class="card accordion-item">
-                            <div class="card-header accordion-header py-4" id="heading-1-2" data-bs-toggle="collapse" role="button"
-                                 data-bs-target="#collapse-1-2" aria-expanded="false" aria-controls="collapse-1-2">
-                                <h6 class="mb-0"><span class="ti-book me-3"></span> How does the Khatabook Party Ledger work?</h6>
-                            </div>
-                            <div id="collapse-1-2" class="collapse" aria-labelledby="heading-1-2"
-                                 data-bs-parent="#accordion-1">
-                                <div class="card-body accordion-body">
-                                    <p>You can record GAVE (credit) and GOT (debit) entries for each party. Track outstanding balances, view passbook-style ledgers, and send WhatsApp reminders for pending payments.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Accordion card 3 -->
-                        <div class="card accordion-item">
-                            <div class="card-header accordion-header py-4" id="heading-1-3" data-bs-toggle="collapse" role="button"
-                                 data-bs-target="#collapse-1-3" aria-expanded="false" aria-controls="collapse-1-3">
-                                <h6 class="mb-0"><span class="ti-printer me-3"></span> Can I print invoices on thermal printers?</h6>
-                            </div>
-                            <div id="collapse-1-3" class="collapse" aria-labelledby="heading-1-3"
-                                 data-bs-parent="#accordion-1">
-                                <div class="card-body accordion-body">
-                                    <p>Absolutely! InvoiceDotCom supports both classic A4/A5 paper formats and standard POS thermal 2-inch and 3-inch printers for retail checkout counters.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="download-img d-flex align-items-end">
-                        <img src="/assets/image-13.png" alt="InvoiceDotCom App" class="img-fluid">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!--download section end-->
-
-    <!--our blog section start-->
-    <section id="blog" class="our-blog-section ptb-100 gray-light-bg">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="section-heading mb-5">
-                        <span class="text-uppercase color-secondary sub-title">Resources &amp; Knowledge</span>
-                        <h2>Latest Business &amp; GST Articles</h2>
-                        <p>Explore expert guides on GST compliance, credit management, and business growth.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-4">
-                    <div class="single-blog-card card border-0 shadow-sm">
-                        <span class="category position-absolute badge badge-pill text-bg-primary">GST Guide</span>
-                        <img src="/assets/blog/1.jpg" class="card-img-top position-relative" alt="blog">
-                        <div class="card-body">
-                            <div class="post-meta mb-2">
-                                <ul class="list-inline meta-list">
-                                    <li class="list-inline-item">Jul 15, 2026</li>
-                                    <li class="list-inline-item"><span>24</span> Comments</li>
-                                </ul>
-                            </div>
-                            <h3 class="h5 card-title"><a href="/dashboard">Understanding GST E-Invoicing for Small Businesses</a></h3>
-                            <p class="card-text">Learn the new e-invoicing thresholds and how to automate compliance easily.</p>
-                            <a href="/dashboard" class="detail-link">Read more <span class="ti-arrow-right"></span></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="single-blog-card card border-0 shadow-sm">
-                        <span class="category position-absolute badge badge-pill text-bg-danger">Finance</span>
-                        <img src="/assets/blog/2.jpg" class="card-img-top position-relative" alt="blog">
-                        <div class="card-body">
-                            <div class="post-meta mb-2">
-                                <ul class="list-inline meta-list">
-                                    <li class="list-inline-item">Jul 10, 2026</li>
-                                    <li class="list-inline-item"><span>18</span> Comments</li>
-                                </ul>
-                            </div>
-                            <h3 class="h5 card-title"><a href="/dashboard">5 Ways to Speed Up Invoice Payment Cycles</a></h3>
-                            <p class="card-text">Proven credit recovery strategies to reduce overdue payments and improve cash flow.</p>
-                            <a href="/dashboard" class="detail-link">Read more <span class="ti-arrow-right"></span></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="single-blog-card card border-0 shadow-sm">
-                        <span class="category position-absolute badge badge-pill text-bg-info">Inventory</span>
-                        <img src="/assets/blog/3.jpg" class="card-img-top" alt="blog">
-                        <div class="card-body">
-                            <div class="post-meta mb-2">
-                                <ul class="list-inline meta-list">
-                                    <li class="list-inline-item">Jul 05, 2026</li>
-                                    <li class="list-inline-item"><span>32</span> Comments</li>
-                                </ul>
-                            </div>
-                            <h3 class="h5 card-title"><a href="/dashboard">Inventory Management Best Practices</a></h3>
-                            <p class="card-text">Essential stock control techniques to avoid deadstock and prevent revenue loss.</p>
-                            <a href="/dashboard" class="detail-link">Read more <span class="ti-arrow-right"></span></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!--our blog section end-->
-
-    <!--contact us section start-->
-    <section id="contact" class="contact-us ptb-100 gray-light-bg">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 pb-3 message-box d-none">
-                    <div class="alert alert-danger"></div>
-                </div>
-                <div class="col-md-5">
-                    <div class="section-heading">
-                        <h3>Get in Touch With Us</h3>
-                        <p>Have questions about setting up your business profile or migrating your billing data? Our support team is here to help.</p>
-                    </div>
-                    <div class="footer-address">
-                        <h6><strong>Headquarters</strong></h6>
-                        <p>Connaught Place, New Delhi 110001, India</p>
-                        <ul>
-                            <li><span>Phone: <a href="tel:+919876543210">+91 98765 43210</a></span></li>
-                            <li><span>Email: <a href="mailto:hello@invoicedotcom.in">hello@invoicedotcom.in</a></span></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-7">
-                    <form action="#" method="POST" id="contactForm" class="contact-us-form" novalidate="novalidate">
-                        <h5>Send Us a Message</h5>
-                        <div class="row">
-                            <div class="col-sm-6 col-12">
-                                <div class="form-group mb-3">
-                                    <input type="text" class="form-control" name="name" id="name" placeholder="Your Name" required="required">
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-12">
-                                <div class="form-group mb-3">
-                                    <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required="required">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6 col-12">
-                                <div class="form-group mb-3">
-                                    <input type="text" name="phone" class="form-control" id="phone" placeholder="Phone Number">
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-12">
-                                <div class="form-group mb-3">
-                                    <input type="text" name="company" class="form-control" id="company" placeholder="Business Name">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group mb-3">
-                                    <textarea name="message" id="message" class="form-control h-100" rows="5" placeholder="How can we help your business?"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-12 mt-2">
-                                <button type="submit" class="btn solid-btn" id="btnContactUs" style="background: #4f46e5; border-color: #4f46e5;">
-                                    Send Message
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                    <p class="form-message"></p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!--contact us section end-->
-
-    <!--client section start-->
-    <section class="client-section ptb-100">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="section-heading text-center mb-5">
-                        <span class="text-uppercase color-secondary sub-title">Trusted Ecosystem</span>
-                        <h2>Integrating Industry Standard Technologies</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class="owl-carousel owl-theme clients-carousel dot-indicator">
-                        <div class="item single-client"><img src="/assets/client-5-color.png" alt="partner" class="client-img"></div>
-                        <div class="item single-client"><img src="/assets/client-1-color.png" alt="partner" class="client-img"></div>
-                        <div class="item single-client"><img src="/assets/client-6-color.png" alt="partner" class="client-img"></div>
-                        <div class="item single-client"><img src="/assets/client-3-color.png" alt="partner" class="client-img"></div>
-                        <div class="item single-client"><img src="/assets/client-4-color.png" alt="partner" class="client-img"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!--client section end-->
-
-</div>
-<!--body content wrap end-->
-
-<!--shape image start-->
-<div class="shape-img subscribe-wrap">
-    <img src="/assets/footer-top-shape.png" alt="footer shape" class="img-fluid">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="w-100 position-relative">
-                    <form action="#" method="post" class="subscribe-form subscribe-form-footer d-none d-md-block d-lg-block">
-                        <div class="d-flex align-items-center">
-                            <input type="text" class="form-control input" id="email-footer" name="email" placeholder="Enter your business email...">
-                            <input type="submit" class="button btn solid-btn" id="submit-footer" value="Subscribe" style="background: #4f46e5; border-color: #4f46e5;">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--shape image end-->
-
-<!--footer section start-->
-<footer class="footer-section">
-    <div class="footer-top pt-150 background-img-2" style="background: url('/assets/footer-bg.png') no-repeat center top / cover">
-        <div class="container">
-            <div class="row justify-content-between">
-                <div class="col-md-12 col-lg-4 mb-4 mb-lg-0">
-                    <div class="footer-nav-wrap text-white">
-                        <h3 style="color: white; font-weight: 800; margin: 0 0 15px 0; font-family: Montserrat, sans-serif;">
-                            Invoice<span style="font-weight: 300; color: #a5b4fc;">DotCom</span>
-                        </h3>
-                        <p>GST-compliant invoicing and business accounting for modern Indian enterprises. Made with ❤️ in India.</p>
-
-                        <div class="social-list-wrap">
-                            <ul class="social-list list-inline list-unstyled">
-                                <li class="list-inline-item"><a href="/dashboard"><span class="ti-facebook"></span></a></li>
-                                <li class="list-inline-item"><a href="/dashboard"><span class="ti-twitter"></span></a></li>
-                                <li class="list-inline-item"><a href="/dashboard"><span class="ti-instagram"></span></a></li>
-                                <li class="list-inline-item"><a href="/dashboard"><span class="ti-linkedin"></span></a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12 col-lg-8">
-                    <div class="row">
-                        <div class="col-sm-6 col-md-4 col-lg-4 mb-4 mb-md-0">
-                            <div class="footer-nav-wrap text-white">
-                                <h5 class="mb-3 text-white">System</h5>
-                                <ul class="list-unstyled">
-                                    <li class="mb-2"><a href="/invoices/new">New GST Invoice</a></li>
-                                    <li class="mb-2"><a href="/inventory">Inventory Stock</a></li>
-                                    <li class="mb-2"><a href="/parties">Party Ledgers</a></li>
-                                    <li class="mb-2"><a href="/reports/gst">GSTR-1 Reports</a></li>
-                                    <li class="mb-2"><a href="/dashboard">Dashboard</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-lg-4 mb-4 mb-md-0">
-                            <div class="footer-nav-wrap text-white">
-                                <h5 class="mb-3 text-white">Company</h5>
-                                <ul class="list-unstyled support-list">
-                                    <li class="mb-2"><a href="#about">About Us</a></li>
-                                    <li class="mb-2"><a href="#pricing">Pricing Plans</a></li>
-                                    <li class="mb-2"><a href="#features">Features</a></li>
-                                    <li class="mb-2"><a href="#contact">Contact Support</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-lg-4">
-                            <div class="footer-nav-wrap text-white">
-                                <h5 class="mb-3 text-white">Contact Us</h5>
-                                <ul class="list-unstyled support-list">
-                                    <li class="mb-2 d-flex align-items-center"><span class="ti-location-pin me-2"></span> Connaught Place, New Delhi 110001</li>
-                                    <li class="mb-2 d-flex align-items-center"><span class="ti-mobile me-2"></span> <a href="tel:+919876543210">+91 98765 43210</a></li>
-                                    <li class="mb-2 d-flex align-items-center"><span class="ti-email me-2"></span> <a href="mailto:hello@invoicedotcom.in">hello@invoicedotcom.in</a></li>
-                                    <li class="mb-2 d-flex align-items-center"><span class="ti-world me-2"></span> <a href="/">www.invoicedotcom.in</a></li>
+                            <div class="client-section-wrap d-flex flex-row align-items-center">
+                                <ul class="list-inline">
+                                    <li class="list-inline-item"><img src="/assets/client-1-color.png" width="85"
+                                            alt="client" class="img-fluid"></li>
+                                    <li class="list-inline-item"><img src="/assets/client-6-color.png" width="85"
+                                            alt="client" class="img-fluid"></li>
+                                    <li class="list-inline-item"><img src="/assets/client-3-color.png" width="85"
+                                            alt="client" class="img-fluid"></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-5">
+                        <div class="owl-carousel owl-theme client-testimonial arrow-indicator">
+                            <div class="item">
+                                <div class="testimonial-quote-wrap">
+                                    <div class="media author-info mb-3">
+                                        <div class="author-img me-3">
+                                            <img src="/assets/client-1.jpg" alt="client"
+                                                class="img-fluid rounded-circle">
+                                        </div>
+                                        <div class="media-body">
+                                            <h5 class="mb-0">Aarav Patel</h5>
+                                            <span>Tech Founder, Mumbai</span>
+                                        </div>
+                                    </div>
+                                    <div class="client-say">
+                                        <p><img src="/assets/quote.png" alt="quote" class="img-fluid"> InvoiceDotCom has
+                                            transformed how we handle invoicing. The automatic GST calculation and
+                                            WhatsApp reminders have cut our payment cycles by half. Highly recommend for
+                                            any growing business.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="testimonial-quote-wrap">
+                                    <div class="media author-info mb-3">
+                                        <div class="author-img me-3">
+                                            <img src="/assets/client-2.jpg" alt="client"
+                                                class="img-fluid rounded-circle">
+                                        </div>
+                                        <div class="media-body">
+                                            <h5 class="mb-0">Priya Sharma</h5>
+                                            <span>Boutique Owner, Delhi</span>
+                                        </div>
+                                    </div>
+                                    <div class="client-say">
+                                        <p><img src="/assets/quote.png" alt="quote" class="img-fluid"> The party ledger
+                                            feature is exactly what I needed. I can track every udhaar entry and send
+                                            polite reminders via WhatsApp. My cash flow has improved significantly since
+                                            switching.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="testimonial-quote-wrap">
+                                    <div class="media author-info mb-3">
+                                        <div class="author-img me-3">
+                                            <img src="/assets/client-1.jpg" alt="client"
+                                                class="img-fluid rounded-circle">
+                                        </div>
+                                        <div class="media-body">
+                                            <h5 class="mb-0">Vikram Mehta</h5>
+                                            <span>Chartered Accountant, Bangalore</span>
+                                        </div>
+                                    </div>
+                                    <div class="client-say">
+                                        <p><img src="/assets/quote.png" alt="quote" class="img-fluid"> As a CA, I
+                                            recommend InvoiceDotCom to all my clients. The GSTR-1 auto-generation and
+                                            HSN summary features save hours of manual work during filing season.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!--footer bottom copyright start-->
-        <div class="footer-bottom border-gray-light mt-5 py-3">
+        </section>
+        <!--testimonial section end-->
+
+        <!--screenshots section start-->
+        <section id="screenshots" class="screenshots-section ptb-100 gray-light-bg">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="section-heading text-center">
+                            <span class="text-uppercase color-secondary sub-title">System Preview</span>
+                            <h2>Explore InvoiceDotCom Screens</h2>
+                            <p>Take a visual tour of our intuitive dashboard, invoice generator, stock manager, and
+                                party passbooks.</p>
+                        </div>
+                    </div>
+                </div>
+                <!--start app screen carousel-->
+                <div class="screen-slider-content mt-5">
+                    <div class="screenshot-frame"></div>
+                    <div class="screen-carousel owl-carousel owl-theme dot-indicator">
+                        <img src="/assets/01.png" class="img-fluid" alt="Dashboard Screen">
+                        <img src="/assets/02.png" class="img-fluid" alt="Invoice Generator Screen">
+                        <img src="/assets/03.png" class="img-fluid" alt="Inventory Screen">
+                        <img src="/assets/04.png" class="img-fluid" alt="Party Ledger Screen">
+                        <img src="/assets/05.png" class="img-fluid" alt="Expenses Screen">
+                        <img src="/assets/06.png" class="img-fluid" alt="GST Reports Screen">
+                    </div>
+                </div>
+                <!--end app screen carousel-->
+            </div>
+        </section>
+        <!--screenshots section end-->
+
+        <!--download section start-->
+        <section class="download-section pt-100 background-img"
+            style="background: url('/assets/app-hero-bg.jpg') no-repeat center center / cover">
+            <div class="container">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-6">
+                        <div id="accordion-1" class="accordion accordion-faq pb-100">
+                            <!-- Accordion card 1 -->
+                            <div class="card accordion-item">
+                                <div class="card-header accordion-header py-4" id="heading-1-1"
+                                    data-bs-toggle="collapse" role="button" data-bs-target="#collapse-1-1"
+                                    aria-expanded="false" aria-controls="collapse-1-1">
+                                    <h6 class="mb-0"><span class="ti-receipt me-3"></span> Is InvoiceDotCom fully GST
+                                        compliant?</h6>
+                                </div>
+                                <div id="collapse-1-1" class="collapse show" aria-labelledby="heading-1-1"
+                                    data-bs-parent="#accordion-1">
+                                    <div class="card-body accordion-body">
+                                        <p>Yes! Fully compliant with Indian GST regulations. We support CGST, SGST,
+                                            IGST, and cess calculations with proper HSN/SAC code support meeting all
+                                            government formatting rules.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Accordion card 2 -->
+                            <div class="card accordion-item">
+                                <div class="card-header accordion-header py-4" id="heading-1-2"
+                                    data-bs-toggle="collapse" role="button" data-bs-target="#collapse-1-2"
+                                    aria-expanded="false" aria-controls="collapse-1-2">
+                                    <h6 class="mb-0"><span class="ti-book me-3"></span> How does the Khatabook Party
+                                        Ledger work?</h6>
+                                </div>
+                                <div id="collapse-1-2" class="collapse" aria-labelledby="heading-1-2"
+                                    data-bs-parent="#accordion-1">
+                                    <div class="card-body accordion-body">
+                                        <p>You can record GAVE (credit) and GOT (debit) entries for each party. Track
+                                            outstanding balances, view passbook-style ledgers, and send WhatsApp
+                                            reminders for pending payments.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Accordion card 3 -->
+                            <div class="card accordion-item">
+                                <div class="card-header accordion-header py-4" id="heading-1-3"
+                                    data-bs-toggle="collapse" role="button" data-bs-target="#collapse-1-3"
+                                    aria-expanded="false" aria-controls="collapse-1-3">
+                                    <h6 class="mb-0"><span class="ti-printer me-3"></span> Can I print invoices on
+                                        thermal printers?</h6>
+                                </div>
+                                <div id="collapse-1-3" class="collapse" aria-labelledby="heading-1-3"
+                                    data-bs-parent="#accordion-1">
+                                    <div class="card-body accordion-body">
+                                        <p>Absolutely! InvoiceDotCom supports both classic A4/A5 paper formats and
+                                            standard POS thermal 2-inch and 3-inch printers for retail checkout
+                                            counters.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="download-img d-flex align-items-end">
+                            <img src="/assets/image-13.png" alt="InvoiceDotCom App" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--download section end-->
+
+        <!--our blog section start-->
+        <section id="blog" class="our-blog-section ptb-100 gray-light-bg">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-6 col-lg-7">
-                        <div class="copyright-wrap small-text">
-                            <p class="mb-0 text-white">© 2026 InvoiceDotCom Technologies Inc. All rights reserved.</p>
+                    <div class="col-md-8">
+                        <div class="section-heading mb-5">
+                            <span class="text-uppercase color-secondary sub-title">Resources &amp; Knowledge</span>
+                            <h2>Latest Business &amp; GST Articles</h2>
+                            <p>Explore expert guides on GST compliance, credit management, and business growth.</p>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-5">
-                        <div class="terms-policy-wrap text-md-end text-start">
-                            <ul class="list-inline">
-                                <li class="list-inline-item"><a class="small-text" href="/dashboard">Terms</a></li>
-                                <li class="list-inline-item"><a class="small-text" href="/dashboard">Security</a></li>
-                                <li class="list-inline-item"><a class="small-text" href="/dashboard">Privacy Policy</a></li>
-                            </ul>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="single-blog-card card border-0 shadow-sm">
+                            <span class="category position-absolute badge badge-pill text-bg-primary">GST Guide</span>
+                            <img src="/assets/blog/1.jpg" class="card-img-top position-relative" alt="blog">
+                            <div class="card-body">
+                                <div class="post-meta mb-2">
+                                    <ul class="list-inline meta-list">
+                                        <li class="list-inline-item">Jul 15, 2026</li>
+                                        <li class="list-inline-item"><span>24</span> Comments</li>
+                                    </ul>
+                                </div>
+                                <h3 class="h5 card-title"><a href="/dashboard">Understanding GST E-Invoicing for Small
+                                        Businesses</a></h3>
+                                <p class="card-text">Learn the new e-invoicing thresholds and how to automate compliance
+                                    easily.</p>
+                                <a href="/dashboard" class="detail-link">Read more <span
+                                        class="ti-arrow-right"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="single-blog-card card border-0 shadow-sm">
+                            <span class="category position-absolute badge badge-pill text-bg-danger">Finance</span>
+                            <img src="/assets/blog/2.jpg" class="card-img-top position-relative" alt="blog">
+                            <div class="card-body">
+                                <div class="post-meta mb-2">
+                                    <ul class="list-inline meta-list">
+                                        <li class="list-inline-item">Jul 10, 2026</li>
+                                        <li class="list-inline-item"><span>18</span> Comments</li>
+                                    </ul>
+                                </div>
+                                <h3 class="h5 card-title"><a href="/dashboard">5 Ways to Speed Up Invoice Payment
+                                        Cycles</a></h3>
+                                <p class="card-text">Proven credit recovery strategies to reduce overdue payments and
+                                    improve cash flow.</p>
+                                <a href="/dashboard" class="detail-link">Read more <span
+                                        class="ti-arrow-right"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="single-blog-card card border-0 shadow-sm">
+                            <span class="category position-absolute badge badge-pill text-bg-info">Inventory</span>
+                            <img src="/assets/blog/3.jpg" class="card-img-top" alt="blog">
+                            <div class="card-body">
+                                <div class="post-meta mb-2">
+                                    <ul class="list-inline meta-list">
+                                        <li class="list-inline-item">Jul 05, 2026</li>
+                                        <li class="list-inline-item"><span>32</span> Comments</li>
+                                    </ul>
+                                </div>
+                                <h3 class="h5 card-title"><a href="/dashboard">Inventory Management Best Practices</a>
+                                </h3>
+                                <p class="card-text">Essential stock control techniques to avoid deadstock and prevent
+                                    revenue loss.</p>
+                                <a href="/dashboard" class="detail-link">Read more <span
+                                        class="ti-arrow-right"></span></a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!--footer bottom copyright end-->
+        </section>
+        <!--our blog section end-->
+
+        <!--contact us section start-->
+        <section id="contact" class="contact-us ptb-100 gray-light-bg">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 pb-3 message-box d-none">
+                        <div class="alert alert-danger"></div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="section-heading">
+                            <h3>Get in Touch With Us</h3>
+                            <p>Have questions about setting up your business profile or migrating your billing data? Our
+                                support team is here to help.</p>
+                        </div>
+                        <div class="footer-address">
+                            <h6><strong>Headquarters</strong></h6>
+                            <p>Connaught Place, New Delhi 110001, India</p>
+                            <ul>
+                                <li><span>Phone: <a href="tel:+919876543210">+91 98765 43210</a></span></li>
+                                <li><span>Email: <a
+                                            href="mailto:hello@invoicedotcom.in">hello@invoicedotcom.in</a></span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <form action="#" method="POST" id="contactForm" class="contact-us-form" novalidate="novalidate">
+                            <h5>Send Us a Message</h5>
+                            <div class="row">
+                                <div class="col-sm-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <input type="text" class="form-control" name="name" id="name"
+                                            placeholder="Your Name" required="required">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <input type="email" class="form-control" name="email" id="email"
+                                            placeholder="Your Email" required="required">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <input type="text" name="phone" class="form-control" id="phone"
+                                            placeholder="Phone Number">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <input type="text" name="company" class="form-control" id="company"
+                                            placeholder="Business Name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group mb-3">
+                                        <textarea name="message" id="message" class="form-control h-100" rows="5"
+                                            placeholder="How can we help your business?"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 mt-2">
+                                    <button type="submit" class="btn solid-btn" id="btnContactUs"
+                                        style="background: #4f46e5; border-color: #4f46e5;">
+                                        Send Message
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <p class="form-message"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--contact us section end-->
+
+        <!--client section start-->
+        <section class="client-section ptb-100">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="section-heading text-center mb-5">
+                            <span class="text-uppercase color-secondary sub-title">Trusted Ecosystem</span>
+                            <h2>Integrating Industry Standard Technologies</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <div class="owl-carousel owl-theme clients-carousel dot-indicator">
+                            <div class="item single-client"><img src="/assets/client-5-color.png" alt="partner"
+                                    class="client-img"></div>
+                            <div class="item single-client"><img src="/assets/client-1-color.png" alt="partner"
+                                    class="client-img"></div>
+                            <div class="item single-client"><img src="/assets/client-6-color.png" alt="partner"
+                                    class="client-img"></div>
+                            <div class="item single-client"><img src="/assets/client-3-color.png" alt="partner"
+                                    class="client-img"></div>
+                            <div class="item single-client"><img src="/assets/client-4-color.png" alt="partner"
+                                    class="client-img"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--client section end-->
+
     </div>
-</footer>
-<!--footer section end-->
+    <!--body content wrap end-->
+
+    <!--shape image start-->
+    <div class="shape-img subscribe-wrap">
+        <img src="/assets/footer-top-shape.png" alt="footer shape" class="img-fluid">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="w-100 position-relative">
+                        <form action="#" method="post"
+                            class="subscribe-form subscribe-form-footer d-none d-md-block d-lg-block">
+                            <div class="d-flex align-items-center">
+                                <input type="text" class="form-control input" id="email-footer" name="email"
+                                    placeholder="Enter your business email...">
+                                <input type="submit" class="button btn solid-btn" id="submit-footer" value="Subscribe"
+                                    style="background: #4f46e5; border-color: #4f46e5;">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--shape image end-->
+
+    <!--footer section start-->
+    <footer class="footer-section">
+        <div class="footer-top pt-150 background-img-2"
+            style="background: url('/assets/footer-bg.png') no-repeat center top / cover">
+            <div class="container">
+                <div class="row justify-content-between">
+                    <div class="col-md-12 col-lg-4 mb-4 mb-lg-0">
+                        <div class="footer-nav-wrap text-white">
+                            <h3
+                                style="color: white; font-weight: 800; margin: 0 0 15px 0; font-family: Montserrat, sans-serif;">
+                                Invoice<span style="font-weight: 300; color: #a5b4fc;">DotCom</span>
+                            </h3>
+                            <p>GST-compliant invoicing and business accounting for modern Indian enterprises. Made with
+                                ❤️ in India.</p>
+
+                            <div class="social-list-wrap">
+                                <ul class="social-list list-inline list-unstyled">
+                                    <li class="list-inline-item"><a href="/dashboard"><span
+                                                class="ti-facebook"></span></a></li>
+                                    <li class="list-inline-item"><a href="/dashboard"><span
+                                                class="ti-twitter"></span></a></li>
+                                    <li class="list-inline-item"><a href="/dashboard"><span
+                                                class="ti-instagram"></span></a></li>
+                                    <li class="list-inline-item"><a href="/dashboard"><span
+                                                class="ti-linkedin"></span></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-8">
+                        <div class="row">
+                            <div class="col-sm-6 col-md-4 col-lg-4 mb-4 mb-md-0">
+                                <div class="footer-nav-wrap text-white">
+                                    <h5 class="mb-3 text-white">System</h5>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><a href="/invoices/new">New GST Invoice</a></li>
+                                        <li class="mb-2"><a href="/inventory">Inventory Stock</a></li>
+                                        <li class="mb-2"><a href="/parties">Party Ledgers</a></li>
+                                        <li class="mb-2"><a href="/reports/gst">GSTR-1 Reports</a></li>
+                                        <li class="mb-2"><a href="/dashboard">Dashboard</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-4 col-lg-4 mb-4 mb-md-0">
+                                <div class="footer-nav-wrap text-white">
+                                    <h5 class="mb-3 text-white">Company</h5>
+                                    <ul class="list-unstyled support-list">
+                                        <li class="mb-2"><a href="#about">About Us</a></li>
+                                        <li class="mb-2"><a href="#pricing">Pricing Plans</a></li>
+                                        <li class="mb-2"><a href="#features">Features</a></li>
+                                        <li class="mb-2"><a href="#contact">Contact Support</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-4 col-lg-4">
+                                <div class="footer-nav-wrap text-white">
+                                    <h5 class="mb-3 text-white">Contact Us</h5>
+                                    <ul class="list-unstyled support-list">
+                                        <li class="mb-2 d-flex align-items-center"><span
+                                                class="ti-location-pin me-2"></span> Connaught Place, New Delhi 110001
+                                        </li>
+                                        <li class="mb-2 d-flex align-items-center"><span class="ti-mobile me-2"></span>
+                                            <a href="tel:+919876543210">+91 98765 43210</a>
+                                        </li>
+                                        <li class="mb-2 d-flex align-items-center"><span class="ti-email me-2"></span>
+                                            <a href="mailto:hello@invoicedotcom.in">hello@invoicedotcom.in</a>
+                                        </li>
+                                        <li class="mb-2 d-flex align-items-center"><span class="ti-world me-2"></span>
+                                            <a href="/">www.invoicedotcom.in</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--footer bottom copyright start-->
+            <div class="footer-bottom border-gray-light mt-5 py-3">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-7">
+                            <div class="copyright-wrap small-text">
+                                <p class="mb-0 text-white">© 2026 InvoiceDotCom Technologies Inc. All rights reserved.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-5">
+                            <div class="terms-policy-wrap text-md-end text-start">
+                                <ul class="list-inline">
+                                    <li class="list-inline-item"><a class="small-text" href="/dashboard">Terms</a></li>
+                                    <li class="list-inline-item"><a class="small-text" href="/dashboard">Security</a>
+                                    </li>
+                                    <li class="list-inline-item"><a class="small-text" href="/dashboard">Privacy
+                                            Policy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--footer bottom copyright end-->
+        </div>
+    </footer>
+    <!--footer section end-->
 
 </body>
+
 </html>

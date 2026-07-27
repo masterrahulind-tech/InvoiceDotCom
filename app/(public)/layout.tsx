@@ -1,12 +1,22 @@
 import Script from "next/script";
+import { getSession } from "@/lib/auth";
 
-export default function PublicLayout({
+export default async function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getSession();
+
   return (
     <>
+      {session && (
+        <style>{`
+          a[href="/signup"] {
+            display: none !important;
+          }
+        `}</style>
+      )}
       {/* AppCo CSS Libraries */}
       <link rel="stylesheet" href="/assets/bootstrap.min.css" />
       <link rel="stylesheet" href="/assets/themify-icons.css" />

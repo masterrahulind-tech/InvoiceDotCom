@@ -61,8 +61,35 @@ export async function getCurrentUser() {
           paymentMethods: true,
         },
       },
+      businessMembers: {
+        include: {
+          businessProfile: {
+            include: {
+              paymentMethods: true,
+            }
+          },
+          branch: true
+        }
+      }
     },
   });
 
   return user;
+}
+
+export async function requireRole(userId: string, businessProfileId: string, allowedRoles: string[]) {
+  const member = await prisma.businessMember.findUnique({
+    where: {
+      userId_businessProfileId: {
+        userId,
+        businessProfileId
+      }
+    }
+  });
+
+  if (!member) return false;
+  if (!allowedRoles.includes(member.role)) return false;
+  if (member.status !== "ACTIVE") return false;
+
+  return true;
 }

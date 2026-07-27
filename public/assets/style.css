@@ -256,50 +256,55 @@ strong, b{
 }
 
 .outline-btn, .solid-btn, .primary-solid-btn{
-    padding: 10px 25px;
-    font-family: 'Open Sans', sans-serif
+    padding: 8px 20px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .primary-solid-btn{
-    border-color: #202877;
+    border: 1px solid #202877;
     background: #202877;
     color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 .primary-solid-btn:hover{
     background: transparent;
     color: #081d43;
     border-color: #081d43;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 .solid-btn{
     color: #fff;
-    -webkit-box-shadow: 0 5px 12px 0 rgba(67,37,204,.2);
-    box-shadow: 0 5px 12px 0 rgba(67,37,204,.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
     background: #6730e3;
-    border: 2px solid #6730e3;
-    border-radius: 30px;
+    border: 1px solid #6730e3;
+    border-radius: 8px;
     position: relative;
     z-index: 2;
+    transition: all 0.2s ease-in-out;
 }
 
 .solid-btn:hover{
-    background: transparent;
-    color: #202877;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    border: 2px solid #6730e3;
+    background: #5527ba;
+    color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #5527ba;
 }
 
 .outline-btn{
-    border-radius: 30px;
+    border-radius: 8px;
     color: #6730e3;
     display: inline-block;
-    border: 2px solid #6730e3;
+    border: 1px solid #6730e3;
+    background: transparent;
+    transition: all 0.2s ease-in-out;
 }
 .outline-btn:hover{
     color: #fff;
     background: #6730e3;
-    -webkit-box-shadow: 0 20px 30px 0 rgba(67,37,204,.2);
-    box-shadow: 0 20px 30px 0 rgba(67,37,204,.2);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .primary-bg h1, .primary-bg p{
@@ -309,29 +314,33 @@ strong, b{
     color: inherit;
 }
 .google-play-btn, .app-store-btn{
-    padding: 12px 30px;
+    padding: 10px 24px;
     font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
 }
 .google-play-btn{
     background: #ffffff;
-    border-color: #ffffff;
+    border: 1px solid #ffffff;
     color: #6730e3;
-    border-radius: 30px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 .google-play-btn:hover{
     background: transparent;
     color: #ffffff;
-    border-color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 .app-store-btn{
-    border-radius: 30px;
     color: #ffffff;
-    border-color: #ffffff;
+    border: 1px solid #ffffff;
+    background: transparent;
 }
 .app-store-btn:hover{
     background: #ffffff;
     color: #6730e3;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 /*form field css*/
@@ -3245,6 +3254,10 @@ button, [type="button"], [type="reset"], [type="submit"] {
 /* ==========================================================================
    HEADER NAVBAR DESKTOP & MOBILE HIGH-VISIBILITY OVERRIDES
    ========================================================================== */
+.collapse.navbar-collapse {
+    visibility: visible !important;
+}
+
 @media (min-width: 992px) {
     .navbar-expand-lg .navbar-collapse {
         display: flex !important;

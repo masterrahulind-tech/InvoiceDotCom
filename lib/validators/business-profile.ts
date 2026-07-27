@@ -19,6 +19,11 @@ export const businessProfileSchema = z.object({
     ],
     { message: "Select a business vertical" }
   ),
+  country: z.string().optional().nullable(),
+  currency: z.string().optional().nullable(),
+  language: z.string().optional().nullable(),
+  timeZone: z.string().optional().nullable(),
+  taxSystem: z.string().optional().nullable(),
   gstin: z.string().optional().nullable(),
   pan: z.string().optional().nullable(),
 });

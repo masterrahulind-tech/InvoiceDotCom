@@ -8,7 +8,9 @@ import {
   Search, 
   X,
   Boxes,
+  UploadCloud,
 } from "lucide-react";
+import { BulkUploadModal } from "./BulkUploadModal";
 
 export function InventoryView() {
   const [items, setItems] = useState<any[]>([]);
@@ -25,6 +27,7 @@ export function InventoryView() {
 
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showBulkUploadModal, setShowBulkUploadModal] = useState(false);
   const [showAdjustModal, setShowAdjustModal] = useState<any>(null); // item object when editing stock
 
   // Add Item Form State
@@ -129,12 +132,20 @@ export function InventoryView() {
           </p>
         </div>
 
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="px-4 py-2.5 rounded-xl text-xs font-bold bg-[#6730e3] hover:bg-[#6730e3] text-[#1f2029] shadow-lg shadow-[#6730e340] flex items-center gap-2 transition-all active:scale-95 self-start md:self-auto"
-        >
-          <Plus className="w-4 h-4" /> Add New Item
-        </button>
+        <div className="flex items-center gap-2 self-start md:self-auto">
+          <button
+            onClick={() => setShowBulkUploadModal(true)}
+            className="px-4 py-2.5 rounded-xl text-xs font-bold bg-[#f8f9fa] hover:bg-[#f0f0f0] text-[#333] border border-[#e0d5ff] flex items-center gap-2 transition-all active:scale-95"
+          >
+            <UploadCloud className="w-4 h-4" /> Bulk Upload
+          </button>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="px-4 py-2.5 rounded-xl text-xs font-bold bg-[#6730e3] hover:bg-[#6730e3] text-[#1f2029] shadow-lg shadow-[#6730e340] flex items-center gap-2 transition-all active:scale-95"
+          >
+            <Plus className="w-4 h-4" /> Add New Item
+          </button>
+        </div>
       </div>
 
       {/* Summary KPI Cards */}
@@ -503,6 +514,17 @@ export function InventoryView() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Bulk Upload Modal */}
+      {showBulkUploadModal && (
+        <BulkUploadModal 
+          onClose={() => setShowBulkUploadModal(false)}
+          onSuccess={() => {
+            setShowBulkUploadModal(false);
+            loadItems();
+          }}
+        />
       )}
     </div>
   );

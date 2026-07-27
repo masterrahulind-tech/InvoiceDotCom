@@ -40,16 +40,43 @@ export async function POST(request: NextRequest) {
 
     const profileData = profileParsed.data;
 
-    // Create business profile
-    const profile = await prisma.businessProfile.create({
-      data: {
-        userId: session.userId,
-        businessName: profileData.businessName,
-        businessType: profileData.businessType,
-        vertical: profileData.vertical,
-        gstin: profileData.gstin || null,
-        pan: profileData.pan || null,
-      },
+    // Create business profile, main branch, and owner member in a transaction
+    const profile = await prisma.$transaction(async (tx) => {
+      const bp = await tx.businessProfile.create({
+        data: {
+          userId: session.userId,
+          businessName: profileData.businessName,
+          businessType: profileData.businessType,
+          vertical: profileData.vertical,
+          country: profileData.country || "India",
+          currency: profileData.currency || "INR",
+          language: profileData.language || "English",
+          timeZone: profileData.timeZone || "Asia/Kolkata",
+          taxSystem: profileData.taxSystem || "GST",
+          gstin: profileData.gstin || null,
+          pan: profileData.pan || null,
+        },
+      });
+
+      const branch = await tx.branch.create({
+        data: {
+          businessProfileId: bp.id,
+          name: "Main Branch",
+          isMain: true,
+        }
+      });
+
+      await tx.businessMember.create({
+        data: {
+          userId: session.userId,
+          businessProfileId: bp.id,
+          role: "OWNER",
+          branchId: branch.id,
+          status: "ACTIVE"
+        }
+      });
+
+      return bp;
     });
 
     // If payment method provided, create it
@@ -67,10 +94,14 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Fetch the complete profile with payment methods
+    // Fetch the complete profile with payment methods and branches
     const completeProfile = await prisma.businessProfile.findUnique({
       where: { id: profile.id },
-      include: { paymentMethods: true },
+      include: { 
+        paymentMethods: true,
+        branches: true,
+        members: true
+      },
     });
 
     return NextResponse.json({ profile: completeProfile }, { status: 201 });

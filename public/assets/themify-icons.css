@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'themify';
-	src:url('https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/fonts/themify.eot?-fvbane');
-	src:url('https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/fonts/themify.eot?#iefix-fvbane') format('embedded-opentype'),
-		url('https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/fonts/themify.woff?-fvbane') format('woff'),
-		url('https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/fonts/themify.ttf?-fvbane') format('truetype'),
-		url('https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/fonts/themify.svg?-fvbane#themify') format('svg');
+	src:url('https://cdn.statically.io/gh/lykmapipo/themify-icons/master/fonts/themify.eot?-fvbane');
+	src:url('https://cdn.statically.io/gh/lykmapipo/themify-icons/master/fonts/themify.eot?#iefix-fvbane') format('embedded-opentype'),
+		url('https://cdn.statically.io/gh/lykmapipo/themify-icons/master/fonts/themify.woff?-fvbane') format('woff'),
+		url('https://cdn.statically.io/gh/lykmapipo/themify-icons/master/fonts/themify.ttf?-fvbane') format('truetype'),
+		url('https://cdn.statically.io/gh/lykmapipo/themify-icons/master/fonts/themify.svg?-fvbane#themify') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }

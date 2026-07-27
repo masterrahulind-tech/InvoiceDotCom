@@ -73,6 +73,10 @@ export async function POST(request: NextRequest) {
       dueDate,
       notes,
       terms,
+      vehicleNo,
+      ewayBillNo,
+      transportMode,
+      documentType = "INVOICE",
       lineItems,
       customFields = [],
       paidAmount = 0,
@@ -178,6 +182,7 @@ export async function POST(request: NextRequest) {
           businessProfileId,
           clientId,
           templateId: templateId || "vyapar_gst_v1",
+          documentType,
           billingType: billingType || "B2B",
           placeOfSupply: placeOfSupplyCode,
           status: status || (paidAmount >= grandTotal ? "paid" : paidAmount > 0 ? "partially_paid" : "pending"),
@@ -191,6 +196,9 @@ export async function POST(request: NextRequest) {
           dueDate: dueDate ? new Date(dueDate) : null,
           notes,
           terms: terms || "Payment due within 15 days of invoice date.",
+          vehicleNo,
+          ewayBillNo,
+          transportMode: transportMode || "road",
           lineItems: {
             create: computedLineItems,
           },
@@ -208,45 +216,49 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // 1. Deduct Stock for mapped items & record stock movements
-      for (const item of computedLineItems) {
-        if (item.itemId) {
-          const currentItem = await tx.item.findUnique({ where: { id: item.itemId } });
-          if (currentItem) {
-            await tx.item.update({
-              where: { id: item.itemId },
-              data: {
-                stockQty: currentItem.stockQty - item.qty,
-                stockMovements: {
-                  create: {
-                    changeQty: -item.qty,
-                    movementType: "sale",
-                    referenceId: createdInvoice.id,
-                    notes: `Sale in Invoice #${finalInvoiceNo}`,
+      // 1. Deduct Stock for mapped items & record stock movements (ONLY FOR INVOICES)
+      if (documentType === "INVOICE") {
+        for (const item of computedLineItems) {
+          if (item.itemId) {
+            const currentItem = await tx.item.findUnique({ where: { id: item.itemId } });
+            if (currentItem) {
+              await tx.item.update({
+                where: { id: item.itemId },
+                data: {
+                  stockQty: currentItem.stockQty - item.qty,
+                  stockMovements: {
+                    create: {
+                      changeQty: -item.qty,
+                      movementType: "sale",
+                      referenceId: createdInvoice.id,
+                      notes: `Sale in Invoice #${finalInvoiceNo}`,
+                    }
                   }
                 }
-              }
-            });
+              });
+            }
           }
         }
       }
 
-      // 2. Record Khatabook Party Udhaar Entry (GAVE) for full invoice amount
-      await tx.partyTransaction.create({
-        data: {
-          businessProfileId,
-          clientId,
-          invoiceId: createdInvoice.id,
-          type: "GAVE", // Bill Issued
-          amount: grandTotal,
-          paymentMode: "Invoice",
-          notes: `Invoice #${finalInvoiceNo} issued`,
-          date: new Date(),
-        }
-      });
+      // 2. Record Khatabook Party Udhaar Entry (GAVE) for full invoice amount (ONLY FOR INVOICES)
+      if (documentType === "INVOICE") {
+        await tx.partyTransaction.create({
+          data: {
+            businessProfileId,
+            clientId,
+            invoiceId: createdInvoice.id,
+            type: "GAVE", // Bill Issued
+            amount: grandTotal,
+            paymentMode: "Invoice",
+            notes: `Invoice #${finalInvoiceNo} issued`,
+            date: new Date(),
+          }
+        });
+      }
 
-      // 3. Record Khatabook Payment Entry (GOT) if upfront paidAmount exists
-      if (paidAmount > 0) {
+      // 3. Record Khatabook Payment Entry (GOT) if upfront paidAmount exists (ONLY FOR INVOICES)
+      if (documentType === "INVOICE" && paidAmount > 0) {
         await tx.partyTransaction.create({
           data: {
             businessProfileId,
