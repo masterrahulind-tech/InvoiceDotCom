@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-type Step = "info" | "otp";
+type Step = "details" | "otp";
 
 function SignupForm() {
   const router = useRouter();
 
-  const [step, setStep] = useState<Step>("info");
+  const [step, setStep] = useState<Step>("details");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
@@ -68,12 +68,8 @@ function SignupForm() {
         return;
       }
 
-      // New user → go to onboarding, existing user → dashboard
-      if (data.isNewUser) {
-        router.push("/settings/profile");
-      } else {
-        router.push("/dashboard");
-      }
+      // After successful signup verification, go to onboarding to complete business profile
+      router.push("/onboarding");
       router.refresh();
     } catch {
       setError("Network error. Please try again.");
@@ -86,11 +82,11 @@ function SignupForm() {
     <div className="card login-signup-card shadow-lg mb-0">
       <div className="card-body px-md-5 py-5">
         <div className="mb-5">
-          <h5 className="h3">Create Account</h5>
-          <p className="text-muted mb-0">Register for your free account.</p>
+          <h6 className="h3">Create account</h6>
+          <p className="text-muted mb-0">Made with love by developers for developers.</p>
         </div>
 
-        {step === "info" ? (
+        {step === "details" ? (
           <form className="login-signup-form" onSubmit={handleSendOtp}>
             <div className="form-group mb-3">
               <label className="pb-1">Your Name</label>
@@ -101,7 +97,7 @@ function SignupForm() {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Enter your full name"
+                  placeholder="Enter your name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -121,9 +117,18 @@ function SignupForm() {
                   className="form-control"
                   placeholder="Enter your phone number"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                   required
                 />
+              </div>
+            </div>
+
+            <div className="my-4">
+              <div className="custom-control custom-checkbox mb-3">
+                <input type="checkbox" className="custom-control-input" id="check-terms" required />
+                <label className="custom-control-label" htmlFor="check-terms">
+                  I agree to the <Link href="#">terms and conditions</Link>
+                </label>
               </div>
             </div>
 
@@ -131,10 +136,10 @@ function SignupForm() {
 
             <button
               type="submit"
-              disabled={loading || !name || phone.length < 10}
+              disabled={loading || phone.length < 10 || !name}
               className="btn btn-lg d-block w-100 solid-btn border-radius mt-4 mb-3"
             >
-              {loading ? "Sending OTP..." : "Continue with OTP"}
+              {loading ? "Sending OTP..." : "Sign up"}
             </button>
           </form>
         ) : (
@@ -176,13 +181,13 @@ function SignupForm() {
               disabled={loading || otp.length !== 6}
               className="btn btn-lg d-block w-100 solid-btn border-radius mt-4 mb-3"
             >
-              {loading ? "Verifying..." : "Verify & Create Account"}
+              {loading ? "Verifying..." : "Verify & Continue"}
             </button>
 
             <button
               type="button"
               onClick={() => {
-                setStep("info");
+                setStep("details");
                 setOtp("");
                 setError(null);
                 setDevOtp(null);
@@ -190,14 +195,14 @@ function SignupForm() {
               className="btn btn-link text-muted p-0 border-0"
               style={{ fontSize: "0.85rem" }}
             >
-              &larr; Go back
+              &larr; Change details
             </button>
           </form>
         )}
       </div>
-      <div className="card-footer bg-transparent border-top px-md-5">
+      <div className="card-footer px-md-5 bg-transparent border-top">
         <small>Already have an account?</small>
-        <Link href="/login" className="small"> Log in</Link>
+        <Link href="/login" className="small"> Sign in</Link>
       </div>
     </div>
   );
@@ -214,10 +219,9 @@ export function SignupView() {
           <div className="row align-items-center justify-content-between pt-5 pt-sm-5 pt-md-5 pt-lg-0">
             <div className="col-md-7 col-lg-6">
               <div className="hero-content-left text-white">
-                <h1 className="text-white">Create Account</h1>
+                <h1 className="text-white">Create Your Account</h1>
                 <p className="lead">
-                  Start managing your GST billing, inventory, and accounting today.
-                  Join thousands of businesses streamlining their operations.
+                  Keep your face always toward the sunshine - and shadows will fall behind you.
                 </p>
                 <div className="mt-5">
                   <Link href="/" className="btn btn-outline-light">
@@ -238,7 +242,6 @@ export function SignupView() {
           </div>
         </div>
         <div className="bottom-img-absolute">
-          {/* Using img tag because Next/Image won't easily work with static SVGs loaded this way without dimensions */}
           <img src="/assets/hero-bg-shape-1.svg" alt="wave shape" className="img-fluid" />
         </div>
       </section>
