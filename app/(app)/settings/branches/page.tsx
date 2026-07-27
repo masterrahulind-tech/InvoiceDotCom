@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { MapPin, Plus, MoreVertical } from "lucide-react";
 
 export default function BranchesSettingsPage() {
-  const [branches, setBranches] = useState([]);
+  const [branches, setBranches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

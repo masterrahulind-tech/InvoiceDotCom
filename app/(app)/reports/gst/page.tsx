@@ -44,8 +44,24 @@ export default function GstReportsPage() {
     downloadAnchor.remove();
   };
 
-  if (loading || !report) {
+  if (loading) {
     return <div className="p-12 text-center text-xs text-[#999]">Generating GST GSTR-1 compliance reports...</div>;
+  }
+
+  if (report?.error) {
+    return (
+      <div className="p-12 text-center flex flex-col items-center justify-center border border-dashed border-gray-200 rounded-2xl bg-white shadow-sm">
+        <Building2 className="h-10 w-10 text-gray-400 mb-4" />
+        <h3 className="text-lg font-semibold text-gray-900">No Business Profile Found</h3>
+        <p className="text-sm text-gray-500 mt-2 max-w-sm">
+          You need to complete your onboarding or create a business profile before viewing GST reports.
+        </p>
+      </div>
+    );
+  }
+
+  if (!report || !report.summary) {
+    return <div className="p-12 text-center text-xs text-red-500">Failed to load reports data.</div>;
   }
 
   const { summary, b2bInvoices = [], hsnSummary = [] } = report;

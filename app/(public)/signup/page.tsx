@@ -1,5 +1,5 @@
-import { SignupView } from "@/features/auth/components/SignupView";
+import { redirect } from "next/navigation";
 
 export default function SignupPage() {
-  return <SignupView />;
+  redirect("/onboarding");
 }

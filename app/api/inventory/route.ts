@@ -6,16 +6,17 @@ import { BulkItemImportSchema } from "@/lib/validators/item";
 export async function GET(req: Request) {
   try {
     const user = await getCurrentUser();
-    if (!user || !user.businessProfileId) {
+    const activeProfileId = user?.businessProfiles[0]?.id || user?.businessMembers[0]?.businessProfileId;
+    if (!user || !activeProfileId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(req.url);
-    const branchId = searchParams.get("branchId") || user.branchId;
+    const branchId = searchParams.get("branchId") || user.businessMembers[0]?.branchId;
 
     const items = await prisma.item.findMany({
       where: {
-        businessProfileId: user.businessProfileId,
+        businessProfileId: activeProfileId,
         ...(branchId ? { branchId } : {}),
       },
       orderBy: { createdAt: "desc" },
@@ -31,7 +32,8 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const user = await getCurrentUser();
-    if (!user || !user.businessProfileId) {
+    const activeProfileId = user?.businessProfiles[0]?.id || user?.businessMembers[0]?.businessProfileId;
+    if (!user || !activeProfileId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -56,8 +58,8 @@ export async function POST(req: Request) {
     // Attach businessProfileId and branchId
     const itemsToCreate = validItems.map((item) => ({
       ...item,
-      businessProfileId: user.businessProfileId!,
-      branchId: user.branchId, // Assuming they fall into user's default active branch
+      businessProfileId: activeProfileId,
+      branchId: user.businessMembers[0]?.branchId, // Assuming they fall into user's default active branch
     }));
 
     if (isBulk) {

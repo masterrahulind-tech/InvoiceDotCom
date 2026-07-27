@@ -7,7 +7,7 @@ import { BulkImportModal } from "./_components/BulkImportModal";
 import { AddItemModal } from "./_components/AddItemModal";
 
 export default function InventoryPage() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);

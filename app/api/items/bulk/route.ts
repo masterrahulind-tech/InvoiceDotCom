@@ -27,7 +27,7 @@ export async function POST(req: Request) {
         const sku = row.sku || `SKU-${Date.now().toString().slice(-6)}-${i}`;
         
         // Ensure SKU is unique (or we could use upsert if we want to update existing items)
-        const existing = await prisma.item.findUnique({ where: { sku } });
+        const existing = await prisma.item.findFirst({ where: { sku, businessProfileId: business.id } });
         if (existing) {
           throw new Error(`Item with SKU ${sku} already exists.`);
         }

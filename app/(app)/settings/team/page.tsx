@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { UserPlus, Shield, MoreVertical } from "lucide-react";
 
 export default function TeamSettingsPage() {
-  const [members, setMembers] = useState([]);
+  const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

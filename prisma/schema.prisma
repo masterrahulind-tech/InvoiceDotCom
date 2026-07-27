@@ -2,7 +2,7 @@
 // Supports GST Billing, HSN/SAC, Inventory & Stock Movement, Khatabook Party Ledgers, Expenses
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -15,6 +15,7 @@ model User {
   phone            String            @unique
   name             String
   email            String?
+  systemRole       String            @default("USER") // USER | SUPER_ADMIN
   createdAt        DateTime          @default(now())
   businessProfiles BusinessProfile[] // Legacy/Creator relation
   businessMembers  BusinessMember[]
@@ -59,7 +60,10 @@ model BusinessProfile {
   branchName    String?
   upiId         String?
 
-  createdAt DateTime @default(now())
+  isVerified    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  subscription  TenantSubscription?
 
   paymentMethods   PaymentMethod[]
   clients          Client[]
@@ -70,6 +74,30 @@ model BusinessProfile {
   
   members          BusinessMember[]
   branches         Branch[]
+}
+
+model SubscriptionPlan {
+  id              String   @id @default(uuid())
+  name            String   // Free, Starter, Professional, Enterprise
+  priceMonthly    Float
+  priceYearly     Float
+  features        String   // JSON string of features
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  
+  subscriptions   TenantSubscription[]
+}
+
+model TenantSubscription {
+  id                String          @id @default(uuid())
+  businessProfileId String          @unique
+  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id], onDelete: Cascade)
+  planId            String
+  plan              SubscriptionPlan @relation(fields: [planId], references: [id])
+  status            String          @default("active") // active | past_due | canceled | trialing
+  currentPeriodEnd  DateTime?
+  cancelAtPeriodEnd Boolean         @default(false)
+  createdAt         DateTime        @default(now())
 }
 
 model BusinessMember {
