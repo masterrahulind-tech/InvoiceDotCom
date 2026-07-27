@@ -10,6 +10,8 @@ export default function ProfileSettingsPage() {
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  const [isLocked, setIsLocked] = useState(true);
+
   // Form state
   const [businessType, setBusinessType] = useState<"individual" | "registered">("individual");
   const [businessName, setBusinessName] = useState("");
@@ -87,6 +89,7 @@ export default function ProfileSettingsPage() {
       }
       
       setSuccessMsg("Profile updated successfully!");
+      setIsLocked(true); // Re-lock after saving
       
       // Auto-hide success message
       setTimeout(() => setSuccessMsg(null), 3000);
@@ -114,16 +117,36 @@ export default function ProfileSettingsPage() {
         
         {/* Section 1: Basic Info */}
         <div>
-          <h2 className="text-lg font-semibold border-b pb-2 mb-4" style={{ color: '#1f2029' }}>Basic Details</h2>
+          <div className="flex items-center justify-between border-b pb-2 mb-4">
+            <h2 className="text-lg font-semibold" style={{ color: '#1f2029' }}>Basic Details</h2>
+            <button 
+              type="button" 
+              onClick={() => setIsLocked(!isLocked)}
+              className="text-sm flex items-center gap-1 text-gray-500 hover:text-gray-800 transition-colors"
+            >
+              {isLocked ? (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                  Unlock to edit
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+                  Lock
+                </>
+              )}
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Business Name *</label>
               <input
                 type="text"
                 required
+                disabled={isLocked}
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className={`w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary ${isLocked ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''}`}
               />
             </div>
             <div>
@@ -149,8 +172,9 @@ export default function ProfileSettingsPage() {
               <label className="mb-1 block text-sm font-medium text-gray-700">Business Type</label>
               <select
                 value={businessType}
+                disabled={isLocked}
                 onChange={(e) => setBusinessType(e.target.value as "individual" | "registered")}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className={`w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary ${isLocked ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''}`}
               >
                 <option value="individual">Individual (Freelancer, Vendor)</option>
                 <option value="registered">Registered Business (LLP, Pvt Ltd)</option>
