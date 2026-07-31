@@ -22,5 +22,30 @@ export const otpVerifySchema = z.object({
   name: z.string().min(1, "Name is required").optional(),
 });
 
+export const passwordSchema = z.string().min(6, "Password must be at least 6 characters");
+
+export const loginSchema = z.object({
+  identifier: identifierSchema,
+  password: z.string().min(1, "Password is required"),
+});
+
+export const signupSchema = z.object({
+  identifier: identifierSchema,
+  name: z.string().min(1, "Name is required"),
+  password: passwordSchema,
+});
+
+export const resetPasswordSchema = z.object({
+  identifier: identifierSchema,
+  otp: z
+    .string()
+    .length(6, "OTP must be 6 digits")
+    .regex(/^[0-9]+$/, "OTP must be numeric"),
+  newPassword: passwordSchema,
+});
+
 export type OtpSendInput = z.infer<typeof otpSendSchema>;
 export type OtpVerifyInput = z.infer<typeof otpVerifySchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
+export type SignupInput = z.infer<typeof signupSchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;

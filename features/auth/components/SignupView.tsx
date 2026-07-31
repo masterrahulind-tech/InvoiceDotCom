@@ -3,72 +3,36 @@
 import { Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-
-type Step = "details" | "otp";
 
 function SignupForm() {
   const router = useRouter();
 
-  const [step, setStep] = useState<Step>("details");
   const [name, setName] = useState("");
   const [identifier, setIdentifier] = useState("");
-  const [otp, setOtp] = useState("");
-  const [devOtp, setDevOtp] = useState<string | null>(null);
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSendOtp = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/otp/send", {
+      const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier, name }),
+        body: JSON.stringify({ identifier, name, password }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Failed to send OTP");
+        setError(data.error || "Failed to create account");
         return;
       }
 
-      if (data.dev_otp) {
-        setDevOtp(data.dev_otp);
-      }
-
-      setStep("otp");
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/auth/otp/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier, otp, name }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Failed to verify OTP");
-        return;
-      }
-
-      // After successful signup verification, go to onboarding to complete business profile
+      // After successful signup, go to onboarding to complete business profile
       router.push("/onboarding");
       router.refresh();
     } catch {
@@ -86,119 +50,79 @@ function SignupForm() {
           <p className="text-muted mb-0">Made with love by developers for developers.</p>
         </div>
 
-        {step === "details" ? (
-          <form className="login-signup-form" onSubmit={handleSendOtp}>
-            <div className="form-group mb-3">
-              <label className="pb-1">Your Name</label>
-              <div className="input-group input-group-merge">
-                <div className="input-icon">
-                  <span className="ti-user color-primary"></span>
-                </div>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  autoFocus
-                />
+        <form className="login-signup-form" onSubmit={handleSignup}>
+          <div className="form-group mb-3">
+            <label className="pb-1">Your Name</label>
+            <div className="input-group input-group-merge">
+              <div className="input-icon">
+                <span className="ti-user color-primary"></span>
               </div>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                autoFocus
+              />
             </div>
+          </div>
 
-            <div className="form-group mb-3">
-              <label className="pb-1">Email or Phone Number</label>
-              <div className="input-group input-group-merge">
-                <div className="input-icon">
-                  <span className="ti-user color-primary"></span>
-                </div>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter your email or phone"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  required
-                />
+          <div className="form-group mb-3">
+            <label className="pb-1">Email or Phone Number</label>
+            <div className="input-group input-group-merge">
+              <div className="input-icon">
+                <span className="ti-email color-primary"></span>
               </div>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter your email or phone"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                required
+              />
             </div>
+          </div>
 
-            <div className="my-4">
-              <div className="custom-control custom-checkbox mb-3">
-                <input type="checkbox" className="custom-control-input" id="check-terms" required />
-                <label className="custom-control-label" htmlFor="check-terms">
-                  I agree to the <Link href="#">terms and conditions</Link>
-                </label>
+          <div className="form-group mb-3">
+            <label className="pb-1">Password</label>
+            <div className="input-group input-group-merge">
+              <div className="input-icon">
+                <span className="ti-lock color-primary"></span>
               </div>
+              <input
+                type="password"
+                className="form-control"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
             </div>
+          </div>
 
-            {error && <p className="small text-danger mb-2">{error}</p>}
-
-            <button
-              type="submit"
-              disabled={loading || identifier.length < 5 || !name}
-              className="btn btn-lg d-block w-100 solid-btn border-radius mt-4 mb-3"
-            >
-              {loading ? "Sending OTP..." : "Sign up"}
-            </button>
-          </form>
-        ) : (
-          <form className="login-signup-form" onSubmit={handleVerifyOtp}>
-            <div className="form-group mb-3">
-              <label className="pb-1">Enter OTP</label>
-              <div className="input-group input-group-merge">
-                <div className="input-icon">
-                  <span className="ti-lock color-primary"></span>
-                </div>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  className="form-control"
-                  placeholder="000000"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  maxLength={6}
-                  required
-                  autoFocus
-                  style={{ letterSpacing: "0.2em", fontWeight: "bold" }}
-                />
-              </div>
-              <small className="form-text text-muted mt-2">
-                We sent a 6-digit code to <strong>{identifier}</strong>
-              </small>
+          <div className="my-4">
+            <div className="custom-control custom-checkbox mb-3">
+              <input type="checkbox" className="custom-control-input" id="check-terms" required />
+              <label className="custom-control-label" htmlFor="check-terms">
+                I agree to the <Link href="#">terms and conditions</Link>
+              </label>
             </div>
+          </div>
 
-            {devOtp && (
-              <div className="alert alert-warning py-2 mb-3">
-                <small className="mb-0 fw-bold">Dev Mode OTP: {devOtp}</small>
-              </div>
-            )}
+          {error && <p className="small text-danger mb-2">{error}</p>}
 
-            {error && <p className="small text-danger mb-2">{error}</p>}
-
-            <button
-              type="submit"
-              disabled={loading || otp.length !== 6}
-              className="btn btn-lg d-block w-100 solid-btn border-radius mt-4 mb-3"
-            >
-              {loading ? "Verifying..." : "Verify & Continue"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setStep("details");
-                setOtp("");
-                setError(null);
-                setDevOtp(null);
-              }}
-              className="btn btn-link text-muted p-0 border-0"
-              style={{ fontSize: "0.85rem" }}
-            >
-              &larr; Change details
-            </button>
-          </form>
-        )}
+          <button
+            type="submit"
+            disabled={loading || identifier.length < 5 || !name || password.length < 6}
+            className="btn btn-lg d-block w-100 solid-btn border-radius mt-4 mb-3"
+          >
+            {loading ? "Creating account..." : "Sign up"}
+          </button>
+        </form>
       </div>
       <div className="card-footer px-md-5 bg-transparent border-top">
         <small>Already have an account?</small>

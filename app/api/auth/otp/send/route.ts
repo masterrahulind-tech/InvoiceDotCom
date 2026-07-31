@@ -17,6 +17,23 @@ export async function POST(request: NextRequest) {
 
     const { identifier } = parsed.data;
 
+    // Verify user exists since OTP is now only for password reset
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: identifier },
+          { phone: identifier }
+        ]
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "No account found with this email or phone number" },
+        { status: 404 }
+      );
+    }
+
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 

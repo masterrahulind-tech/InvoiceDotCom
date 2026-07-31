@@ -3,69 +3,33 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-
-type Step = "phone" | "otp";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/dashboard";
 
-  const [step, setStep] = useState<Step>("phone");
   const [identifier, setIdentifier] = useState("");
-  const [otp, setOtp] = useState("");
-  const [devOtp, setDevOtp] = useState<string | null>(null);
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSendOtp = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/otp/send", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier }),
+        body: JSON.stringify({ identifier, password }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Failed to send OTP");
-        return;
-      }
-
-      if (data.dev_otp) {
-        setDevOtp(data.dev_otp);
-      }
-
-      setStep("otp");
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/auth/otp/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier, otp }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Failed to verify OTP");
+        setError(data.error || "Failed to log in");
         return;
       }
 
@@ -86,93 +50,57 @@ function LoginForm() {
           <p className="text-muted mb-0">Sign in to your account to continue.</p>
         </div>
 
-        {step === "phone" ? (
-          <form className="login-signup-form" onSubmit={handleSendOtp}>
-            <div className="form-group mb-3">
-              <label className="pb-1">Email or Phone Number</label>
-              <div className="input-group input-group-merge">
-                <div className="input-icon">
-                  <span className="ti-user color-primary"></span>
-                </div>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter your email or phone"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  required
-                  autoFocus
-                />
+        <form className="login-signup-form" onSubmit={handleLogin}>
+          <div className="form-group mb-3">
+            <label className="pb-1">Email or Phone Number</label>
+            <div className="input-group input-group-merge">
+              <div className="input-icon">
+                <span className="ti-user color-primary"></span>
               </div>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter your email or phone"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                required
+                autoFocus
+              />
             </div>
+          </div>
 
-            {error && <p className="small text-danger mb-2">{error}</p>}
-
-            <button
-              type="submit"
-              disabled={loading || identifier.length < 5}
-              className="btn btn-lg d-block w-100 solid-btn border-radius mt-4 mb-3"
-            >
-              {loading ? "Sending OTP..." : "Send OTP"}
-            </button>
-          </form>
-        ) : (
-          <form className="login-signup-form" onSubmit={handleVerifyOtp}>
-            <div className="form-group mb-3">
-              <label className="pb-1">Enter OTP</label>
-              <div className="input-group input-group-merge">
-                <div className="input-icon">
-                  <span className="ti-lock color-primary"></span>
-                </div>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  className="form-control"
-                  placeholder="000000"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  maxLength={6}
-                  required
-                  autoFocus
-                  style={{ letterSpacing: "0.2em", fontWeight: "bold" }}
-                />
-              </div>
-              <small className="form-text text-muted mt-2">
-                We sent a 6-digit code to <strong>{identifier}</strong>. Please enter it below.
-              </small>
+          <div className="form-group mb-3">
+            <div className="d-flex justify-content-between align-items-center pb-1">
+              <label className="mb-0">Password</label>
+              <Link href="/forgot-password" className="small text-primary">
+                Forgot Password?
+              </Link>
             </div>
-
-            {devOtp && (
-              <div className="alert alert-warning py-2 mb-3">
-                <small className="mb-0 fw-bold">Dev Mode OTP: {devOtp}</small>
+            <div className="input-group input-group-merge">
+              <div className="input-icon">
+                <span className="ti-lock color-primary"></span>
               </div>
-            )}
+              <input
+                type="password"
+                className="form-control"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+          </div>
 
-            {error && <p className="small text-danger mb-2">{error}</p>}
+          {error && <p className="small text-danger mb-2">{error}</p>}
 
-            <button
-              type="submit"
-              disabled={loading || otp.length !== 6}
-              className="btn btn-lg d-block w-100 solid-btn border-radius mt-4 mb-3"
-            >
-              {loading ? "Verifying..." : "Verify & Log In"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setStep("phone");
-                setOtp("");
-                setError(null);
-                setDevOtp(null);
-              }}
-              className="btn btn-link text-muted p-0 border-0"
-              style={{ fontSize: "0.85rem" }}
-            >
-              &larr; Change phone number
-            </button>
-          </form>
-        )}
+          <button
+            type="submit"
+            disabled={loading || identifier.length < 5 || !password}
+            className="btn btn-lg d-block w-100 solid-btn border-radius mt-4 mb-3"
+          >
+            {loading ? "Logging in..." : "Log in"}
+          </button>
+        </form>
       </div>
       <div className="card-footer bg-transparent border-top px-md-5">
         <small>Not registered?</small>

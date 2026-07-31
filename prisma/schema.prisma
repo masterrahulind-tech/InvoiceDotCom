@@ -15,6 +15,7 @@ model User {
   phone            String?           @unique
   name             String
   email            String?           @unique
+  passwordHash     String?
   systemRole       String            @default("USER") // USER | SUPER_ADMIN
   createdAt        DateTime          @default(now())
   businessProfiles BusinessProfile[] // Legacy/Creator relation

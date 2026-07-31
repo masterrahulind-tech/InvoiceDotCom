@@ -9,18 +9,18 @@ const JWT_SECRET = new TextEncoder().encode(
 
 export interface SessionPayload {
   userId: string;
-  phone: string;
+  identifier: string;
   name: string;
 }
 
 export async function createSession(user: {
   id: string;
-  phone: string;
+  identifier: string;
   name: string;
 }): Promise<string> {
   const token = await new SignJWT({
     userId: user.id,
-    phone: user.phone,
+    identifier: user.identifier,
     name: user.name,
   })
     .setProtectedHeader({ alg: "HS256" })
