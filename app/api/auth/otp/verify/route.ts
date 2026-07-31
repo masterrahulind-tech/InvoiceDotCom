@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     // Create JWT session
     const token = await createSession({
       id: user.id,
-      phone: user.phone || "",
+      identifier: user.phone || user.email || "",
       name: user.name,
     });
 
