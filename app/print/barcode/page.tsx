@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Barcode from "react-barcode";
 
-export default function PrintBarcodePage() {
+function PrintBarcodeContent() {
   const searchParams = useSearchParams();
   const [mounted, setMounted] = useState(false);
 
@@ -87,5 +87,13 @@ export default function PrintBarcodePage() {
         </div>
       ))}
     </div>
+  );
+}
+
+export default function PrintBarcodePage() {
+  return (
+    <Suspense fallback={<div className="p-4 font-sans">Loading barcode data...</div>}>
+      <PrintBarcodeContent />
+    </Suspense>
   );
 }
