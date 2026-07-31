@@ -48,8 +48,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "OTP sent successfully",
-      // Include OTP in dev mode for testing
-      ...(process.env.NODE_ENV !== "production" && { dev_otp: otp }),
+      // TEMPORARY: Include OTP in response even in production so user can test the live Vercel site
+      // without setting up Twilio/SendGrid yet.
+      dev_otp: otp,
     });
   } catch (error) {
     console.error("OTP send error:", error);
