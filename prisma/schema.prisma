@@ -12,9 +12,9 @@ generator client {
 
 model User {
   id               String            @id @default(uuid())
-  phone            String            @unique
+  phone            String?           @unique
   name             String
-  email            String?
+  email            String?           @unique
   systemRole       String            @default("USER") // USER | SUPER_ADMIN
   createdAt        DateTime          @default(now())
   businessProfiles BusinessProfile[] // Legacy/Creator relation
@@ -23,13 +23,13 @@ model User {
 
 model OtpToken {
   id        String   @id @default(uuid())
-  phone     String
+  identifier String   @default("")
   otpHash   String
   expiresAt DateTime
   verified  Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  @@index([phone])
+  @@index([identifier])
 }
 
 model BusinessProfile {

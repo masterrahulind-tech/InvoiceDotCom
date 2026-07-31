@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { phone } = parsed.data;
+    const { identifier } = parsed.data;
 
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -26,24 +26,24 @@ export async function POST(request: NextRequest) {
     // Set expiry to 5 minutes from now
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-    // Invalidate any previous OTPs for this phone
+    // Invalidate any previous OTPs for this identifier
     await prisma.otpToken.updateMany({
-      where: { phone, verified: false },
+      where: { identifier, verified: false },
       data: { verified: true },
     });
 
     // Store new OTP
     await prisma.otpToken.create({
       data: {
-        phone,
+        identifier,
         otpHash,
         expiresAt,
       },
     });
 
-    // In production, send OTP via SMS (Twilio/MSG91)
+    // In production, send OTP via SMS (Twilio/MSG91) or Email (Resend/SendGrid)
     // For local dev, log the OTP to console
-    console.log(`[DEV] OTP for ${phone}: ${otp}`);
+    console.log(`[DEV] OTP for ${identifier}: ${otp}`);
 
     return NextResponse.json({
       success: true,

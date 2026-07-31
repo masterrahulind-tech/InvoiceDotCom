@@ -9,8 +9,11 @@ import {
   X,
   Boxes,
   UploadCloud,
+  Camera
 } from "lucide-react";
 import { BulkUploadModal } from "./BulkUploadModal";
+import { usePhysicalBarcodeScanner } from "@/lib/usePhysicalBarcodeScanner";
+import { BarcodeScannerModal } from "@/components/BarcodeScannerModal";
 
 export function InventoryView() {
   const [items, setItems] = useState<any[]>([]);
@@ -29,6 +32,7 @@ export function InventoryView() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBulkUploadModal, setShowBulkUploadModal] = useState(false);
   const [showAdjustModal, setShowAdjustModal] = useState<any>(null); // item object when editing stock
+  const [showScannerModal, setShowScannerModal] = useState(false);
 
   // Add Item Form State
   const [newItem, setNewItem] = useState({
@@ -47,6 +51,30 @@ export function InventoryView() {
   // Adjust Stock Form State
   const [adjustQty, setAdjustQty] = useState("");
   const [adjustNotes, setAdjustNotes] = useState("");
+
+  // Physical Barcode Scanner
+  usePhysicalBarcodeScanner((barcode) => {
+    if (showAddModal) {
+      setNewItem(prev => ({ ...prev, sku: barcode }));
+      if (showScannerModal) {
+        setShowScannerModal(false);
+      }
+    } else if (!showAdjustModal && !showBulkUploadModal) {
+      // If we are in the main view, search for the item
+      const found = items.find(i => i.sku === barcode || i.id === barcode);
+      if (found) {
+        setSearch(barcode);
+        setShowAdjustModal(found); // Open adjust modal immediately for speed
+      } else {
+        // If not found, open the "Add New Item" modal prefilled with this barcode
+        setNewItem(prev => ({ ...prev, sku: barcode }));
+        setShowAddModal(true);
+      }
+      if (showScannerModal) {
+        setShowScannerModal(false);
+      }
+    }
+  }, true); // Keep always active to support scanning from the main screen
 
   const loadItems = async () => {
     try {
@@ -183,15 +211,24 @@ export function InventoryView() {
 
       {/* Filter & Search Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white border border-[#e8ecf1] p-3 rounded-2xl">
-        <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-[#999] absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Search items by name or SKU..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl pl-9 pr-3 py-2 text-xs text-[#333] placeholder-[#aaa] focus:outline-none focus:border-[#6730e3]"
-          />
+        <div className="relative w-full sm:w-80 flex gap-2">
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-[#999] absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search items by name or SKU..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl pl-9 pr-3 py-2 text-xs text-[#333] placeholder-[#aaa] focus:outline-none focus:border-[#6730e3]"
+            />
+          </div>
+          <button
+            onClick={() => setShowScannerModal(true)}
+            className="px-3 py-2 rounded-xl text-[#6730e3] bg-[#6730e3]/10 hover:bg-[#6730e3]/20 transition-colors flex items-center justify-center flex-shrink-0"
+            title="Scan Barcode to Search or Add"
+          >
+            <Camera className="w-4 h-4" />
+          </button>
         </div>
 
         <div className="flex items-center space-x-2 w-full sm:w-auto">
@@ -328,13 +365,23 @@ export function InventoryView() {
                 </div>
                 <div>
                   <label className="block text-[#999] mb-1 font-semibold">SKU / Item Code</label>
-                  <input
-                    type="text"
-                    placeholder="Auto-generated if empty"
-                    value={newItem.sku}
-                    onChange={(e) => setNewItem({ ...newItem, sku: e.target.value })}
-                    className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] focus:outline-none focus:border-[#6730e3]"
-                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Auto-generated if empty"
+                      value={newItem.sku}
+                      onChange={(e) => setNewItem({ ...newItem, sku: e.target.value })}
+                      className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] focus:outline-none focus:border-[#6730e3]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowScannerModal(true)}
+                      className="p-2.5 rounded-xl bg-[#f8f9fa] border border-[#e8ecf1] text-[#6730e3] hover:bg-[#6730e3] hover:text-white transition-colors flex-shrink-0"
+                      title="Scan Barcode"
+                    >
+                      <Camera className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -523,6 +570,27 @@ export function InventoryView() {
           onSuccess={() => {
             setShowBulkUploadModal(false);
             loadItems();
+          }}
+        />
+      )}
+      {/* Barcode Scanner Modal */}
+      {showScannerModal && (
+        <BarcodeScannerModal 
+          onClose={() => setShowScannerModal(false)}
+          onScan={(barcode) => {
+            if (showAddModal) {
+              setNewItem(prev => ({ ...prev, sku: barcode }));
+            } else {
+              const found = items.find(i => i.sku === barcode || i.id === barcode);
+              if (found) {
+                setSearch(barcode);
+                setShowAdjustModal(found);
+              } else {
+                setNewItem(prev => ({ ...prev, sku: barcode }));
+                setShowAddModal(true);
+              }
+            }
+            setShowScannerModal(false);
           }}
         />
       )}

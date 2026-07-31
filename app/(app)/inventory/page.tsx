@@ -1,16 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Download } from "lucide-react";
+import { Plus, Download, Camera } from "lucide-react";
 import { InventoryTable } from "./_components/InventoryTable";
 import { BulkImportModal } from "./_components/BulkImportModal";
 import { AddItemModal } from "./_components/AddItemModal";
+import { usePhysicalBarcodeScanner } from "@/lib/usePhysicalBarcodeScanner";
+import { BarcodeScannerModal } from "@/components/BarcodeScannerModal";
 
 export default function InventoryPage() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [showScannerModal, setShowScannerModal] = useState(false);
+  const [scannedSku, setScannedSku] = useState("");
+
+  usePhysicalBarcodeScanner((barcode) => {
+    if (!isAddModalOpen && !isBulkModalOpen) {
+      // Just open add modal with the barcode
+      setScannedSku(barcode);
+      setIsAddModalOpen(true);
+      if (showScannerModal) setShowScannerModal(false);
+    }
+  }, true);
 
   const fetchItems = async () => {
     setLoading(true);
@@ -50,8 +63,17 @@ export default function InventoryPage() {
             Bulk Import
           </button>
           
+          <button
+            onClick={() => setShowScannerModal(true)}
+            className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm"
+            title="Scan Barcode to Add"
+          >
+            <Camera className="h-4 w-4" />
+            Scan
+          </button>
+
           <button 
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={() => { setScannedSku(""); setIsAddModalOpen(true); }}
             className="flex items-center gap-2 rounded-lg bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 shadow-sm"
           >
             <Plus className="h-4 w-4" />
@@ -79,12 +101,24 @@ export default function InventoryPage() {
 
       <AddItemModal
         isOpen={isAddModalOpen}
+        initialSku={scannedSku}
         onClose={() => setIsAddModalOpen(false)}
         onSuccess={() => {
           setIsAddModalOpen(false);
           fetchItems();
         }}
       />
+      
+      {showScannerModal && (
+        <BarcodeScannerModal 
+          onClose={() => setShowScannerModal(false)}
+          onScan={(barcode) => {
+            setScannedSku(barcode);
+            setIsAddModalOpen(true);
+            setShowScannerModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

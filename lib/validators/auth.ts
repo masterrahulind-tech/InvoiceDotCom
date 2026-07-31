@@ -1,18 +1,20 @@
 import { z } from "zod";
 
-export const phoneSchema = z
-  .string()
-  .min(10, "Phone number must be at least 10 digits")
-  .max(15, "Phone number is too long")
-  .regex(/^\+?[0-9]+$/, "Invalid phone number format");
+export const identifierSchema = z.string().min(3, "Please enter a valid email or phone number").refine((val) => {
+  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+  const isPhone = /^\+?[0-9]{10,15}$/.test(val);
+  return isEmail || isPhone;
+}, {
+  message: "Invalid email or phone number format",
+});
 
 export const otpSendSchema = z.object({
-  phone: phoneSchema,
+  identifier: identifierSchema,
   name: z.string().min(1, "Name is required").optional(),
 });
 
 export const otpVerifySchema = z.object({
-  phone: phoneSchema,
+  identifier: identifierSchema,
   otp: z
     .string()
     .length(6, "OTP must be 6 digits")

@@ -31,7 +31,11 @@ export default function AppLayout({
     async function fetchProfile() {
       try {
         const res = await fetch("/api/business-profiles");
-        const data = await res.json();
+        if (!res.ok) return;
+        const text = await res.text();
+        if (!text) return;
+        const data = JSON.parse(text);
+        
         if (data.profiles && data.profiles.length > 0) {
           setBusinessName(data.profiles[0].businessName || "My Business");
           setGstin(data.profiles[0].gstin || "N/A");

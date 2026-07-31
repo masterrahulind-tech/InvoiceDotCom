@@ -10,8 +10,11 @@ import {
   Trash2, 
   Users, 
   Package, 
-  Sparkles
+  Sparkles,
+  Camera
 } from "lucide-react";
+import { usePhysicalBarcodeScanner } from "@/lib/usePhysicalBarcodeScanner";
+import { BarcodeScannerModal } from "@/components/BarcodeScannerModal";
 
 function InvoiceBuilderForm() {
   const router = useRouter();
@@ -21,6 +24,7 @@ function InvoiceBuilderForm() {
   const [parties, setParties] = useState<any[]>([]);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showScannerModal, setShowScannerModal] = useState(false);
 
   // Form State
   const [selectedClientId, setSelectedClientId] = useState(preselectedClientId);
@@ -139,6 +143,38 @@ function InvoiceBuilderForm() {
     if (lineItems.length === 1) return;
     setLineItems(lineItems.filter((_, i) => i !== index));
   };
+
+  const handleBarcodeScan = (barcode: string) => {
+    const invItem = items.find(i => i.sku === barcode || i.id === barcode);
+    if (invItem) {
+      // Create new line item for the scanned product
+      const newItem = {
+        itemId: invItem.id,
+        description: invItem.name,
+        hsnCode: invItem.hsnCode || "8517",
+        qty: 1,
+        unit: invItem.unit || "Pcs",
+        rate: invItem.salePrice || 0,
+        discountPercent: 0,
+        taxPercent: invItem.taxRate || 18,
+        amount: invItem.salePrice || 0,
+      };
+      
+      // If the last item is completely empty, replace it, otherwise append
+      const lastItem = lineItems[lineItems.length - 1];
+      if (!lastItem.itemId && !lastItem.description) {
+        const updated = [...lineItems];
+        updated[updated.length - 1] = newItem;
+        setLineItems(updated);
+      } else {
+        setLineItems([...lineItems, newItem]);
+      }
+    } else {
+      alert(`No item found for barcode/SKU: ${barcode}`);
+    }
+  };
+
+  usePhysicalBarcodeScanner(handleBarcodeScan);
 
   // Calculation totals
   const totalTaxable = lineItems.reduce((acc, item) => acc + (item.amount || 0), 0);
@@ -288,13 +324,22 @@ function InvoiceBuilderForm() {
           <h2 className="text-sm font-bold text-[#1f2029] flex items-center gap-2">
             <Package className="w-4 h-4 text-[#6730e3]" /> Line Items & HSN Tax Rates
           </h2>
-          <button
-            type="button"
-            onClick={addLineItem}
-            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#6730e3]/20 text-[#6730e3] hover:bg-[#6730e3]/30 border border-[#e0d5ff] flex items-center gap-1"
-          >
-            <Plus className="w-3.5 h-3.5" /> Add Line
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowScannerModal(true)}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-[#6730e3] hover:bg-[#f8f9fa] border border-[#e0d5ff] flex items-center gap-1 shadow-sm transition-all"
+            >
+              <Camera className="w-3.5 h-3.5" /> Scan Barcode
+            </button>
+            <button
+              type="button"
+              onClick={addLineItem}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#6730e3]/20 text-[#6730e3] hover:bg-[#6730e3]/30 border border-[#e0d5ff] flex items-center gap-1"
+            >
+              <Plus className="w-3.5 h-3.5" /> Add Line
+            </button>
+          </div>
         </div>
 
         <div className="space-y-3">
@@ -529,6 +574,16 @@ function InvoiceBuilderForm() {
           </div>
         </div>
       </div>
+
+      {showScannerModal && (
+        <BarcodeScannerModal
+          onClose={() => setShowScannerModal(false)}
+          onScan={(barcode) => {
+            handleBarcodeScan(barcode);
+            setShowScannerModal(false);
+          }}
+        />
+      )}
     </form>
   );
 }

@@ -13,7 +13,7 @@ function LoginForm() {
   const redirect = searchParams.get("redirect") || "/dashboard";
 
   const [step, setStep] = useState<Step>("phone");
-  const [phone, setPhone] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [otp, setOtp] = useState("");
   const [devOtp, setDevOtp] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ function LoginForm() {
       const res = await fetch("/api/auth/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ identifier }),
       });
 
       const data = await res.json();
@@ -59,7 +59,7 @@ function LoginForm() {
       const res = await fetch("/api/auth/otp/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, otp }),
+        body: JSON.stringify({ identifier, otp }),
       });
 
       const data = await res.json();
@@ -89,17 +89,17 @@ function LoginForm() {
         {step === "phone" ? (
           <form className="login-signup-form" onSubmit={handleSendOtp}>
             <div className="form-group mb-3">
-              <label className="pb-1">Phone Number</label>
+              <label className="pb-1">Email or Phone Number</label>
               <div className="input-group input-group-merge">
                 <div className="input-icon">
-                  <span className="ti-mobile color-primary"></span>
+                  <span className="ti-user color-primary"></span>
                 </div>
                 <input
-                  type="tel"
+                  type="text"
                   className="form-control"
-                  placeholder="Enter your phone number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Enter your email or phone"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   required
                   autoFocus
                 />
@@ -110,7 +110,7 @@ function LoginForm() {
 
             <button
               type="submit"
-              disabled={loading || phone.length < 10}
+              disabled={loading || identifier.length < 5}
               className="btn btn-lg d-block w-100 solid-btn border-radius mt-4 mb-3"
             >
               {loading ? "Sending OTP..." : "Send OTP"}
@@ -138,7 +138,7 @@ function LoginForm() {
                 />
               </div>
               <small className="form-text text-muted mt-2">
-                We sent a 6-digit code to {phone}
+                We sent a 6-digit code to <strong>{identifier}</strong>. Please enter it below.
               </small>
             </div>
 

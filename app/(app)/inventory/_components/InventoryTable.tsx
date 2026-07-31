@@ -1,8 +1,11 @@
 "use client";
 
-import { Package, Search, Filter } from "lucide-react";
+import { useState } from "react";
+import { Package, Search, Filter, Printer } from "lucide-react";
+import { PrintBarcodeModal } from "./PrintBarcodeModal";
 
 export function InventoryTable({ items }: { items: any[] }) {
+  const [printItem, setPrintItem] = useState<any>(null);
   if (!items || items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white p-12 text-center">
@@ -46,6 +49,7 @@ export function InventoryTable({ items }: { items: any[] }) {
               <th className="px-4 py-3 font-medium text-right">Sale Price</th>
               <th className="px-4 py-3 font-medium text-right">Stock</th>
               <th className="px-4 py-3 font-medium text-center">Status</th>
+              <th className="px-4 py-3 font-medium text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -79,6 +83,15 @@ export function InventoryTable({ items }: { items: any[] }) {
                     </span>
                   )}
                 </td>
+                <td className="px-4 py-3 text-right">
+                  <button 
+                    onClick={() => setPrintItem(item)}
+                    className="p-1.5 text-gray-400 hover:text-black hover:bg-gray-100 rounded-lg transition-colors"
+                    title="Print Barcode Labels"
+                  >
+                    <Printer className="w-4 h-4" />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -89,6 +102,12 @@ export function InventoryTable({ items }: { items: any[] }) {
       <div className="border-t border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-500 flex justify-between items-center">
         <span>Showing {items.length} items</span>
       </div>
+
+      <PrintBarcodeModal 
+        isOpen={!!printItem} 
+        onClose={() => setPrintItem(null)} 
+        item={printItem} 
+      />
     </div>
   );
 }

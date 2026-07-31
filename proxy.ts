@@ -9,9 +9,13 @@ const JWT_SECRET = new TextEncoder().encode(
 // Routes that require authentication
 const protectedPaths = [
   "/dashboard",
+  "/inventory",
   "/invoices",
+  "/parties",
   "/clients",
+  "/expenses",
   "/settings",
+  "/reports"
 ];
 
 // Routes that should redirect to dashboard if already authenticated

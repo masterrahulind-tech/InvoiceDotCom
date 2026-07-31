@@ -12,7 +12,7 @@ function SignupForm() {
 
   const [step, setStep] = useState<Step>("details");
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [otp, setOtp] = useState("");
   const [devOtp, setDevOtp] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ function SignupForm() {
       const res = await fetch("/api/auth/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, name }),
+        body: JSON.stringify({ identifier, name }),
       });
 
       const data = await res.json();
@@ -58,7 +58,7 @@ function SignupForm() {
       const res = await fetch("/api/auth/otp/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, otp, name }),
+        body: JSON.stringify({ identifier, otp, name }),
       });
 
       const data = await res.json();
@@ -107,17 +107,17 @@ function SignupForm() {
             </div>
 
             <div className="form-group mb-3">
-              <label className="pb-1">Phone Number</label>
+              <label className="pb-1">Email or Phone Number</label>
               <div className="input-group input-group-merge">
                 <div className="input-icon">
-                  <span className="ti-mobile color-primary"></span>
+                  <span className="ti-user color-primary"></span>
                 </div>
                 <input
-                  type="tel"
+                  type="text"
                   className="form-control"
-                  placeholder="Enter your phone number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                  placeholder="Enter your email or phone"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   required
                 />
               </div>
@@ -136,7 +136,7 @@ function SignupForm() {
 
             <button
               type="submit"
-              disabled={loading || phone.length < 10 || !name}
+              disabled={loading || identifier.length < 5 || !name}
               className="btn btn-lg d-block w-100 solid-btn border-radius mt-4 mb-3"
             >
               {loading ? "Sending OTP..." : "Sign up"}
@@ -164,7 +164,7 @@ function SignupForm() {
                 />
               </div>
               <small className="form-text text-muted mt-2">
-                We sent a 6-digit code to {phone}
+                We sent a 6-digit code to <strong>{identifier}</strong>
               </small>
             </div>
 

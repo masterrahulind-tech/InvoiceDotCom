@@ -1,23 +1,38 @@
 "use client";
 
-import { useState } from "react";
-import { X, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Check, Camera } from "lucide-react";
+import { usePhysicalBarcodeScanner } from "@/lib/usePhysicalBarcodeScanner";
+import { BarcodeScannerModal } from "@/components/BarcodeScannerModal";
 
 export function AddItemModal({
   isOpen,
   onClose,
   onSuccess,
+  initialSku,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  initialSku?: string;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showScannerModal, setShowScannerModal] = useState(false);
+
+  // Physical Barcode Scanner support for SKU
+  usePhysicalBarcodeScanner((barcode) => {
+    if (isOpen) {
+      setFormData(prev => ({ ...prev, sku: barcode }));
+      if (showScannerModal) {
+        setShowScannerModal(false);
+      }
+    }
+  }, isOpen);
 
   const [formData, setFormData] = useState({
     name: "",
-    sku: "",
+    sku: initialSku || "",
     category: "General",
     unit: "Pcs",
     hsnCode: "",
@@ -27,6 +42,13 @@ export function AddItemModal({
     stockQty: "0",
     lowStockThreshold: "10",
   });
+
+  // When initialSku changes or modal opens, update sku
+  useEffect(() => {
+    if (isOpen && initialSku) {
+      setFormData(prev => ({ ...prev, sku: initialSku }));
+    }
+  }, [isOpen, initialSku]);
 
   if (!isOpen) return null;
 
@@ -116,14 +138,24 @@ export function AddItemModal({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">SKU / Code</label>
-                <input
-                  name="sku"
-                  value={formData.sku}
-                  onChange={handleChange}
-                  type="text"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
-                  placeholder="e.g. IPH15"
-                />
+                <div className="flex gap-2">
+                  <input
+                    name="sku"
+                    value={formData.sku}
+                    onChange={handleChange}
+                    type="text"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
+                    placeholder="e.g. IPH15"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowScannerModal(true)}
+                    className="px-3 py-2 rounded-md border border-gray-300 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors flex items-center justify-center flex-shrink-0"
+                    title="Scan Barcode"
+                  >
+                    <Camera className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">Category</label>
@@ -246,6 +278,16 @@ export function AddItemModal({
           </button>
         </div>
       </div>
+
+      {showScannerModal && (
+        <BarcodeScannerModal 
+          onClose={() => setShowScannerModal(false)}
+          onScan={(barcode) => {
+            setFormData(prev => ({ ...prev, sku: barcode }));
+            setShowScannerModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

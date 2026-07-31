@@ -16,12 +16,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { phone, otp, name } = parsed.data;
+    const { identifier, otp, name } = parsed.data;
 
-    // Find the most recent unverified OTP for this phone
+    // Find the most recent unverified OTP for this identifier
     const otpRecord = await prisma.otpToken.findFirst({
       where: {
-        phone,
+        identifier,
         verified: false,
         expiresAt: { gt: new Date() },
       },
@@ -50,9 +50,12 @@ export async function POST(request: NextRequest) {
       data: { verified: true },
     });
 
+    const isEmail = identifier.includes("@");
+    const whereClause = isEmail ? { email: identifier } : { phone: identifier };
+
     // Find or create user
-    let user = await prisma.user.findUnique({
-      where: { phone },
+    let user = await prisma.user.findFirst({
+      where: whereClause,
     });
 
     const isNewUser = !user;
@@ -61,7 +64,8 @@ export async function POST(request: NextRequest) {
       // Create new user (signup flow)
       user = await prisma.user.create({
         data: {
-          phone,
+          email: isEmail ? identifier : null,
+          phone: !isEmail ? identifier : null,
           name: name || "User",
         },
       });
@@ -70,7 +74,7 @@ export async function POST(request: NextRequest) {
     // Create JWT session
     const token = await createSession({
       id: user.id,
-      phone: user.phone,
+      phone: user.phone || "",
       name: user.name,
     });
 
@@ -80,6 +84,7 @@ export async function POST(request: NextRequest) {
       user: {
         id: user.id,
         phone: user.phone,
+        email: user.email,
         name: user.name,
       },
       isNewUser,
