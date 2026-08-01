@@ -68,10 +68,10 @@ export async function POST(request: NextRequest) {
       success: true,
       user: { id: user.id, name: user.name },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Signup error:", error);
     return NextResponse.json(
-      { error: "Failed to create account" },
+      { error: "Failed to create account", details: error?.message || String(error) },
       { status: 500 }
     );
   }
