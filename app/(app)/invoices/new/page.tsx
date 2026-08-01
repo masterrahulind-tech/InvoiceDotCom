@@ -14,7 +14,7 @@ import {
   Camera
 } from "lucide-react";
 import { usePhysicalBarcodeScanner } from "@/lib/usePhysicalBarcodeScanner";
-import { BarcodeScannerModal } from "@/components/BarcodeScannerModal";
+import { useScannerStore } from "@/lib/store/useScannerStore";
 
 function InvoiceBuilderForm() {
   const router = useRouter();
@@ -24,8 +24,7 @@ function InvoiceBuilderForm() {
   const [parties, setParties] = useState<any[]>([]);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showScannerModal, setShowScannerModal] = useState(false);
-
+  const openScanner = useScannerStore(s => s.openScanner);
   // Form State
   const [selectedClientId, setSelectedClientId] = useState(preselectedClientId);
   const [billingType, setBillingType] = useState<"B2B" | "B2C" | "EXPORT">("B2B");
@@ -327,7 +326,7 @@ function InvoiceBuilderForm() {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setShowScannerModal(true)}
+              onClick={() => openScanner(handleBarcodeScan)}
               className="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-[#6730e3] hover:bg-[#f8f9fa] border border-[#e0d5ff] flex items-center gap-1 shadow-sm transition-all"
             >
               <Camera className="w-3.5 h-3.5" /> Scan Barcode
@@ -574,16 +573,6 @@ function InvoiceBuilderForm() {
           </div>
         </div>
       </div>
-
-      {showScannerModal && (
-        <BarcodeScannerModal
-          onClose={() => setShowScannerModal(false)}
-          onScan={(barcode) => {
-            handleBarcodeScan(barcode);
-            setShowScannerModal(false);
-          }}
-        />
-      )}
     </form>
   );
 }

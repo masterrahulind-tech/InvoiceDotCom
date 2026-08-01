@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { BulkUploadModal } from "./BulkUploadModal";
 import { usePhysicalBarcodeScanner } from "@/lib/usePhysicalBarcodeScanner";
-import { BarcodeScannerModal } from "@/components/BarcodeScannerModal";
+import { useScannerStore } from "@/lib/store/useScannerStore";
 
 export function InventoryView() {
   const [items, setItems] = useState<any[]>([]);
@@ -32,7 +32,7 @@ export function InventoryView() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBulkUploadModal, setShowBulkUploadModal] = useState(false);
   const [showAdjustModal, setShowAdjustModal] = useState<any>(null); // item object when editing stock
-  const [showScannerModal, setShowScannerModal] = useState(false);
+  const openScanner = useScannerStore(s => s.openScanner);
 
   // Add Item Form State
   const [newItem, setNewItem] = useState({
@@ -52,13 +52,9 @@ export function InventoryView() {
   const [adjustQty, setAdjustQty] = useState("");
   const [adjustNotes, setAdjustNotes] = useState("");
 
-  // Physical Barcode Scanner
   usePhysicalBarcodeScanner((barcode) => {
     if (showAddModal) {
       setNewItem(prev => ({ ...prev, sku: barcode }));
-      if (showScannerModal) {
-        setShowScannerModal(false);
-      }
     } else if (!showAdjustModal && !showBulkUploadModal) {
       // If we are in the main view, search for the item
       const found = items.find(i => i.sku === barcode || i.id === barcode);
@@ -69,9 +65,6 @@ export function InventoryView() {
         // If not found, open the "Add New Item" modal prefilled with this barcode
         setNewItem(prev => ({ ...prev, sku: barcode }));
         setShowAddModal(true);
-      }
-      if (showScannerModal) {
-        setShowScannerModal(false);
       }
     }
   }, true); // Keep always active to support scanning from the main screen
@@ -223,7 +216,16 @@ export function InventoryView() {
             />
           </div>
           <button
-            onClick={() => setShowScannerModal(true)}
+            onClick={() => openScanner((barcode) => {
+              const found = items.find(i => i.sku === barcode || i.id === barcode);
+              if (found) {
+                setSearch(barcode);
+                setShowAdjustModal(found);
+              } else {
+                setNewItem(prev => ({ ...prev, sku: barcode }));
+                setShowAddModal(true);
+              }
+            })}
             className="px-3 py-2 rounded-xl text-[#6730e3] bg-[#6730e3]/10 hover:bg-[#6730e3]/20 transition-colors flex items-center justify-center flex-shrink-0"
             title="Scan Barcode to Search or Add"
           >
@@ -375,7 +377,9 @@ export function InventoryView() {
                     />
                     <button
                       type="button"
-                      onClick={() => setShowScannerModal(true)}
+                      onClick={() => openScanner((barcode) => {
+                        setNewItem(prev => ({ ...prev, sku: barcode }));
+                      })}
                       className="p-2.5 rounded-xl bg-[#f8f9fa] border border-[#e8ecf1] text-[#6730e3] hover:bg-[#6730e3] hover:text-white transition-colors flex-shrink-0"
                       title="Scan Barcode"
                     >
@@ -570,27 +574,6 @@ export function InventoryView() {
           onSuccess={() => {
             setShowBulkUploadModal(false);
             loadItems();
-          }}
-        />
-      )}
-      {/* Barcode Scanner Modal */}
-      {showScannerModal && (
-        <BarcodeScannerModal 
-          onClose={() => setShowScannerModal(false)}
-          onScan={(barcode) => {
-            if (showAddModal) {
-              setNewItem(prev => ({ ...prev, sku: barcode }));
-            } else {
-              const found = items.find(i => i.sku === barcode || i.id === barcode);
-              if (found) {
-                setSearch(barcode);
-                setShowAdjustModal(found);
-              } else {
-                setNewItem(prev => ({ ...prev, sku: barcode }));
-                setShowAddModal(true);
-              }
-            }
-            setShowScannerModal(false);
           }}
         />
       )}

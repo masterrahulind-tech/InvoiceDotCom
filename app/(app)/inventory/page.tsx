@@ -6,22 +6,21 @@ import { InventoryTable } from "./_components/InventoryTable";
 import { BulkImportModal } from "./_components/BulkImportModal";
 import { AddItemModal } from "./_components/AddItemModal";
 import { usePhysicalBarcodeScanner } from "@/lib/usePhysicalBarcodeScanner";
-import { BarcodeScannerModal } from "@/components/BarcodeScannerModal";
+import { useScannerStore } from "@/lib/store/useScannerStore";
 
 export default function InventoryPage() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [showScannerModal, setShowScannerModal] = useState(false);
+  const openScanner = useScannerStore(s => s.openScanner);
   const [scannedSku, setScannedSku] = useState("");
 
-  usePhysicalBarcodeScanner((barcode) => {
+  usePhysicalBarcodeScanner((barcode: string) => {
     if (!isAddModalOpen && !isBulkModalOpen) {
       // Just open add modal with the barcode
       setScannedSku(barcode);
       setIsAddModalOpen(true);
-      if (showScannerModal) setShowScannerModal(false);
     }
   }, true);
 
@@ -64,7 +63,10 @@ export default function InventoryPage() {
           </button>
           
           <button
-            onClick={() => setShowScannerModal(true)}
+            onClick={() => openScanner((barcode) => {
+              setScannedSku(barcode);
+              setIsAddModalOpen(true);
+            })}
             className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm"
             title="Scan Barcode to Add"
           >
@@ -108,17 +110,6 @@ export default function InventoryPage() {
           fetchItems();
         }}
       />
-      
-      {showScannerModal && (
-        <BarcodeScannerModal 
-          onClose={() => setShowScannerModal(false)}
-          onScan={(barcode) => {
-            setScannedSku(barcode);
-            setIsAddModalOpen(true);
-            setShowScannerModal(false);
-          }}
-        />
-      )}
     </div>
   );
 }

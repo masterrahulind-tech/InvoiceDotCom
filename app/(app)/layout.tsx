@@ -17,6 +17,7 @@ import {
   LogOut
 } from "lucide-react";
 import { CommandPalette } from "@/components/CommandPalette";
+import { GlobalBarcodeScanner } from "@/components/BarcodeScannerModal";
 
 export default function AppLayout({
   children,
@@ -290,6 +291,9 @@ export default function AppLayout({
 
       {/* Command Palette Overlay */}
       <CommandPalette />
+
+      {/* Global Barcode Scanner */}
+      <GlobalBarcodeScanner />
     </div>
   );
 }

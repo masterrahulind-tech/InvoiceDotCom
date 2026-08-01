@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { X, Check, Camera } from "lucide-react";
 import { usePhysicalBarcodeScanner } from "@/lib/usePhysicalBarcodeScanner";
-import { BarcodeScannerModal } from "@/components/BarcodeScannerModal";
+import { useScannerStore } from "@/lib/store/useScannerStore";
 
 export function AddItemModal({
   isOpen,
@@ -18,15 +18,12 @@ export function AddItemModal({
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showScannerModal, setShowScannerModal] = useState(false);
+  const openScanner = useScannerStore(s => s.openScanner);
 
   // Physical Barcode Scanner support for SKU
   usePhysicalBarcodeScanner((barcode) => {
     if (isOpen) {
       setFormData(prev => ({ ...prev, sku: barcode }));
-      if (showScannerModal) {
-        setShowScannerModal(false);
-      }
     }
   }, isOpen);
 
@@ -149,7 +146,9 @@ export function AddItemModal({
                   />
                   <button
                     type="button"
-                    onClick={() => setShowScannerModal(true)}
+                    onClick={() => openScanner((barcode) => {
+                      setFormData(prev => ({ ...prev, sku: barcode }));
+                    })}
                     className="px-3 py-2 rounded-md border border-gray-300 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors flex items-center justify-center flex-shrink-0"
                     title="Scan Barcode"
                   >
@@ -278,16 +277,6 @@ export function AddItemModal({
           </button>
         </div>
       </div>
-
-      {showScannerModal && (
-        <BarcodeScannerModal 
-          onClose={() => setShowScannerModal(false)}
-          onScan={(barcode) => {
-            setFormData(prev => ({ ...prev, sku: barcode }));
-            setShowScannerModal(false);
-          }}
-        />
-      )}
     </div>
   );
 }

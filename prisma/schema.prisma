@@ -1,14 +1,11 @@
-// InvoiceDotCom — Prisma Schema (Vyapar & Khatabook Style Upgrade)
-// Supports GST Billing, HSN/SAC, Inventory & Stock Movement, Khatabook Party Ledgers, Expenses
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
 }
 
 model User {
@@ -16,262 +13,244 @@ model User {
   phone            String?           @unique
   name             String
   email            String?           @unique
-  passwordHash     String?
-  systemRole       String            @default("USER") // USER | SUPER_ADMIN
   createdAt        DateTime          @default(now())
-  businessProfiles BusinessProfile[] // Legacy/Creator relation
+  systemRole       String            @default("USER")
+  passwordHash     String?
   businessMembers  BusinessMember[]
+  businessProfiles BusinessProfile[]
 }
 
 model OtpToken {
-  id        String   @id @default(uuid())
+  id         String   @id @default(uuid())
+  otpHash    String
+  expiresAt  DateTime
+  verified   Boolean  @default(false)
+  createdAt  DateTime @default(now())
   identifier String   @default("")
-  otpHash   String
-  expiresAt DateTime
-  verified  Boolean  @default(false)
-  createdAt DateTime @default(now())
 
   @@index([identifier])
 }
 
 model BusinessProfile {
-  id           String   @id @default(uuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id])
-  businessName String
-  businessType String   // individual | registered
-  vertical     String   // retail | real_estate | restaurant | school | freelance | healthcare | logistics | events | other
-  gstin        String?
-  pan          String?
-  stateCode    String?  @default("27") // Indian State Code (e.g. 27 = Maharashtra, 07 = Delhi)
-  address      String?
-  logoUrl      String?
-  signatureUrl String?
-  
-  // Global Localization
-  country      String?  @default("India")
-  currency     String?  @default("INR")
-  language     String?  @default("English")
-  timeZone     String?  @default("Asia/Kolkata")
-  taxSystem    String?  @default("GST")
-  
-  // Bank & UPI Details for Invoice
-  bankName      String?
-  bankAccountNo String?
-  ifscCode      String?
-  branchName    String?
-  upiId         String?
-
-  isVerified    Boolean  @default(false)
-  createdAt     DateTime @default(now())
-
-  subscription  TenantSubscription?
-
-  paymentMethods   PaymentMethod[]
-  clients          Client[]
-  items            Item[]
-  invoices         Invoice[]
-  expenses         Expense[]
+  id                String              @id @default(uuid())
+  userId            String
+  businessName      String
+  businessType      String
+  vertical          String
+  gstin             String?
+  pan               String?
+  stateCode         String?             @default("27")
+  address           String?
+  logoUrl           String?
+  signatureUrl      String?
+  country           String?             @default("India")
+  currency          String?             @default("INR")
+  language          String?             @default("English")
+  timeZone          String?             @default("Asia/Kolkata")
+  taxSystem         String?             @default("GST")
+  bankName          String?
+  bankAccountNo     String?
+  ifscCode          String?
+  branchName        String?
+  upiId             String?
+  createdAt         DateTime            @default(now())
+  isVerified        Boolean             @default(false)
+  branches          Branch[]
+  members           BusinessMember[]
+  user              User                @relation(fields: [userId], references: [id])
+  clients           Client[]
+  expenses          Expense[]
+  invoices          Invoice[]
+  items             Item[]
   partyTransactions PartyTransaction[]
-  
-  members          BusinessMember[]
-  branches         Branch[]
+  paymentMethods    PaymentMethod[]
+  subscription      TenantSubscription?
 }
 
 model SubscriptionPlan {
-  id              String   @id @default(uuid())
-  name            String   // Free, Starter, Professional, Enterprise
-  priceMonthly    Float
-  priceYearly     Float
-  features        String   // JSON string of features
-  active          Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  
-  subscriptions   TenantSubscription[]
+  id            String               @id @default(uuid())
+  name          String
+  priceMonthly  Float
+  priceYearly   Float
+  features      String
+  active        Boolean              @default(true)
+  createdAt     DateTime             @default(now())
+  subscriptions TenantSubscription[]
 }
 
 model TenantSubscription {
-  id                String          @id @default(uuid())
-  businessProfileId String          @unique
-  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id], onDelete: Cascade)
+  id                String           @id @default(uuid())
+  businessProfileId String           @unique
   planId            String
-  plan              SubscriptionPlan @relation(fields: [planId], references: [id])
-  status            String          @default("active") // active | past_due | canceled | trialing
+  status            String           @default("active")
   currentPeriodEnd  DateTime?
-  cancelAtPeriodEnd Boolean         @default(false)
-  createdAt         DateTime        @default(now())
+  cancelAtPeriodEnd Boolean          @default(false)
+  createdAt         DateTime         @default(now())
+  businessProfile   BusinessProfile  @relation(fields: [businessProfileId], references: [id], onDelete: Cascade)
+  plan              SubscriptionPlan @relation(fields: [planId], references: [id])
 }
 
 model BusinessMember {
   id                String          @id @default(uuid())
   userId            String
-  user              User            @relation(fields: [userId], references: [id])
   businessProfileId String
-  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
-  role              String          @default("STAFF") // OWNER | ADMIN | MANAGER | CASHIER | STAFF
+  role              String          @default("STAFF")
   branchId          String?
-  branch            Branch?         @relation(fields: [branchId], references: [id])
-  status            String          @default("ACTIVE") // INVITED | ACTIVE
+  status            String          @default("ACTIVE")
   createdAt         DateTime        @default(now())
-  
+  branch            Branch?         @relation(fields: [branchId], references: [id])
+  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
+  user              User            @relation(fields: [userId], references: [id])
+
   @@unique([userId, businessProfileId])
 }
 
 model Branch {
-  id                String          @id @default(uuid())
+  id                String             @id @default(uuid())
   businessProfileId String
-  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
   name              String
   address           String?
   phone             String?
   gstin             String?
-  isMain            Boolean         @default(false)
-  createdAt         DateTime        @default(now())
-  
+  isMain            Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  businessProfile   BusinessProfile    @relation(fields: [businessProfileId], references: [id])
   members           BusinessMember[]
-  items             Item[]
-  invoices          Invoice[]
   expenses          Expense[]
+  invoices          Invoice[]
+  items             Item[]
   partyTransactions PartyTransaction[]
 }
 
 model PaymentMethod {
   id                String          @id @default(uuid())
   businessProfileId String
-  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
-  type              String          // upi | bank | qr_upload | gateway_link
-  value             String          // upi id, bank details JSON string, image url, or link
+  type              String
+  value             String
   isDefault         Boolean         @default(false)
+  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
 }
 
 model Client {
-  id                String          @id @default(uuid())
+  id                String             @id @default(uuid())
   businessProfileId String
-  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
   name              String
-  partyType         String          @default("customer") // customer | supplier | both
+  partyType         String             @default("customer")
   phone             String?
   email             String?
   address           String?
   gstin             String?
-  stateCode         String?         @default("27")
-  openingBalance    Float           @default(0)
-  balanceType       String          @default("receivable") // receivable ("You'll get") | payable ("You'll give")
+  stateCode         String?            @default("27")
+  openingBalance    Float              @default(0)
+  balanceType       String             @default("receivable")
   creditLimit       Float?
-  createdAt         DateTime        @default(now())
-
+  createdAt         DateTime           @default(now())
+  businessProfile   BusinessProfile    @relation(fields: [businessProfileId], references: [id])
   invoices          Invoice[]
   partyTransactions PartyTransaction[]
 }
 
 model Item {
-  id                String          @id @default(uuid())
+  id                String            @id @default(uuid())
   businessProfileId String
-  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
   sku               String?
   name              String
-  category          String?         @default("General")
-  unit              String          @default("Pcs") // Pcs, Kg, Box, Mtr, Ltr, Set
-  hsnCode           String?         @default("8517")
-  salePrice         Float           @default(0)
-  purchasePrice     Float           @default(0)
-  taxRate           Float           @default(18) // GST tax slab % (0, 5, 12, 18, 28)
-  stockQty          Float           @default(0)
-  lowStockThreshold Float           @default(10)
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-
+  category          String?           @default("General")
+  unit              String            @default("Pcs")
+  hsnCode           String?           @default("8517")
+  salePrice         Float             @default(0)
+  purchasePrice     Float             @default(0)
+  taxRate           Float             @default(18)
+  stockQty          Float             @default(0)
+  lowStockThreshold Float             @default(10)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
   branchId          String?
-  branch            Branch?         @relation(fields: [branchId], references: [id])
-
-  stockMovements StockMovement[]
-  lineItems      InvoiceLineItem[]
+  lineItems         InvoiceLineItem[]
+  branch            Branch?           @relation(fields: [branchId], references: [id])
+  businessProfile   BusinessProfile   @relation(fields: [businessProfileId], references: [id])
+  stockMovements    StockMovement[]
 }
 
 model StockMovement {
   id           String   @id @default(uuid())
   itemId       String
-  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  changeQty    Float    // positive for restock/purchase, negative for sale
-  movementType String   // sale | purchase | adjustment
-  referenceId  String?  // invoiceId or billId
+  changeQty    Float
+  movementType String
+  referenceId  String?
   notes        String?
   createdAt    DateTime @default(now())
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
 
 model Expense {
   id                String          @id @default(uuid())
   businessProfileId String
-  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
-  category          String          // Rent, Utility, Salary, Transport, Office, Maintenance, Purchase, Other
+  category          String
   amount            Float
-  taxAmount         Float           @default(0) // Input GST
+  taxAmount         Float           @default(0)
   vendorName        String?
   gstin             String?
-  paymentMode       String          @default("cash") // cash | bank | upi
+  paymentMode       String          @default("cash")
   date              DateTime        @default(now())
   notes             String?
   createdAt         DateTime        @default(now())
-
   branchId          String?
   branch            Branch?         @relation(fields: [branchId], references: [id])
+  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
 }
 
 model InvoiceTemplate {
   id         String    @id @default(uuid())
   name       String
   vertical   String
-  schemaJson String    // JSON string
+  schemaJson String
   invoices   Invoice[]
 }
 
 model Invoice {
-  id                String           @id @default(uuid())
+  id                String               @id @default(uuid())
   invoiceNo         String
   businessProfileId String
-  businessProfile   BusinessProfile  @relation(fields: [businessProfileId], references: [id])
   clientId          String
-  client            Client           @relation(fields: [clientId], references: [id])
   templateId        String?
-  template          InvoiceTemplate? @relation(fields: [templateId], references: [id])
-  documentType      String           @default("INVOICE") // INVOICE | QUOTATION | PROFORMA | CHALLAN
-  billingType       String           @default("B2B") // B2B | B2C | EXPORT
-  placeOfSupply     String?          @default("27")
-  status            String           @default("draft") // draft | pending | partially_paid | paid | overdue | refunded
-  taxableAmount     Float            @default(0)
-  cgstAmount        Float            @default(0)
-  sgstAmount        Float            @default(0)
-  igstAmount        Float            @default(0)
-  discountAmount    Float            @default(0)
+  documentType      String               @default("INVOICE")
+  billingType       String               @default("B2B")
+  placeOfSupply     String?              @default("27")
+  status            String               @default("draft")
+  taxableAmount     Float                @default(0)
+  cgstAmount        Float                @default(0)
+  sgstAmount        Float                @default(0)
+  igstAmount        Float                @default(0)
+  discountAmount    Float                @default(0)
   totalAmount       Float
-  paidAmount        Float            @default(0)
-  currency          String           @default("INR")
+  paidAmount        Float                @default(0)
+  currency          String               @default("INR")
   dueDate           DateTime?
-  publicToken       String           @unique @default(uuid())
+  publicToken       String               @unique @default(uuid())
   notes             String?
-  terms             String?          @default("Payment due within 15 days of invoice date.")
+  terms             String?              @default("Payment due within 15 days of invoice date.")
   vehicleNo         String?
   ewayBillNo        String?
-  transportMode     String?          @default("road") // road | rail | air | ship
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-
+  transportMode     String?              @default("road")
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
   branchId          String?
-  branch            Branch?          @relation(fields: [branchId], references: [id])
-
-  lineItems         InvoiceLineItem[]
-  customFields      InvoiceCustomField[]
-  payments          Payment[]
-  partyTransactions PartyTransaction[]
   activityLogs      ActivityLog[]
+  branch            Branch?              @relation(fields: [branchId], references: [id])
+  businessProfile   BusinessProfile      @relation(fields: [businessProfileId], references: [id])
+  client            Client               @relation(fields: [clientId], references: [id])
+  template          InvoiceTemplate?     @relation(fields: [templateId], references: [id])
+  customFields      InvoiceCustomField[]
+  lineItems         InvoiceLineItem[]
+  partyTransactions PartyTransaction[]
+  payments          Payment[]
 }
 
 model InvoiceLineItem {
   id              String  @id @default(uuid())
   invoiceId       String
-  invoice         Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   itemId          String?
-  item            Item?   @relation(fields: [itemId], references: [id])
   description     String
   hsnCode         String? @default("8517")
   qty             Float
@@ -283,51 +262,52 @@ model InvoiceLineItem {
   sgstAmount      Float   @default(0)
   igstAmount      Float   @default(0)
   amount          Float
+  invoice         Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  item            Item?   @relation(fields: [itemId], references: [id])
 }
 
 model InvoiceCustomField {
   id         String  @id @default(uuid())
   invoiceId  String
-  invoice    Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   fieldKey   String
   fieldValue String
+  invoice    Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 }
 
 model Payment {
   id             String   @id @default(uuid())
   invoiceId      String
-  invoice        Invoice  @relation(fields: [invoiceId], references: [id])
   amount         Float
-  mode           String   // upi | bank | cash | gateway
+  mode           String
   transactionRef String?
-  status         String   // success | pending | failed
+  status         String
   paidAt         DateTime @default(now())
+  invoice        Invoice  @relation(fields: [invoiceId], references: [id])
 }
 
 model PartyTransaction {
   id                String          @id @default(uuid())
   businessProfileId String
-  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
   clientId          String
-  client            Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  type              String          // GAVE (Udhaar/Debit) | GOT (Payment Received/Credit)
+  type              String
   amount            Float
-  paymentMode       String          @default("cash") // cash | upi | bank | cheque
+  paymentMode       String          @default("cash")
   invoiceId         String?
-  invoice           Invoice?        @relation(fields: [invoiceId], references: [id])
   notes             String?
   date              DateTime        @default(now())
   createdAt         DateTime        @default(now())
-
   branchId          String?
   branch            Branch?         @relation(fields: [branchId], references: [id])
+  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
+  client            Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  invoice           Invoice?        @relation(fields: [invoiceId], references: [id])
 }
 
 model ActivityLog {
   id        String   @id @default(uuid())
   invoiceId String
-  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
-  action    String   // viewed | paid | commented | signed | reminder_sent
-  actor     String?  // "sender" | "recipient"
+  action    String
+  actor     String?
   timestamp DateTime @default(now())
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
 }

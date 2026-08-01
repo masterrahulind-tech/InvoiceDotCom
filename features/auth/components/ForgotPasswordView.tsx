@@ -13,7 +13,6 @@ function ForgotPasswordForm() {
   const [identifier, setIdentifier] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [devOtp, setDevOtp] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,10 +33,6 @@ function ForgotPasswordForm() {
       if (!res.ok) {
         setError(data.error || "Failed to send OTP");
         return;
-      }
-
-      if (data.dev_otp) {
-        setDevOtp(data.dev_otp);
       }
 
       setStep("reset");
@@ -140,12 +135,6 @@ function ForgotPasswordForm() {
               </small>
             </div>
 
-            {devOtp && (
-              <div className="alert alert-warning py-2 mb-3">
-                <small className="mb-0 fw-bold">Dev Mode OTP: {devOtp}</small>
-              </div>
-            )}
-
             <div className="form-group mb-3">
               <label className="pb-1">New Password</label>
               <div className="input-group input-group-merge">
@@ -181,7 +170,6 @@ function ForgotPasswordForm() {
                 setOtp("");
                 setNewPassword("");
                 setError(null);
-                setDevOtp(null);
               }}
               className="btn btn-link text-muted p-0 border-0"
               style={{ fontSize: "0.85rem" }}

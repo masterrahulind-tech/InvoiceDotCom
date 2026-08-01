@@ -58,16 +58,41 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // In production, send OTP via SMS (Twilio/MSG91) or Email (Resend/SendGrid)
-    // For local dev, log the OTP to console
-    console.log(`[DEV] OTP for ${identifier}: ${otp}`);
+    // Send email using Resend if an API key is available
+    const resendApiKey = process.env.RESEND_API_KEY || process.env.EMAIL_PROVIDER_API_KEY;
+    
+    if (resendApiKey && identifier.includes("@")) {
+      const { Resend } = require("resend");
+      const resend = new Resend(resendApiKey);
+      
+      try {
+        await resend.emails.send({
+          from: 'InvoiceDotCom <onboarding@resend.dev>',
+          to: identifier,
+          subject: 'Your Password Reset OTP',
+          html: `
+            <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #e8ecf1; border-radius: 12px;">
+              <h2 style="color: #1f2029; margin-top: 0;">Password Reset Request</h2>
+              <p style="color: #6c757d; font-size: 15px;">You have requested to reset your password. Please use the following One-Time Password (OTP) to proceed.</p>
+              
+              <div style="background: #f4f7fa; padding: 15px; border-radius: 8px; text-align: center; margin: 25px 0;">
+                <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #6730e3;">${otp}</span>
+              </div>
+              
+              <p style="color: #6c757d; font-size: 14px;">This code will expire in 5 minutes. If you did not request this, please ignore this email.</p>
+            </div>
+          `,
+        });
+      } catch (err) {
+        console.error("Failed to send OTP email via Resend:", err);
+      }
+    } else {
+      console.log(`[DEV ONLY - NO API KEY] OTP for ${identifier}: ${otp}`);
+    }
 
     return NextResponse.json({
       success: true,
       message: "OTP sent successfully",
-      // TEMPORARY: Include OTP in response even in production so user can test the live Vercel site
-      // without setting up Twilio/SendGrid yet.
-      dev_otp: otp,
     });
   } catch (error) {
     console.error("OTP send error:", error);
