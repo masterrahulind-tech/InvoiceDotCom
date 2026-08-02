@@ -421,14 +421,16 @@ export function DashboardView() {
               <p style={{ fontSize: 13, color: "#999", textAlign: "center", padding: "24px 0" }}>No pending customer debts.</p>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {stats.topParties.map((party: any) => (
+                {stats.topParties.map((party: any) => {
+                  const isPayable = party.balanceStatus === "payable";
+                  return (
                   <div
                     key={party.id}
                     style={{
                       padding: "12px 14px",
                       borderRadius: 12,
-                      background: "#f9faf9",
-                      border: "1px solid #e8f5e9",
+                      background: isPayable ? "#fff5f5" : "#f9faf9",
+                      border: isPayable ? "1px solid #ffebee" : "1px solid #e8f5e9",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
@@ -436,16 +438,16 @@ export function DashboardView() {
                   >
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 700, color: "#333" }}>{party.name}</div>
-                      <div style={{ fontSize: 11, fontWeight: 600, color: "#2e7d32", marginTop: 2 }}>
-                        You Get: ₹{party.calculatedBalance.toLocaleString("en-IN")}
+                      <div style={{ fontSize: 11, fontWeight: 600, color: isPayable ? "#d32f2f" : "#2e7d32", marginTop: 2 }}>
+                        {isPayable ? "You Give:" : "You Get:"} ₹{party.calculatedBalance.toLocaleString("en-IN")}
                       </div>
                     </div>
                     {party.phone && (
                       <a
                         href={`https://wa.me/${party.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
-                          `Hello ${party.name}, your total outstanding balance at Apex Digital Solutions is ₹${party.calculatedBalance.toLocaleString(
-                            "en-IN"
-                          )}. Kindly settle your dues. Thank you!`
+                          isPayable 
+                            ? `Hello ${party.name}, we owe you a refund of ₹${party.calculatedBalance.toLocaleString("en-IN")}. We will process this shortly.`
+                            : `Hello ${party.name}, your total outstanding balance at Apex Digital Solutions is ₹${party.calculatedBalance.toLocaleString("en-IN")}. Kindly settle your dues. Thank you!`
                         )}`}
                         target="_blank"
                         rel="noreferrer"
@@ -468,7 +470,8 @@ export function DashboardView() {
                       </a>
                     )}
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </DashCard>
