@@ -99,7 +99,7 @@ export function DashboardView() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* ═══════ Welcome Banner ═══════ */}
+      {/* â•â•â•â•â•â•â• Welcome Banner â•â•â•â•â•â•â• */}
       <div
         style={{
           position: "relative",
@@ -218,11 +218,11 @@ export function DashboardView() {
         </div>
       </div>
 
-      {/* ═══════ KPI Cards Grid ═══════ */}
+      {/* â•â•â•â•â•â•â• KPI Cards Grid â•â•â•â•â•â•â• */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard
           label="Total GST Sales"
-          value={`₹${stats.totalSales.toLocaleString("en-IN")}`}
+          value={`â‚¹${stats.totalSales.toLocaleString("en-IN")}`}
           icon={<Receipt className="w-[18px] h-[18px]" />}
           iconBg="#f3f0ff"
           iconColor="#6730e3"
@@ -230,17 +230,17 @@ export function DashboardView() {
           sub={
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 4, fontSize: 11, color: "#999", marginTop: 4 }}>
               <span style={{ color: "#2e7d32", fontWeight: 600, display: "flex", alignItems: "center" }}>
-                <ArrowUpRight className="w-3 h-3" style={{ marginRight: 2 }} /> ₹{stats.paidSales.toLocaleString("en-IN")} Paid
+                <ArrowUpRight className="w-3 h-3" style={{ marginRight: 2 }} /> â‚¹{stats.paidSales.toLocaleString("en-IN")} Paid
               </span>
-              <span className="hidden sm:inline">•</span>
-              <span style={{ color: "#ed6c02" }}>₹{stats.pendingSales.toLocaleString("en-IN")} Pending</span>
+              <span className="hidden sm:inline">â€¢</span>
+              <span style={{ color: "#ed6c02" }}>â‚¹{stats.pendingSales.toLocaleString("en-IN")} Pending</span>
             </div>
           }
         />
 
         <KpiCard
           label="You Will Get (Udhaar)"
-          value={`₹${stats.receivableBalance.toLocaleString("en-IN")}`}
+          value={`â‚¹${stats.receivableBalance.toLocaleString("en-IN")}`}
           icon={<ArrowDownLeft className="w-[18px] h-[18px]" />}
           iconBg="#e8f5e9"
           iconColor="#2e7d32"
@@ -252,7 +252,7 @@ export function DashboardView() {
 
         <KpiCard
           label="You Will Give"
-          value={`₹${stats.payableBalance.toLocaleString("en-IN")}`}
+          value={`â‚¹${stats.payableBalance.toLocaleString("en-IN")}`}
           icon={<ArrowUpRight className="w-[18px] h-[18px]" />}
           iconBg="#fce4ec"
           iconColor="#c62828"
@@ -264,7 +264,7 @@ export function DashboardView() {
 
         <KpiCard
           label="Stock Valuation"
-          value={`₹${stats.inventoryValue.toLocaleString("en-IN")}`}
+          value={`â‚¹${stats.inventoryValue.toLocaleString("en-IN")}`}
           icon={<Package className="w-[18px] h-[18px]" />}
           iconBg="#fff3e0"
           iconColor="#e65100"
@@ -294,7 +294,7 @@ export function DashboardView() {
         />
       </div>
 
-      {/* ═══════ Main Content Grid ═══════ */}
+      {/* â•â•â•â•â•â•â• Main Content Grid â•â•â•â•â•â•â• */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 20 }} className="lg:!grid-cols-[2fr_1fr]">
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <DashCard
@@ -334,7 +334,7 @@ export function DashboardView() {
                           {inv.client?.name || "Client"}
                         </td>
                         <td className="whitespace-nowrap" style={{ padding: "12px 8px", fontWeight: 700, color: "#1f2029" }}>
-                          ₹{inv.totalAmount.toLocaleString("en-IN")}
+                          â‚¹{inv.totalAmount.toLocaleString("en-IN")}
                         </td>
                         <td className="whitespace-nowrap" style={{ padding: "12px 8px" }}>
                           <StatusBadge status={inv.status} />
@@ -344,7 +344,7 @@ export function DashboardView() {
                             href={`/invoices/${inv.id}`}
                             style={{ fontSize: 12, fontWeight: 700, color: "#6730e3", textDecoration: "none" }}
                           >
-                            View →
+                            View â†’
                           </Link>
                         </td>
                       </tr>
@@ -385,7 +385,7 @@ export function DashboardView() {
               <div>
                 <span style={{ fontSize: 11, fontWeight: 600, color: "#999", textTransform: "uppercase" }}>Recorded Expenses</span>
                 <div style={{ fontSize: 20, fontWeight: 800, color: "#1f2029", fontFamily: "var(--font-montserrat)" }}>
-                  ₹{stats.totalExpenses.toLocaleString("en-IN")}
+                  â‚¹{stats.totalExpenses.toLocaleString("en-IN")}
                 </div>
               </div>
             </div>
@@ -437,13 +437,13 @@ export function DashboardView() {
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 700, color: "#333" }}>{party.name}</div>
                       <div style={{ fontSize: 11, fontWeight: 600, color: "#2e7d32", marginTop: 2 }}>
-                        You Get: ₹{party.calculatedBalance.toLocaleString("en-IN")}
+                        You Get: â‚¹{party.calculatedBalance.toLocaleString("en-IN")}
                       </div>
                     </div>
                     {party.phone && (
                       <a
                         href={`https://wa.me/${party.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
-                          `Hello ${party.name}, your total outstanding balance at Apex Digital Solutions is ₹${party.calculatedBalance.toLocaleString(
+                          `Hello ${party.name}, your total outstanding balance at Apex Digital Solutions is â‚¹${party.calculatedBalance.toLocaleString(
                             "en-IN"
                           )}. Kindly settle your dues. Thank you!`
                         )}`}
