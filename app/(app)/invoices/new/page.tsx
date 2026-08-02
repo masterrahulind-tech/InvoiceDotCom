@@ -280,8 +280,7 @@ function InvoiceBuilderForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedClientId) {
-      alert("Please select a Client/Party from the dropdown to generate this invoice. If it's a new client, you can add them from the dropdown menu.");
-      document.getElementById('client-select')?.focus();
+      setShowClientModal(true);
       return;
     }
 
