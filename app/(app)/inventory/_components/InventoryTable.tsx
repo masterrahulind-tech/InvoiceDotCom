@@ -6,6 +6,8 @@ import { PrintBarcodeModal } from "./PrintBarcodeModal";
 
 export function InventoryTable({ items, onEdit, onDelete }: { items: any[], onEdit?: (item: any) => void, onDelete?: (item: any) => void }) {
   const [printItem, setPrintItem] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  
   if (!items || items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white p-12 text-center">
@@ -29,6 +31,8 @@ export function InventoryTable({ items, onEdit, onDelete }: { items: any[], onEd
           <input 
             type="text" 
             placeholder="Search items..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="h-9 w-full rounded-md border border-gray-300 pl-9 pr-3 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
@@ -53,7 +57,16 @@ export function InventoryTable({ items, onEdit, onDelete }: { items: any[], onEd
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {items.map((item) => (
+            {items
+              .filter(item => {
+                const query = searchQuery.toLowerCase();
+                return (
+                  item.name?.toLowerCase().includes(query) ||
+                  item.sku?.toLowerCase().includes(query) ||
+                  item.category?.toLowerCase().includes(query)
+                );
+              })
+              .map((item) => (
               <tr key={item.id} className="hover:bg-gray-50/50">
                 <td className="px-4 py-3">
                   <div className="font-medium text-gray-900">{item.name}</div>
@@ -120,7 +133,16 @@ export function InventoryTable({ items, onEdit, onDelete }: { items: any[], onEd
       
       {/* Footer / Pagination stub */}
       <div className="border-t border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-500 flex justify-between items-center">
-        <span>Showing {items.length} items</span>
+        <span>
+          Showing {items.filter(item => {
+            const query = searchQuery.toLowerCase();
+            return (
+              item.name?.toLowerCase().includes(query) ||
+              item.sku?.toLowerCase().includes(query) ||
+              item.category?.toLowerCase().includes(query)
+            );
+          }).length} items {searchQuery ? "(Filtered)" : ""}
+        </span>
       </div>
 
       <PrintBarcodeModal 
