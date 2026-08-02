@@ -263,7 +263,7 @@ function InvoiceBuilderForm() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <h2 className="text-lg font-black text-slate-800 tracking-tight">Add New Client</h2>
-              <button onClick={() => setShowClientModal(false)} className="text-slate-400 hover:text-rose-500 transition-colors">
+              <button type="button" onClick={() => setShowClientModal(false)} className="text-slate-400 hover:text-rose-500 transition-colors">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
@@ -304,12 +304,14 @@ function InvoiceBuilderForm() {
             </div>
             <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
               <button 
+                type="button"
                 onClick={() => setShowClientModal(false)}
                 className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button 
+                type="button"
                 onClick={async () => {
                   if (!newClient.name) return;
                   setIsSavingClient(true);
@@ -325,9 +327,12 @@ function InvoiceBuilderForm() {
                       setSelectedClientId(data.party.id);
                       setShowClientModal(false);
                       setNewClient({ name: "", phone: "", gstin: "" });
+                    } else {
+                      alert(data.error || "Failed to save client");
                     }
                   } catch(e) {
                     console.error(e);
+                    alert("An error occurred while saving the client.");
                   } finally {
                     setIsSavingClient(false);
                   }

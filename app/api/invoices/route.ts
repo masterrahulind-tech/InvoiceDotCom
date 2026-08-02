@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
           invoiceNo: finalInvoiceNo,
           businessProfileId,
           clientId,
-          templateId: templateId || "vyapar_gst_v1",
+          templateId: templateId || null,
           documentType,
           billingType: billingType || "B2B",
           placeOfSupply: placeOfSupplyCode,
