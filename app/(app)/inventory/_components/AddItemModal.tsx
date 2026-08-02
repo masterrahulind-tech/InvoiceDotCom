@@ -33,6 +33,7 @@ export function AddItemModal({
     category: "General",
     unit: "Pcs",
     hsnCode: "",
+    mrp: "",
     salePrice: "",
     purchasePrice: "",
     taxRate: "18",
@@ -60,6 +61,7 @@ export function AddItemModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          mrp: formData.mrp ? Number(formData.mrp) : null,
           salePrice: Number(formData.salePrice),
           purchasePrice: Number(formData.purchasePrice),
           taxRate: Number(formData.taxRate),
@@ -81,6 +83,7 @@ export function AddItemModal({
           category: "General",
           unit: "Pcs",
           hsnCode: "",
+          mrp: "",
           salePrice: "",
           purchasePrice: "",
           taxRate: "18",
@@ -170,6 +173,18 @@ export function AddItemModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">MRP (₹)</label>
+                <input
+                  name="mrp"
+                  value={formData.mrp}
+                  onChange={handleChange}
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
+                />
+              </div>
+              <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">Sale Price (₹) *</label>
                 <input
                   required
@@ -182,6 +197,9 @@ export function AddItemModal({
                   className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                 />
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">Purchase Price (₹)</label>
                 <input

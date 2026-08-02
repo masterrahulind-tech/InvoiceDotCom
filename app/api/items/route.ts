@@ -59,7 +59,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { sku, name, category, unit, hsnCode, salePrice, purchasePrice, taxRate, stockQty, lowStockThreshold } = body;
+    const { sku, name, category, unit, hsnCode, mrp, salePrice, purchasePrice, taxRate, stockQty, lowStockThreshold } = body;
 
     if (!name) {
       return NextResponse.json({ error: "Item name is required" }, { status: 400 });
@@ -78,7 +78,8 @@ export async function POST(req: Request) {
         name,
         category: category || "General",
         unit: unit || "Pcs",
-        hsnCode: hsnCode || "8517",
+        hsnCode: hsnCode || null,
+        mrp: parseFloat(mrp) || 0,
         salePrice: parseFloat(salePrice) || 0,
         purchasePrice: parseFloat(purchasePrice) || 0,
         taxRate: parseFloat(taxRate) || 18,

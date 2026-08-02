@@ -27,7 +27,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   try {
     const { id } = await params;
     const body = await req.json();
-    const { sku, name, category, unit, hsnCode, salePrice, purchasePrice, taxRate, lowStockThreshold, adjustStock, adjustNotes } = body;
+    const { sku, name, category, unit, hsnCode, mrp, salePrice, purchasePrice, taxRate, lowStockThreshold, adjustStock, adjustNotes } = body;
 
     const existingItem = await prisma.item.findUnique({ where: { id } });
     if (!existingItem) {
@@ -55,6 +55,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         category: category !== undefined ? category : existingItem.category,
         unit: unit !== undefined ? unit : existingItem.unit,
         hsnCode: hsnCode !== undefined ? hsnCode : existingItem.hsnCode,
+        mrp: mrp !== undefined ? parseFloat(mrp) : existingItem.mrp,
         salePrice: salePrice !== undefined ? parseFloat(salePrice) : existingItem.salePrice,
         purchasePrice: purchasePrice !== undefined ? parseFloat(purchasePrice) : existingItem.purchasePrice,
         taxRate: taxRate !== undefined ? parseFloat(taxRate) : existingItem.taxRate,

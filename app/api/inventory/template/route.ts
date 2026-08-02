@@ -5,8 +5,8 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const type = searchParams.get("type") || "csv"; // csv or xlsx
 
-  const headers = ["Name", "SKU", "Category", "Unit", "HSN Code", "Sale Price", "Purchase Price", "Tax Rate", "Stock Qty", "Low Stock Alert"];
-  const sampleRow = ["Apple iPhone 15", "IPH15-128", "Electronics", "Pcs", "8517", "79900", "65000", "18", "50", "10"];
+  const headers = ["Name", "SKU", "Category", "Unit", "HSN Code", "MRP", "Sale Price", "Purchase Price", "Tax Rate", "Stock Qty", "Low Stock Alert"];
+  const sampleRow = ["Apple iPhone 15", "IPH15-128", "Electronics", "Pcs", "8517", "89900", "79900", "65000", "18", "50", "10"];
 
   if (type === "csv") {
     const csvContent = `${headers.join(",")}\n${sampleRow.join(",")}\n`;

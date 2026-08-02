@@ -158,6 +158,7 @@ model Item {
   category          String?           @default("General")
   unit              String            @default("Pcs")
   hsnCode           String?           @default("8517")
+  mrp               Float             @default(0)
   salePrice         Float             @default(0)
   purchasePrice     Float             @default(0)
   taxRate           Float             @default(18)

@@ -45,7 +45,7 @@ export function InventoryTable({ items }: { items: any[] }) {
             <tr>
               <th className="px-4 py-3 font-medium">Item Details</th>
               <th className="px-4 py-3 font-medium">Category / Unit</th>
-              <th className="px-4 py-3 font-medium text-right">Purchase Price</th>
+              <th className="px-4 py-3 font-medium text-right">MRP</th>
               <th className="px-4 py-3 font-medium text-right">Sale Price</th>
               <th className="px-4 py-3 font-medium text-right">Stock</th>
               <th className="px-4 py-3 font-medium text-center">Status</th>
@@ -63,10 +63,10 @@ export function InventoryTable({ items }: { items: any[] }) {
                   <div>{item.category}</div>
                   <div className="text-xs text-gray-400">per {item.unit}</div>
                 </td>
-                <td className="px-4 py-3 text-right text-gray-600">
-                  ₹{item.purchasePrice?.toFixed(2)}
+                <td className="px-4 py-3 text-right text-gray-600 line-through text-xs">
+                  ₹{item.mrp?.toFixed(2) || "0.00"}
                 </td>
-                <td className="px-4 py-3 text-right font-medium text-gray-900">
+                <td className="px-4 py-3 text-right font-bold text-gray-900">
                   ₹{item.salePrice?.toFixed(2)}
                 </td>
                 <td className="px-4 py-3 text-right font-medium">

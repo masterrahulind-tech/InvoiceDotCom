@@ -60,6 +60,7 @@ export function BulkImportModal({
       category: row["Category"] || row["category"] || "General",
       unit: row["Unit"] || row["unit"] || "Pcs",
       hsnCode: String(row["HSN Code"] || row["HSN"] || row["hsnCode"] || ""),
+      mrp: parseFloat(row["MRP"] || row["mrp"]) || 0,
       salePrice: parseFloat(row["Sale Price"] || row["salePrice"]) || 0,
       purchasePrice: parseFloat(row["Purchase Price"] || row["purchasePrice"]) || 0,
       taxRate: parseFloat(row["Tax Rate"] || row["taxRate"]) || 0,

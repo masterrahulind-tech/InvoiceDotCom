@@ -146,13 +146,20 @@ function InvoiceBuilderForm() {
     const invItem = items.find(i => i.id === itemId);
     const updated = [...lineItems];
     if (invItem) {
+      const rate = (invItem.mrp && invItem.mrp > invItem.salePrice) ? invItem.mrp : invItem.salePrice;
+      let discountPercent = 0;
+      if (invItem.mrp && invItem.mrp > invItem.salePrice) {
+        discountPercent = parseFloat((((invItem.mrp - invItem.salePrice) / invItem.mrp) * 100).toFixed(2));
+      }
+
       updated[index] = {
         ...updated[index],
         itemId: invItem.id,
         description: invItem.name,
         hsnCode: invItem.hsnCode || "8517",
         unit: invItem.unit || "Pcs",
-        rate: invItem.salePrice || 0,
+        rate: rate || 0,
+        discountPercent: discountPercent,
         taxPercent: hasGst ? (invItem.taxRate || 18) : 0,
         amount: (invItem.salePrice || 0) * (updated[index].qty || 1),
       };
