@@ -55,11 +55,11 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         category: category !== undefined ? category : existingItem.category,
         unit: unit !== undefined ? unit : existingItem.unit,
         hsnCode: hsnCode !== undefined ? hsnCode : existingItem.hsnCode,
-        mrp: mrp !== undefined ? parseFloat(mrp) : existingItem.mrp,
-        salePrice: salePrice !== undefined ? parseFloat(salePrice) : existingItem.salePrice,
-        purchasePrice: purchasePrice !== undefined ? parseFloat(purchasePrice) : existingItem.purchasePrice,
-        taxRate: taxRate !== undefined ? parseFloat(taxRate) : existingItem.taxRate,
-        lowStockThreshold: lowStockThreshold !== undefined ? parseFloat(lowStockThreshold) : existingItem.lowStockThreshold,
+        mrp: mrp != null ? parseFloat(mrp) || 0 : existingItem.mrp,
+        salePrice: salePrice != null ? parseFloat(salePrice) || 0 : existingItem.salePrice,
+        purchasePrice: purchasePrice != null ? parseFloat(purchasePrice) || 0 : existingItem.purchasePrice,
+        taxRate: taxRate != null ? parseFloat(taxRate) || 0 : existingItem.taxRate,
+        lowStockThreshold: lowStockThreshold != null ? parseFloat(lowStockThreshold) || 0 : existingItem.lowStockThreshold,
         stockQty: updatedStockQty,
         ...(createMovement ? {
           stockMovements: {
