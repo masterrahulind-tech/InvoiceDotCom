@@ -190,3 +190,62 @@ export async function DELETE(
     return NextResponse.json({ error: "Failed to delete invoice" }, { status: 500 });
   }
 }
+// PATCH — record a payment settlement
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const existing = await verifyInvoiceOwnership(id, session.userId);
+  if (!existing) {
+    return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+  }
+
+  try {
+    const body = await request.json();
+    const { amount, paymentMode } = body;
+
+    if (!amount || amount <= 0) {
+      return NextResponse.json({ error: "Invalid payment amount" }, { status: 400 });
+    }
+
+    const newPaidAmount = existing.paidAmount + amount;
+    const newStatus = newPaidAmount >= existing.totalAmount ? "paid" : "partially_paid";
+
+    const updatedInvoice = await prisma.$transaction(async (tx) => {
+      // 1. Update invoice
+      const inv = await tx.invoice.update({
+        where: { id },
+        data: {
+          paidAmount: newPaidAmount,
+          status: newStatus,
+        }
+      });
+
+      // 2. Record Party Transaction for Ledger
+      await tx.partyTransaction.create({
+        data: {
+          businessProfileId: existing.businessProfileId,
+          clientId: existing.clientId,
+          type: "GOT",
+          amount: amount,
+          paymentMode: paymentMode || "upi",
+          notes: "Settlement received for Invoice #$",
+          date: new Date(),
+        }
+      });
+
+      return inv;
+    });
+
+    return NextResponse.json({ success: true, invoice: updatedInvoice });
+  } catch (error) {
+    console.error("Record payment error:", error);
+    return NextResponse.json({ error: "Failed to record payment" }, { status: 500 });
+  }
+}

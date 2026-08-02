@@ -40,15 +40,18 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
       const newPaid = invoice.paidAmount + parseFloat(payAmount);
       const newStatus = newPaid >= invoice.totalAmount ? "paid" : "partially_paid";
 
-      const res = await fetch(`/api/invoices`, {
-        method: "POST",
+      const res = await fetch(`/api/invoices/${invoice.id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...invoice,
-          paidAmount: newPaid,
-          status: newStatus,
+          amount: parseFloat(payAmount),
+          paymentMode: payMode,
         }),
       });
+
+      if (!res.ok) {
+        throw new Error("Failed to record payment");
+      }
 
       setShowPayModal(false);
       setPayAmount("");
