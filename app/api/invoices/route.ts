@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
           documentType,
           billingType: billingType || "B2B",
           placeOfSupply: placeOfSupplyCode,
-          status: status || (paidAmount >= grandTotal ? "paid" : paidAmount > 0 ? "partially_paid" : "pending"),
+          status: (!status || status === "pending") ? (paidAmount >= grandTotal ? "paid" : paidAmount > 0 ? "partially_paid" : "pending") : status,
           taxableAmount: totalTaxableAmount,
           cgstAmount: totalCgstAmount,
           sgstAmount: totalSgstAmount,

@@ -38,7 +38,7 @@ export const invoiceCreateSchema = z.object({
   terms: z.string().optional().nullable(),
   vehicleNo: z.string().optional().nullable(),
   ewayBillNo: z.string().optional().nullable(),
-  transportMode: z.enum(["road", "rail", "air", "ship"]).optional().default("road"),
+  transportMode: z.enum(["road", "rail", "air", "ship", "courier"]).optional().default("road"),
   lineItems: z.array(lineItemSchema).min(1, "At least one line item is required"),
   customFields: z.array(customFieldSchema).optional(),
 });

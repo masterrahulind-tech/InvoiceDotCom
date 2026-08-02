@@ -681,10 +681,11 @@ function InvoiceBuilderForm() {
                   onChange={(e) => setTransportMode(e.target.value as any)}
                   className="w-full appearance-none bg-slate-50/50 border border-slate-200 hover:border-indigo-300 rounded-xl pl-4 pr-10 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all cursor-pointer"
                 >
-                  <option value="road">Road Transport</option>
-                  <option value="rail">Rail Transport</option>
+                  <option value="road">Road / Truck</option>
+                  <option value="rail">Rail / Train</option>
                   <option value="air">Air Cargo</option>
                   <option value="ship">Ship / Sea</option>
+                  <option value="courier">Courier / Post</option>
                 </select>
                 <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
               </div>
