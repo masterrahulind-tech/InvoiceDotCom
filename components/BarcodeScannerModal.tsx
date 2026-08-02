@@ -16,12 +16,18 @@ export function GlobalBarcodeScanner() {
   useEffect(() => {
     if (!isOpen) {
       if (html5QrCode.current) {
-        html5QrCode.current.stop().then(() => {
-          html5QrCode.current?.clear();
+        try {
+          html5QrCode.current.stop().then(() => {
+            html5QrCode.current?.clear();
+            html5QrCode.current = null;
+          }).catch(err => {
+            console.error("Failed to stop scanner", err);
+          });
+        } catch (err) {
+          console.error("Sync error stopping scanner:", err);
+          try { html5QrCode.current?.clear(); } catch(e) {}
           html5QrCode.current = null;
-        }).catch(err => {
-          console.error("Failed to stop scanner", err);
-        });
+        }
       }
       return;
     }
@@ -51,10 +57,16 @@ export function GlobalBarcodeScanner() {
 
     return () => {
       if (html5QrCode.current) {
-        html5QrCode.current.stop().then(() => {
-          html5QrCode.current?.clear();
+        try {
+          html5QrCode.current.stop().then(() => {
+            html5QrCode.current?.clear();
+            html5QrCode.current = null;
+          }).catch(e => console.error("Failed to stop on unmount", e));
+        } catch (err) {
+          console.error("Sync error stopping on unmount:", err);
+          try { html5QrCode.current?.clear(); } catch(e) {}
           html5QrCode.current = null;
-        }).catch(e => console.error("Failed to stop on unmount", e));
+        }
       }
     };
   }, [isOpen]);
@@ -62,12 +74,19 @@ export function GlobalBarcodeScanner() {
   const startScanner = (cameraId: string) => {
     if (html5QrCode.current) {
       // If already running, stop it first
-      html5QrCode.current.stop().then(() => {
-        html5QrCode.current?.clear();
+      try {
+        html5QrCode.current.stop().then(() => {
+          html5QrCode.current?.clear();
+          initScanner(cameraId);
+        }).catch(e => {
+          console.error("Failed to stop scanner before restarting", e);
+          initScanner(cameraId); // try anyway
+        });
+      } catch (err) {
+        console.error("Sync error stopping before restart:", err);
+        try { html5QrCode.current?.clear(); } catch(e) {}
         initScanner(cameraId);
-      }).catch(e => {
-        console.error("Failed to stop scanner before restarting", e);
-      });
+      }
     } else {
       initScanner(cameraId);
     }
@@ -75,30 +94,36 @@ export function GlobalBarcodeScanner() {
 
   const initScanner = (cameraId: string) => {
     setIsStarting(true);
-    html5QrCode.current = new Html5Qrcode("global-qr-reader");
-    html5QrCode.current.start(
-      cameraId,
-      {
-        fps: 10,
-        qrbox: { width: 250, height: 150 },
-      },
-      (decodedText) => {
-        // Success
-        if (onScan) {
-          onScan(decodedText);
+    try {
+      html5QrCode.current = new Html5Qrcode("global-qr-reader");
+      html5QrCode.current.start(
+        cameraId,
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 150 },
+        },
+        (decodedText) => {
+          // Success
+          if (onScan) {
+            onScan(decodedText);
+          }
+          closeScanner();
+        },
+        (errorMessage) => {
+          // Continuous error during scanning, usually safe to ignore
         }
-        closeScanner();
-      },
-      (errorMessage) => {
-        // Continuous error during scanning, usually safe to ignore
-      }
-    ).then(() => {
+      ).then(() => {
+        setIsStarting(false);
+      }).catch((err) => {
+        console.error("Scanner start error:", err);
+        setError("Could not start video stream. Please ensure camera is not in use by another app.");
+        setIsStarting(false);
+      });
+    } catch (err) {
+      console.error("Sync error initializing scanner:", err);
+      setError("Failed to initialize the barcode scanner.");
       setIsStarting(false);
-    }).catch((err) => {
-      console.error("Scanner start error:", err);
-      setError("Could not start video stream. Please ensure camera is not in use by another app.");
-      setIsStarting(false);
-    });
+    }
   };
 
   const handleFlipCamera = () => {
