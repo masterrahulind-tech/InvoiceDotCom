@@ -396,9 +396,9 @@ function InvoiceBuilderForm() {
                       body: JSON.stringify(newClient),
                     });
                     const data = await res.json();
-                    if (data.party) {
-                      setParties(prev => [...prev, data.party]);
-                      setSelectedClientId(data.party.id);
+                    if (res.ok && data.id) {
+                      setParties(prev => [...prev, data]);
+                      setSelectedClientId(data.id);
                       setShowClientModal(false);
                       setNewClient({ name: "", phone: "", gstin: "" });
                     } else {
