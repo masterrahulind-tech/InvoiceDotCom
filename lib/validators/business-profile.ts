@@ -11,10 +11,12 @@ export const businessProfileSchema = z.object({
       "restaurant",
       "school",
       "retail",
+      "wholesale",
       "freelance",
       "healthcare",
       "logistics",
       "events",
+      "tech",
       "other",
     ],
     { message: "Select a business vertical" }

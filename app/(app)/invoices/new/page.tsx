@@ -33,6 +33,11 @@ function InvoiceBuilderForm() {
   const [loading, setLoading] = useState(true);
   const openScanner = useScannerStore(s => s.openScanner);
 
+  // New Client Modal State
+  const [showClientModal, setShowClientModal] = useState(false);
+  const [newClient, setNewClient] = useState({ name: "", phone: "", gstin: "" });
+  const [isSavingClient, setIsSavingClient] = useState(false);
+
   // Form State
   const [selectedClientId, setSelectedClientId] = useState(preselectedClientId);
   const [billingType, setBillingType] = useState<"B2B" | "B2C" | "EXPORT">("B2B");
@@ -202,7 +207,7 @@ function InvoiceBuilderForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedClientId) {
-      alert("Please select a customer party");
+      setShowClientModal(true);
       return;
     }
 
@@ -252,6 +257,90 @@ function InvoiceBuilderForm() {
 
   return (
     <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+      {/* Add New Client Modal */}
+      {showClientModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <h2 className="text-lg font-black text-slate-800 tracking-tight">Add New Client</h2>
+              <button onClick={() => setShowClientModal(false)} className="text-slate-400 hover:text-rose-500 transition-colors">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Client Name *</label>
+                <input 
+                  type="text" 
+                  value={newClient.name} 
+                  onChange={e => setNewClient({...newClient, name: e.target.value})}
+                  className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 rounded-lg px-4 py-2.5 text-sm font-semibold text-slate-800 transition-all"
+                  placeholder="Enter business or customer name"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Phone Number</label>
+                <input 
+                  type="text" 
+                  value={newClient.phone} 
+                  onChange={e => setNewClient({...newClient, phone: e.target.value})}
+                  className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 rounded-lg px-4 py-2.5 text-sm font-semibold text-slate-800 transition-all"
+                  placeholder="Optional"
+                />
+              </div>
+              {hasGst && (
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">GSTIN</label>
+                  <input 
+                    type="text" 
+                    value={newClient.gstin} 
+                    onChange={e => setNewClient({...newClient, gstin: e.target.value.toUpperCase()})}
+                    className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 rounded-lg px-4 py-2.5 text-sm font-semibold text-slate-800 transition-all uppercase"
+                    placeholder="Optional (15 digits)"
+                  />
+                </div>
+              )}
+            </div>
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+              <button 
+                onClick={() => setShowClientModal(false)}
+                className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={async () => {
+                  if (!newClient.name) return;
+                  setIsSavingClient(true);
+                  try {
+                    const res = await fetch("/api/parties", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify(newClient),
+                    });
+                    const data = await res.json();
+                    if (data.party) {
+                      setParties(prev => [...prev, data.party]);
+                      setSelectedClientId(data.party.id);
+                      setShowClientModal(false);
+                      setNewClient({ name: "", phone: "", gstin: "" });
+                    }
+                  } catch(e) {
+                    console.error(e);
+                  } finally {
+                    setIsSavingClient(false);
+                  }
+                }}
+                disabled={!newClient.name || isSavingClient}
+                className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-bold rounded-lg transition-colors shadow-md shadow-indigo-200"
+              >
+                {isSavingClient ? "Saving..." : "Save & Continue"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* LEFT COLUMN: THE ENGINE */}
       <div className="xl:col-span-7 space-y-6 pb-32">
@@ -274,10 +363,17 @@ function InvoiceBuilderForm() {
               <div className="relative">
                 <select
                   value={selectedClientId}
-                  onChange={(e) => setSelectedClientId(e.target.value)}
+                  onChange={(e) => {
+                    if (e.target.value === "add_new") {
+                      setShowClientModal(true);
+                    } else {
+                      setSelectedClientId(e.target.value);
+                    }
+                  }}
                   className="w-full appearance-none bg-slate-50/50 border border-slate-200 hover:border-indigo-300 rounded-xl pl-4 pr-10 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all cursor-pointer"
                 >
                   <option value="" disabled>Select Client...</option>
+                  <option value="add_new" className="font-bold text-indigo-600 bg-indigo-50">+ Add New Client...</option>
                   {parties.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.name} {p.gstin ? `(${p.gstin})` : ""}
