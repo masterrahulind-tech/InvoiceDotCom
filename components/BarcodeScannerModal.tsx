@@ -35,25 +35,36 @@ export function GlobalBarcodeScanner() {
     // Initialize scanner when modal opens
     setIsStarting(true);
     setError(null);
-    Html5Qrcode.getCameras()
-      .then((devices) => {
-        if (devices && devices.length) {
-          setCameras(devices);
-          // Prefer back camera if available, otherwise first camera
-          const backCamera = devices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('rear'));
-          const selectedCam = backCamera ? backCamera.id : devices[0].id;
-          setCurrentCameraId(selectedCam);
-          startScanner(selectedCam);
-        } else {
-          setError("No cameras found on your device.");
+    
+    try {
+      if (typeof Html5Qrcode === 'undefined') {
+        throw new Error("Html5Qrcode library failed to load");
+      }
+      
+      Html5Qrcode.getCameras()
+        .then((devices) => {
+          if (devices && devices.length) {
+            setCameras(devices);
+            // Prefer back camera if available, otherwise first camera
+            const backCamera = devices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('rear'));
+            const selectedCam = backCamera ? backCamera.id : devices[0].id;
+            setCurrentCameraId(selectedCam);
+            startScanner(selectedCam);
+          } else {
+            setError("No cameras found on your device.");
+            setIsStarting(false);
+          }
+        })
+        .catch((err) => {
+          console.error("Camera access error:", err);
+          setError("Camera permission denied or not available.");
           setIsStarting(false);
-        }
-      })
-      .catch((err) => {
-        console.error("Camera access error:", err);
-        setError("Camera permission denied or not available.");
-        setIsStarting(false);
-      });
+        });
+    } catch (err: any) {
+      console.error("Sync error starting camera fetch:", err);
+      setError("Camera system error: " + (err.message || "Library failed to initialize"));
+      setIsStarting(false);
+    }
 
     return () => {
       if (html5QrCode.current) {
