@@ -131,6 +131,35 @@ function InvoiceBuilderForm() {
         } else if (pData.parties && pData.parties.length > 0) {
           setSelectedClientId(pData.parties[0].id);
         }
+
+        // Auto-sync existing draft line items with the latest inventory values (like tax rate and price)
+        const fetchedItems = iData.items || [];
+        setLineItems(prev => prev.map(line => {
+          if (!line.itemId) return line;
+          const inv = fetchedItems.find((i: any) => i.id === line.itemId);
+          if (!inv) return line;
+          
+          const rate = (inv.mrp && inv.mrp > inv.salePrice) ? inv.mrp : inv.salePrice;
+          let discountPercent = 0;
+          if (inv.mrp && inv.mrp > inv.salePrice) {
+            discountPercent = parseFloat((((inv.mrp - inv.salePrice) / inv.mrp) * 100).toFixed(2));
+          }
+          
+          const qty = line.qty || 1;
+          const base = rate * qty;
+          const amount = round2(base - (base * (discountPercent / 100)));
+          
+          return {
+            ...line,
+            description: inv.name,
+            hsnCode: inv.hsnCode || "8517",
+            unit: inv.unit || "Pcs",
+            rate: rate || 0,
+            discountPercent: discountPercent,
+            taxPercent: !!bProfile?.gstin ? (inv.taxRate || 18) : 0,
+            amount: amount
+          };
+        }));
       } catch (e) {
         console.error(e);
       } finally {
