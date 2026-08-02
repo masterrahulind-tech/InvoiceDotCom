@@ -11,7 +11,11 @@ import {
   Users, 
   Package, 
   Sparkles,
-  Camera
+  Camera,
+  FileText,
+  Truck,
+  CreditCard,
+  ChevronDown
 } from "lucide-react";
 import { usePhysicalBarcodeScanner } from "@/lib/usePhysicalBarcodeScanner";
 import { useScannerStore } from "@/lib/store/useScannerStore";
@@ -25,6 +29,7 @@ function InvoiceBuilderForm() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const openScanner = useScannerStore(s => s.openScanner);
+
   // Form State
   const [selectedClientId, setSelectedClientId] = useState(preselectedClientId);
   const [billingType, setBillingType] = useState<"B2B" | "B2C" | "EXPORT">("B2B");
@@ -32,7 +37,7 @@ function InvoiceBuilderForm() {
   const [invoiceNo, setInvoiceNo] = useState("");
   const [documentType, setDocumentType] = useState<"INVOICE" | "QUOTATION" | "PROFORMA" | "CHALLAN">("INVOICE");
   const [notes, setNotes] = useState("Thank you for your business!");
-  const [terms, setTerms] = useState("Payment due within 15 days of invoice date.");
+  const [terms, setTerms] = useState("Payment due within 15 days.");
   const [paidAmount, setPaidAmount] = useState("0");
   
   // Logistics
@@ -44,7 +49,7 @@ function InvoiceBuilderForm() {
     {
       itemId: "",
       description: "",
-      hsnCode: "8517",
+      hsnCode: "",
       qty: 1,
       unit: "Pcs",
       rate: 0,
@@ -75,17 +80,15 @@ function InvoiceBuilderForm() {
         }
       } catch (e) {
         console.error(e);
-      } fontFinally: {
+      } finally {
         setLoading(false);
       }
     }
     loadData();
   }, [preselectedClientId]);
 
-  // Selected party object
   const selectedParty = parties.find(p => p.id === selectedClientId);
 
-  // Handle Item Select from Inventory
   const handleItemSelect = (index: number, itemId: string) => {
     const invItem = items.find(i => i.id === itemId);
     const updated = [...lineItems];
@@ -127,7 +130,7 @@ function InvoiceBuilderForm() {
       {
         itemId: "",
         description: "",
-        hsnCode: "8517",
+        hsnCode: "",
         qty: 1,
         unit: "Pcs",
         rate: 0,
@@ -146,7 +149,6 @@ function InvoiceBuilderForm() {
   const handleBarcodeScan = (barcode: string) => {
     const invItem = items.find(i => i.sku === barcode || i.id === barcode);
     if (invItem) {
-      // Create new line item for the scanned product
       const newItem = {
         itemId: invItem.id,
         description: invItem.name,
@@ -159,7 +161,6 @@ function InvoiceBuilderForm() {
         amount: invItem.salePrice || 0,
       };
       
-      // If the last item is completely empty, replace it, otherwise append
       const lastItem = lineItems[lineItems.length - 1];
       if (!lastItem.itemId && !lastItem.description) {
         const updated = [...lineItems];
@@ -168,22 +169,18 @@ function InvoiceBuilderForm() {
       } else {
         setLineItems([...lineItems, newItem]);
       }
-    } else {
-      alert(`No item found for barcode/SKU: ${barcode}`);
     }
   };
 
   usePhysicalBarcodeScanner(handleBarcodeScan);
 
-  // Calculation totals
   const totalTaxable = lineItems.reduce((acc, item) => acc + (item.amount || 0), 0);
   const supplierStateCode = "27";
   const partyStateCode = selectedParty?.stateCode || placeOfSupply || supplierStateCode;
   const isIntraState = supplierStateCode === partyStateCode;
 
   const totalTax = lineItems.reduce((acc, item) => {
-    const taxVal = (item.amount || 0) * ((item.taxPercent || 0) / 100);
-    return acc + taxVal;
+    return acc + ((item.amount || 0) * ((item.taxPercent || 0) / 100));
   }, 0);
 
   const grandTotal = totalTaxable + totalTax;
@@ -220,388 +217,452 @@ function InvoiceBuilderForm() {
       if (res.ok && data.invoice) {
         router.push(`/invoices/${data.invoice.id}`);
       } else {
-        alert(data.error || "Failed to create GST invoice");
+        alert(data.error || "Failed to create invoice");
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       alert("Error saving invoice");
     }
   };
 
   if (loading) {
-    return <div className="p-12 text-center text-xs text-[#999]">Loading invoice form...</div>;
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="animate-pulse flex flex-col items-center gap-3">
+          <div className="w-8 h-8 rounded-full border-4 border-indigo-100 border-t-indigo-600 animate-spin" />
+          <span className="text-sm font-medium text-slate-400">Loading Pro Workspace...</span>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 text-xs">
-      {/* Customer & Billing Details */}
-      <div className="bg-white border border-[#e8ecf1] rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] space-y-4">
-        <h2 className="text-sm font-bold text-[#1f2029] flex items-center gap-2 border-b border-[#e8ecf1] pb-3">
-          <Users className="w-4 h-4 text-emerald-400" /> Customer & GST Information
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-[#999] mb-1 font-semibold">Select Customer / Party *</label>
-            <select
-              value={selectedClientId}
-              onChange={(e) => setSelectedClientId(e.target.value)}
-              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
-            >
-              {parties.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} {p.gstin ? `(${p.gstin})` : "(B2C Consumer)"}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-[#999] mb-1 font-semibold">Billing Type</label>
-            <select
-              value={billingType}
-              onChange={(e) => setBillingType(e.target.value as any)}
-              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
-            >
-              <option value="B2B">B2B (Registered Buyer with GSTIN)</option>
-              <option value="B2C">B2C (Retail Consumer)</option>
-              <option value="EXPORT">EXPORT / SEZ (Zero Rated)</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-[#999] mb-1 font-semibold">Invoice No (Optional)</label>
-            <input
-              type="text"
-              placeholder="Auto-generated if empty"
-              value={invoiceNo}
-              onChange={(e) => setInvoiceNo(e.target.value)}
-              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-mono focus:outline-none focus:border-[#6730e3]"
-            />
-          </div>
-
-          <div>
-            <label className="block text-[#999] mb-1 font-semibold">Document Type</label>
-            <select
-              value={documentType}
-              onChange={(e) => setDocumentType(e.target.value as any)}
-              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
-            >
-              <option value="INVOICE">Tax Invoice</option>
-              <option value="QUOTATION">Quotation / Estimate</option>
-              <option value="PROFORMA">Proforma Invoice</option>
-              <option value="CHALLAN">Delivery Challan</option>
-            </select>
-          </div>
-        </div>
-
-        {selectedParty && (
-          <div className="p-3 bg-[#f8f9fa] rounded-xl border border-[#e8ecf1] flex flex-col sm:flex-row sm:items-center justify-between text-[#666] gap-3">
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+      
+      {/* LEFT COLUMN: THE ENGINE */}
+      <div className="xl:col-span-7 space-y-6 pb-32">
+        
+        {/* Document Header Card */}
+        <div className="bg-white/70 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100/50">
+              <FileText className="w-5 h-5 text-indigo-600" />
+            </div>
             <div>
-              <span className="font-bold text-[#1f2029]">{selectedParty.name}</span>
-              {selectedParty.gstin && (
-                <span className="ml-2 font-mono text-[11px] bg-[#f3f0ff] text-[#6730e3] px-2 py-0.5 rounded border border-[#e0d5ff]">
-                  GSTIN: {selectedParty.gstin}
-                </span>
+              <h2 className="text-base font-bold text-slate-800 tracking-tight">Document Details</h2>
+              <p className="text-xs font-medium text-slate-500">Configure client and invoice parameters</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-1.5">
+              <label className="text-[11px] uppercase tracking-wider font-bold text-slate-500">Client / Party</label>
+              <div className="relative">
+                <select
+                  value={selectedClientId}
+                  onChange={(e) => setSelectedClientId(e.target.value)}
+                  className="w-full appearance-none bg-slate-50/50 border border-slate-200 hover:border-indigo-300 rounded-xl pl-4 pr-10 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all cursor-pointer"
+                >
+                  <option value="" disabled>Select Client...</option>
+                  {parties.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} {p.gstin ? `(${p.gstin})` : ""}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              </div>
+              {selectedParty?.gstin && (
+                <div className="mt-2 text-[11px] font-medium text-slate-500 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> GSTIN: {selectedParty.gstin}
+                </div>
               )}
-              {selectedParty.address && <p className="text-[11px] text-[#999]">{selectedParty.address}</p>}
             </div>
 
-            <div className="text-left sm:text-right">
-              <span className="text-[10px] text-[#999] uppercase font-semibold">GST Tax Mode</span>
-              <div className={`font-bold ${isIntraState ? "text-emerald-400" : "text-amber-400"}`}>
-                {isIntraState ? "Intra-State (CGST + SGST)" : "Inter-State (IGST)"}
+            <div className="space-y-1.5">
+              <label className="text-[11px] uppercase tracking-wider font-bold text-slate-500">Document Type</label>
+              <div className="relative">
+                <select
+                  value={documentType}
+                  onChange={(e) => setDocumentType(e.target.value as any)}
+                  className="w-full appearance-none bg-slate-50/50 border border-slate-200 hover:border-indigo-300 rounded-xl pl-4 pr-10 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all cursor-pointer"
+                >
+                  <option value="INVOICE">Tax Invoice</option>
+                  <option value="QUOTATION">Quotation / Estimate</option>
+                  <option value="PROFORMA">Proforma Invoice</option>
+                </select>
+                <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] uppercase tracking-wider font-bold text-slate-500">Invoice Number</label>
+              <input
+                type="text"
+                placeholder="Auto-generated"
+                value={invoiceNo}
+                onChange={(e) => setInvoiceNo(e.target.value)}
+                className="w-full bg-slate-50/50 border border-slate-200 hover:border-indigo-300 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 focus:outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all placeholder:text-slate-400 placeholder:font-normal"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] uppercase tracking-wider font-bold text-slate-500">Billing Profile</label>
+              <div className="relative">
+                <select
+                  value={billingType}
+                  onChange={(e) => setBillingType(e.target.value as any)}
+                  className="w-full appearance-none bg-slate-50/50 border border-slate-200 hover:border-indigo-300 rounded-xl pl-4 pr-10 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all cursor-pointer"
+                >
+                  <option value="B2B">B2B (Registered)</option>
+                  <option value="B2C">B2C (Retail)</option>
+                </select>
+                <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* Line Items Builder */}
-      <div className="bg-white border border-[#e8ecf1] rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e8ecf1] pb-3">
-          <h2 className="text-sm font-bold text-[#1f2029] flex items-center gap-2">
-            <Package className="w-4 h-4 text-[#6730e3]" /> Line Items & HSN Tax Rates
-          </h2>
-          <div className="flex items-center gap-2">
+        {/* The Grid: Line Items */}
+        <div className="bg-white/70 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-1 shadow-sm overflow-hidden">
+          <div className="p-5 flex items-center justify-between border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-fuchsia-50 flex items-center justify-center border border-fuchsia-100/50">
+                <Package className="w-5 h-5 text-fuchsia-600" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-slate-800 tracking-tight">Line Items Grid</h2>
+                <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Press Tab to navigate cells</p>
+              </div>
+            </div>
             <button
               type="button"
               onClick={() => openScanner(handleBarcodeScan)}
-              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-[#6730e3] hover:bg-[#f8f9fa] border border-[#e0d5ff] flex items-center gap-1 shadow-sm transition-all"
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 border border-slate-200 shadow-sm transition-all flex items-center gap-2 group"
             >
-              <Camera className="w-3.5 h-3.5" /> Scan Barcode
+              <Camera className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors" /> Scan Barcode
             </button>
+          </div>
+
+          <div className="overflow-x-auto pb-4">
+            <table className="w-full text-left border-collapse min-w-[700px]">
+              <thead>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <th className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-[35%]">Item Details</th>
+                  <th className="px-3 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-[12%]">HSN</th>
+                  <th className="px-3 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-[12%]">Qty</th>
+                  <th className="px-3 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-[15%]">Rate</th>
+                  <th className="px-3 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-[12%]">Tax %</th>
+                  <th className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right w-[14%]">Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {lineItems.map((item, idx) => (
+                  <tr key={idx} className="group hover:bg-slate-50/80 transition-colors">
+                    <td className="p-2 pl-4">
+                      <div className="relative">
+                        <select
+                          value={item.itemId}
+                          onChange={(e) => handleItemSelect(idx, e.target.value)}
+                          className="absolute inset-y-0 left-0 w-8 opacity-0 cursor-pointer z-10"
+                        >
+                          <option value="">+</option>
+                          {items.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
+                        </select>
+                        <input
+                          type="text"
+                          placeholder="Search or type description..."
+                          value={item.description}
+                          onChange={(e) => handleLineChange(idx, "description", e.target.value)}
+                          className="w-full bg-transparent border-0 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-600/20 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 transition-all"
+                        />
+                      </div>
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="text"
+                        placeholder="8517"
+                        value={item.hsnCode}
+                        onChange={(e) => handleLineChange(idx, "hsnCode", e.target.value)}
+                        className="w-full bg-transparent border-0 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-600/20 rounded-lg px-2 py-2 text-sm font-mono text-slate-600 transition-all"
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="number"
+                        min="1"
+                        value={item.qty}
+                        onChange={(e) => handleLineChange(idx, "qty", parseFloat(e.target.value))}
+                        className="w-full bg-transparent border-0 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-600/20 rounded-lg px-2 py-2 text-sm font-bold text-slate-700 transition-all text-center"
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={item.rate}
+                        onChange={(e) => handleLineChange(idx, "rate", parseFloat(e.target.value))}
+                        className="w-full bg-transparent border-0 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-600/20 rounded-lg px-2 py-2 text-sm font-bold text-slate-700 transition-all text-right"
+                      />
+                    </td>
+                    <td className="p-2">
+                      <select
+                        value={item.taxPercent}
+                        onChange={(e) => handleLineChange(idx, "taxPercent", parseFloat(e.target.value))}
+                        className="w-full bg-transparent border-0 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-600/20 rounded-lg px-1 py-2 text-sm font-bold text-slate-700 transition-all appearance-none cursor-pointer text-center"
+                      >
+                        <option value="0">0%</option>
+                        <option value="5">5%</option>
+                        <option value="12">12%</option>
+                        <option value="18">18%</option>
+                        <option value="28">28%</option>
+                      </select>
+                    </td>
+                    <td className="p-2 pr-4 relative">
+                      <div className="text-sm font-black text-slate-800 text-right pr-6">
+                        {(item.amount || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeLineItem(idx)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          
+          <div className="p-3 border-t border-slate-100 bg-slate-50/50 rounded-b-3xl">
             <button
               type="button"
               onClick={addLineItem}
-              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#6730e3]/20 text-[#6730e3] hover:bg-[#6730e3]/30 border border-[#e0d5ff] flex items-center gap-1"
+              className="px-4 py-2 rounded-xl text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-colors flex items-center gap-1.5"
             >
-              <Plus className="w-3.5 h-3.5" /> Add Line
+              <Plus className="w-4 h-4" /> Add Row
             </button>
           </div>
         </div>
 
-        <div className="space-y-3">
-          {lineItems.map((item, idx) => {
-            const matchedInvItem = items.find(i => i.id === item.itemId);
-            const availableStock = matchedInvItem ? matchedInvItem.stockQty : null;
-
-            return (
-              <div key={idx} className="p-4 bg-[#f8f9fa] rounded-xl border border-[#e8ecf1] space-y-3">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                  <div className="md:col-span-2">
-                    <label className="block text-[#999] mb-1 font-semibold">Pick from Inventory OR Type Description *</label>
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <select
-                        value={item.itemId}
-                        onChange={(e) => handleItemSelect(idx, e.target.value)}
-                        className="bg-white border border-[#e8ecf1] rounded-xl px-2.5 py-1.5 text-[#333] text-xs focus:outline-none sm:w-1/3"
-                      >
-                        <option value="">Custom Item</option>
-                        {items.map((i) => (
-                          <option key={i.id} value={i.id}>
-                            {i.name} ({i.stockQty} in stock)
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Item Description"
-                        value={item.description}
-                        onChange={(e) => handleLineChange(idx, "description", e.target.value)}
-                        className="flex-1 bg-white border border-[#e8ecf1] rounded-xl px-3 py-1.5 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[#999] mb-1 font-semibold">HSN Code</label>
-                    <input
-                      type="text"
-                      placeholder="8517"
-                      value={item.hsnCode}
-                      onChange={(e) => handleLineChange(idx, "hsnCode", e.target.value)}
-                      className="w-full bg-white border border-[#e8ecf1] rounded-xl px-3 py-1.5 text-[#1f2029] font-mono focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[#999] mb-1 font-semibold">GST Rate (%)</label>
-                    <select
-                      value={item.taxPercent}
-                      onChange={(e) => handleLineChange(idx, "taxPercent", parseFloat(e.target.value))}
-                      className="w-full bg-white border border-[#e8ecf1] rounded-xl px-3 py-1.5 text-[#1f2029] focus:outline-none"
-                    >
-                      <option value="0">0%</option>
-                      <option value="5">5%</option>
-                      <option value="12">12%</option>
-                      <option value="18">18%</option>
-                      <option value="28">28%</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3 items-center">
-                  <div>
-                    <label className="block text-[#999] mb-1 font-semibold">Quantity</label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={item.qty}
-                      onChange={(e) => handleLineChange(idx, "qty", parseFloat(e.target.value))}
-                      className="w-full bg-white border border-[#e8ecf1] rounded-xl px-3 py-1.5 text-[#1f2029] font-bold focus:outline-none"
-                    />
-                    {availableStock !== null && (
-                      <span className={`text-[10px] ${availableStock < item.qty ? "text-amber-400 font-bold" : "text-[#999]"}`}>
-                        Available Stock: {availableStock}
-                      </span>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-[#999] mb-1 font-semibold">Rate (₹)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={item.rate}
-                      onChange={(e) => handleLineChange(idx, "rate", parseFloat(e.target.value))}
-                      className="w-full bg-white border border-[#e8ecf1] rounded-xl px-3 py-1.5 text-[#1f2029] font-bold focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[#999] mb-1 font-semibold">Taxable Value</label>
-                    <div className="text-sm font-black text-[#1f2029] pt-1">
-                      ₹{(item.amount || 0).toLocaleString("en-IN")}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[#999] mb-1 font-semibold">Discount (%)</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="100"
-                      value={item.discountPercent}
-                      onChange={(e) => handleLineChange(idx, "discountPercent", parseFloat(e.target.value) || 0)}
-                      className="w-full bg-white border border-[#e8ecf1] rounded-xl px-3 py-1.5 text-[#1f2029] font-bold focus:outline-none text-rose-500"
-                    />
-                  </div>
-
-                  <div className="col-span-2 sm:col-span-4 md:col-span-1 text-right pt-2 md:pt-4">
-                    <button
-                      type="button"
-                      onClick={() => removeLineItem(idx)}
-                      className="p-2 rounded-lg text-rose-400 hover:bg-rose-500/10 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4 inline" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Logistics & E-Way Bill Section */}
-      <div className="bg-white border border-[#e8ecf1] rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] space-y-4">
-        <h2 className="text-sm font-bold text-[#1f2029] flex items-center gap-2 border-b border-[#e8ecf1] pb-3">
-          <Package className="w-4 h-4 text-amber-500" /> Shipping & Logistics Details
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-[#999] mb-1 font-semibold">Vehicle No (Optional)</label>
-            <input
-              type="text"
-              placeholder="e.g. MH 12 AB 1234"
-              value={vehicleNo}
-              onChange={(e) => setVehicleNo(e.target.value)}
-              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
-            />
-          </div>
-          <div>
-            <label className="block text-[#999] mb-1 font-semibold">E-Way Bill No (Optional)</label>
-            <input
-              type="text"
-              placeholder="e.g. 123456789012"
-              value={ewayBillNo}
-              onChange={(e) => setEwayBillNo(e.target.value)}
-              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
-            />
-          </div>
-          <div>
-            <label className="block text-[#999] mb-1 font-semibold">Transport Mode</label>
-            <select
-              value={transportMode}
-              onChange={(e) => setTransportMode(e.target.value as any)}
-              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] font-medium focus:outline-none focus:border-[#6730e3]"
-            >
-              <option value="road">Road</option>
-              <option value="rail">Rail</option>
-              <option value="air">Air</option>
-              <option value="ship">Ship</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Calculation Totals & Upfront Payment Card */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white border border-[#e8ecf1] rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] space-y-3">
-          <h2 className="text-sm font-bold text-[#1f2029]">Invoice Notes & Payment Received</h2>
-          <div>
-            <label className="block text-[#999] mb-1 font-semibold">Upfront Payment Received Now (₹)</label>
-            <input
-              type="number"
-              step="0.01"
-              placeholder="0"
-              value={paidAmount}
-              onChange={(e) => setPaidAmount(e.target.value)}
-              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3.5 py-2 text-[#1f2029] font-bold text-sm focus:outline-none focus:border-[#6730e3]"
-            />
-          </div>
-          <div>
-            <label className="block text-[#999] mb-1 font-semibold">Invoice Footnote</label>
-            <input
-              type="text"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-[#f8f9fa] border border-[#e8ecf1] rounded-xl px-3 py-2 text-[#1f2029] focus:outline-none"
-            />
-          </div>
-        </div>
-
-        <div className="bg-white border border-[#e0d5ff] rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] space-y-2 bg-gradient-to-br from-indigo-950/20 to-slate-900">
-          <div className="flex justify-between text-[#666]">
-            <span>Total Taxable Subtotal:</span>
-            <span className="font-bold text-[#1f2029]">₹{totalTaxable.toLocaleString("en-IN")}</span>
-          </div>
-
-          {isIntraState ? (
-            <>
-              <div className="flex justify-between text-[#999]">
-                <span>CGST (9% / 2.5%):</span>
-                <span>₹{(totalTax / 2).toLocaleString("en-IN")}</span>
-              </div>
-              <div className="flex justify-between text-[#999]">
-                <span>SGST (9% / 2.5%):</span>
-                <span>₹{(totalTax / 2).toLocaleString("en-IN")}</span>
-              </div>
-            </>
-          ) : (
-            <div className="flex justify-between text-[#999]">
-              <span>IGST (18% / 12%):</span>
-              <span>₹{totalTax.toLocaleString("en-IN")}</span>
+        {/* E-way & Settings */}
+        <div className="bg-white/70 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center border border-amber-100/50">
+              <Truck className="w-5 h-5 text-amber-600" />
             </div>
-          )}
-
-          <div className="flex justify-between text-lg font-black text-[#1f2029] pt-2 border-t border-[#e8ecf1]">
-            <span>Grand Total:</span>
-            <span className="text-[#6730e3]">₹{grandTotal.toLocaleString("en-IN")}</span>
+            <div>
+              <h2 className="text-base font-bold text-slate-800 tracking-tight">Logistics & E-Way Bill</h2>
+              <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Optional shipping details</p>
+            </div>
           </div>
 
-          <div className="flex items-center justify-end space-x-3 pt-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div className="space-y-1.5">
+              <label className="text-[11px] uppercase tracking-wider font-bold text-slate-500">Vehicle No.</label>
+              <input
+                type="text"
+                placeholder="MH 12 AB 1234"
+                value={vehicleNo}
+                onChange={(e) => setVehicleNo(e.target.value)}
+                className="w-full bg-slate-50/50 border border-slate-200 hover:border-indigo-300 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all placeholder:text-slate-400 placeholder:font-normal"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[11px] uppercase tracking-wider font-bold text-slate-500">E-Way Bill</label>
+              <input
+                type="text"
+                value={ewayBillNo}
+                onChange={(e) => setEwayBillNo(e.target.value)}
+                className="w-full bg-slate-50/50 border border-slate-200 hover:border-indigo-300 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[11px] uppercase tracking-wider font-bold text-slate-500">Transport</label>
+              <div className="relative">
+                <select
+                  value={transportMode}
+                  onChange={(e) => setTransportMode(e.target.value as any)}
+                  className="w-full appearance-none bg-slate-50/50 border border-slate-200 hover:border-indigo-300 rounded-xl pl-4 pr-10 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all cursor-pointer"
+                >
+                  <option value="road">Road Transport</option>
+                  <option value="rail">Rail Transport</option>
+                  <option value="air">Air Cargo</option>
+                  <option value="ship">Ship / Sea</option>
+                </select>
+                <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+      {/* RIGHT COLUMN: LIVE CANVAS & SUMMARY */}
+      <div className="xl:col-span-5 sticky top-8 space-y-6">
+        
+        {/* Dynamic Summary Card */}
+        <div className="bg-gradient-to-b from-slate-900 to-slate-800 rounded-3xl p-1 shadow-2xl shadow-indigo-900/20 overflow-hidden">
+          <div className="p-6 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] bg-opacity-10 relative">
+            <div className="absolute top-0 right-0 p-6 opacity-10">
+              <Sparkles className="w-24 h-24 text-white" />
+            </div>
+            
+            <h2 className="text-white/60 text-[11px] font-bold uppercase tracking-widest mb-4">Invoice Summary</h2>
+            
+            <div className="space-y-3 relative z-10">
+              <div className="flex justify-between text-white/80 text-sm">
+                <span>Taxable Subtotal</span>
+                <span className="font-mono">₹{totalTaxable.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
+              </div>
+              
+              {isIntraState ? (
+                <>
+                  <div className="flex justify-between text-white/70 text-sm">
+                    <span>CGST</span>
+                    <span className="font-mono">₹{(totalTax / 2).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="flex justify-between text-white/70 text-sm">
+                    <span>SGST</span>
+                    <span className="font-mono">₹{(totalTax / 2).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
+                  </div>
+                </>
+              ) : (
+                <div className="flex justify-between text-white/70 text-sm">
+                  <span>IGST</span>
+                  <span className="font-mono">₹{totalTax.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-white/10 flex justify-between items-end relative z-10">
+              <span className="text-white/60 text-xs font-bold uppercase tracking-wider">Grand Total</span>
+              <span className="text-4xl font-black text-white tracking-tight">₹{grandTotal.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
+            </div>
+          </div>
+
+          <div className="p-3 bg-white/5 backdrop-blur-md flex flex-col gap-3">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <CreditCard className="w-4 h-4 text-emerald-400" />
+              </div>
+              <input
+                type="number"
+                placeholder="Upfront Payment Received (₹)"
+                value={paidAmount}
+                onChange={(e) => setPaidAmount(e.target.value)}
+                className="w-full bg-white/10 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm font-bold text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+              />
+            </div>
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-[#1f2029] font-extrabold shadow-lg shadow-[#6730e340] transition-all active:scale-95 text-sm"
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 text-white font-extrabold text-sm shadow-[0_0_20px_rgba(99,102,241,0.3)] transition-all active:scale-[0.98] flex items-center justify-center gap-2"
             >
-              Save & Generate {documentType === "INVOICE" ? "GST Invoice" : documentType}
+              <Receipt className="w-4 h-4" /> Generate {documentType} Now
             </button>
           </div>
         </div>
+
+        {/* Live PDF Preview Canvas */}
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] min-h-[400px] flex flex-col hidden lg:flex">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+              <FileText className="w-3.5 h-3.5" /> Live Document Preview
+            </span>
+            <span className="text-[9px] bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-full border border-emerald-100 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Syncing
+            </span>
+          </div>
+
+          <div className="flex-1 bg-white rounded-xl border border-slate-200 shadow-sm p-6 text-[10px] text-slate-600 relative overflow-hidden flex flex-col">
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-indigo-600" />
+            
+            <div className="flex justify-between items-start mb-8 pt-2">
+              <div>
+                <h1 className="text-xl font-black text-slate-900 tracking-tighter uppercase">{documentType}</h1>
+                <p className="text-slate-400 font-mono mt-0.5">{invoiceNo || "INV-XXXX"}</p>
+              </div>
+              <div className="text-right text-[10px] text-slate-500 max-w-[140px]">
+                <p className="font-bold text-slate-800 uppercase tracking-wider mb-1 text-[9px]">Billed To</p>
+                <p className="font-semibold text-slate-700 truncate">{selectedParty?.name || "Client Name"}</p>
+                {selectedParty?.gstin && <p className="truncate">GSTIN: {selectedParty.gstin}</p>}
+                {selectedParty?.address && <p className="truncate">{selectedParty.address}</p>}
+              </div>
+            </div>
+
+            <div className="border-t border-b border-slate-200 py-2 mb-4 flex font-bold text-slate-800 uppercase tracking-wider text-[9px]">
+              <div className="flex-1">Description</div>
+              <div className="w-10 text-right">Qty</div>
+              <div className="w-16 text-right">Rate</div>
+              <div className="w-16 text-right">Total</div>
+            </div>
+
+            <div className="space-y-3 min-h-[100px]">
+              {lineItems.map((item, idx) => (
+                <div key={idx} className="flex text-slate-600 font-medium text-[11px]">
+                  <div className="flex-1 truncate pr-2">{item.description || "—"}</div>
+                  <div className="w-10 text-right">{item.qty || "0"}</div>
+                  <div className="w-16 text-right">{item.rate || "0"}</div>
+                  <div className="w-16 text-right text-slate-800 font-bold">{(item.amount || 0).toLocaleString("en-IN")}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="border-t border-slate-200 pt-4 mt-auto flex justify-end">
+              <div className="w-48 space-y-1.5 text-[11px]">
+                <div className="flex justify-between text-slate-500 font-medium">
+                  <span>Subtotal</span>
+                  <span>{totalTaxable.toLocaleString("en-IN")}</span>
+                </div>
+                <div className="flex justify-between text-slate-500 font-medium">
+                  <span>GST Tax</span>
+                  <span>{totalTax.toLocaleString("en-IN")}</span>
+                </div>
+                <div className="flex justify-between font-black text-indigo-600 text-sm border-t border-slate-200 pt-2 mt-2">
+                  <span>Total</span>
+                  <span>₹{grandTotal.toLocaleString("en-IN")}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
+
     </form>
   );
 }
 
 export default function NewGstInvoicePage() {
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div>
-        <Link href="/invoices" className="inline-flex items-center gap-1.5 text-xs text-[#999] hover:text-[#1f2029]">
-          <ArrowLeft className="w-4 h-4" /> Back to Invoices
+    <div className="max-w-[1400px] mx-auto pt-2 pb-12">
+      <div className="mb-8">
+        <Link href="/invoices" className="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-400 hover:text-slate-800 uppercase tracking-widest transition-colors mb-4">
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to Workspace
         </Link>
-      </div>
-
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-extrabold text-[#1f2029] tracking-tight flex items-center gap-2">
-            <Receipt className="w-6 h-6 text-[#6730e3]" /> Create GST Sales Invoice
-          </h1>
-          <p className="text-xs text-[#999] mt-1">
-            Auto-calculates CGST/SGST vs IGST, deducts item stock, and posts to Khatabook party ledger.
-          </p>
+        <div className="flex items-end justify-between">
+          <div>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+              Billing Engine
+              <span className="px-2.5 py-1 rounded-lg text-[10px] font-black bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase tracking-widest">
+                Pro
+              </span>
+            </h1>
+            <p className="text-sm font-medium text-slate-500 mt-1.5">
+              Keyboard-driven document creation with real-time tax compilation.
+            </p>
+          </div>
         </div>
-
-        <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#f3f0ff] text-[#6730e3] border border-[#e0d5ff] flex items-center gap-1">
-          <Sparkles className="w-3.5 h-3.5" /> Vyapar GST Engine
-        </span>
       </div>
 
-      <Suspense fallback={<div className="p-12 text-center text-xs text-[#999]">Loading invoice form...</div>}>
+      <Suspense fallback={
+        <div className="h-64 flex items-center justify-center">
+           <div className="w-8 h-8 rounded-full border-4 border-indigo-100 border-t-indigo-600 animate-spin" />
+        </div>
+      }>
         <InvoiceBuilderForm />
       </Suspense>
     </div>
