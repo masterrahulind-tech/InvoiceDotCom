@@ -69,10 +69,10 @@ export default function AppLayout({
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ fontFamily: "var(--font-open-sans), 'Open Sans', sans-serif", background: "#f4f7fa" }}>
+    <div className="min-h-screen flex flex-col print:bg-white" style={{ fontFamily: "var(--font-open-sans), 'Open Sans', sans-serif", background: "#f4f7fa" }}>
       {/* ═══════ Top Header ═══════ */}
       <header
-        className="sticky top-0 z-40"
+        className="sticky top-0 z-40 print:hidden"
         style={{
           background: "#fff",
           borderBottom: "1px solid #e8ecf1",
@@ -290,7 +290,7 @@ export default function AppLayout({
       </header>
 
       {/* ═══════ Main Content ═══════ */}
-      <main className="px-3 py-4 sm:px-5 sm:py-6" style={{ flex: 1, maxWidth: 1200, width: "100%", margin: "0 auto" }}>
+      <main className="px-3 py-4 sm:px-5 sm:py-6 print:p-0 print:m-0" style={{ flex: 1, maxWidth: 1200, width: "100%", margin: "0 auto" }}>
         {children}
       </main>
 
