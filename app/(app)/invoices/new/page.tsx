@@ -69,6 +69,40 @@ function InvoiceBuilderForm() {
     }
   ]);
 
+  // Draft persistence
+  useEffect(() => {
+    const saved = localStorage.getItem("invoiceDraft");
+    if (saved) {
+      try {
+        const draft = JSON.parse(saved);
+        if (draft.lineItems && draft.lineItems.length > 0) setLineItems(draft.lineItems);
+        if (draft.selectedClientId && !preselectedClientId) setSelectedClientId(draft.selectedClientId);
+        if (draft.billingType) setBillingType(draft.billingType);
+        if (draft.placeOfSupply) setPlaceOfSupply(draft.placeOfSupply);
+        if (draft.invoiceNo) setInvoiceNo(draft.invoiceNo);
+        if (draft.documentType) setDocumentType(draft.documentType);
+        if (draft.notes) setNotes(draft.notes);
+        if (draft.terms) setTerms(draft.terms);
+        if (draft.paidAmount) setPaidAmount(draft.paidAmount);
+        if (draft.vehicleNo) setVehicleNo(draft.vehicleNo);
+        if (draft.ewayBillNo) setEwayBillNo(draft.ewayBillNo);
+        if (draft.transportMode) setTransportMode(draft.transportMode);
+      } catch (e) {}
+    }
+  }, [preselectedClientId]);
+
+  useEffect(() => {
+    if (loading) return;
+    const draft = {
+      lineItems, selectedClientId, billingType, placeOfSupply, invoiceNo, 
+      documentType, notes, terms, paidAmount, vehicleNo, ewayBillNo, transportMode
+    };
+    localStorage.setItem("invoiceDraft", JSON.stringify(draft));
+  }, [
+    lineItems, selectedClientId, billingType, placeOfSupply, invoiceNo, 
+    documentType, notes, terms, paidAmount, vehicleNo, ewayBillNo, transportMode, loading
+  ]);
+
   useEffect(() => {
     async function loadData() {
       try {
@@ -234,6 +268,7 @@ function InvoiceBuilderForm() {
 
       const data = await res.json();
       if (res.ok && data.invoice) {
+        localStorage.removeItem("invoiceDraft");
         router.push(`/invoices/${data.invoice.id}`);
       } else {
         alert(data.error || "Failed to create invoice");
