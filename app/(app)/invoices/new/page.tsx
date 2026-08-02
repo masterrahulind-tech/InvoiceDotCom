@@ -128,8 +128,6 @@ function InvoiceBuilderForm() {
 
         if (preselectedClientId) {
           setSelectedClientId(preselectedClientId);
-        } else if (pData.parties && pData.parties.length > 0) {
-          setSelectedClientId(pData.parties[0].id);
         }
 
         // Auto-sync existing draft line items with the latest inventory values (like tax rate and price)
@@ -277,7 +275,8 @@ function InvoiceBuilderForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedClientId) {
-      setShowClientModal(true);
+      alert("Please select a Client/Party from the dropdown to generate this invoice. If it's a new client, you can add them from the dropdown menu.");
+      document.getElementById('client-select')?.focus();
       return;
     }
 
@@ -438,6 +437,7 @@ function InvoiceBuilderForm() {
               <label className="text-[11px] uppercase tracking-wider font-bold text-slate-500">Client / Party</label>
               <div className="relative">
                 <select
+                  id="client-select"
                   value={selectedClientId}
                   onChange={(e) => {
                     if (e.target.value === "add_new") {
