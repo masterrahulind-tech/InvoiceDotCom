@@ -1,19 +1,21 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category") || "";
 
-    const business = await prisma.businessProfile.findFirst();
-    if (!business) {
-      return NextResponse.json({ error: "Business profile not found" }, { status: 404 });
+    const user = await getCurrentUser();
+    const activeProfileId = user?.businessProfiles[0]?.id || user?.businessMembers[0]?.businessProfileId;
+    if (!user || !activeProfileId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const expenses = await prisma.expense.findMany({
       where: {
-        businessProfileId: business.id,
+        businessProfileId: activeProfileId,
         ...(category ? { category } : {}),
       },
       orderBy: { date: "desc" }
@@ -44,14 +46,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Category and amount are required" }, { status: 400 });
     }
 
-    const business = await prisma.businessProfile.findFirst();
-    if (!business) {
-      return NextResponse.json({ error: "Business profile not found" }, { status: 404 });
+    const user = await getCurrentUser();
+    const activeProfileId = user?.businessProfiles[0]?.id || user?.businessMembers[0]?.businessProfileId;
+    if (!user || !activeProfileId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const expense = await prisma.expense.create({
       data: {
-        businessProfileId: business.id,
+        businessProfileId: activeProfileId,
         category,
         amount: parseFloat(amount),
         taxAmount: parseFloat(taxAmount) || 0,

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { invoiceCreateSchema } from "@/lib/validators/invoice";
 
 // GET — list all invoices with GST & Client details
@@ -12,17 +12,22 @@ export async function GET(request: NextRequest) {
 
     let businessProfileId = searchParams.get("businessProfileId");
 
-    if (!businessProfileId) {
-      const defaultProfile = await prisma.businessProfile.findFirst();
-      if (defaultProfile) {
-        businessProfileId = defaultProfile.id;
-      }
+    const user = await getCurrentUser();
+    const activeProfileId = user?.businessProfiles[0]?.id || user?.businessMembers[0]?.businessProfileId;
+    if (!user || !activeProfileId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const where: any = {};
-    if (businessProfileId) {
-      where.businessProfileId = businessProfileId;
+    if (!businessProfileId) {
+      businessProfileId = activeProfileId;
     }
+
+    // Force secure filtering to the logged-in user's business profile
+    if (businessProfileId !== activeProfileId) {
+       return NextResponse.json({ error: "Unauthorized access to another business profile" }, { status: 403 });
+    }
+
+    const where: any = { businessProfileId };
     if (clientId) {
       where.clientId = clientId;
     }
@@ -82,13 +87,18 @@ export async function POST(request: NextRequest) {
       paidAmount = 0,
     } = parsed.data;
 
-    // Fetch default business profile if not provided
+    const user = await getCurrentUser();
+    const activeProfileId = user?.businessProfiles[0]?.id || user?.businessMembers[0]?.businessProfileId;
+    if (!user || !activeProfileId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     if (!businessProfileId) {
-      const defaultProfile = await prisma.businessProfile.findFirst();
-      if (!defaultProfile) {
-        return NextResponse.json({ error: "No business profile found. Please set up profile." }, { status: 400 });
-      }
-      businessProfileId = defaultProfile.id;
+      businessProfileId = activeProfileId;
+    }
+
+    if (businessProfileId !== activeProfileId) {
+       return NextResponse.json({ error: "Unauthorized access to another business profile" }, { status: 403 });
     }
 
     const businessProfile = await prisma.businessProfile.findUnique({

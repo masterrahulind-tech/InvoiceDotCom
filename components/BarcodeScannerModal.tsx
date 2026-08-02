@@ -24,7 +24,7 @@ export function GlobalBarcodeScanner() {
             console.error("Failed to stop scanner", err);
           });
         } catch (err) {
-          console.error("Sync error stopping scanner:", err);
+          console.warn("Sync error stopping scanner:", err);
           try { html5QrCode.current?.clear(); } catch(e) {}
           html5QrCode.current = null;
         }
@@ -74,7 +74,7 @@ export function GlobalBarcodeScanner() {
             html5QrCode.current = null;
           }).catch(e => console.error("Failed to stop on unmount", e));
         } catch (err) {
-          console.error("Sync error stopping on unmount:", err);
+          console.warn("Sync error stopping on unmount:", err);
           try { html5QrCode.current?.clear(); } catch(e) {}
           html5QrCode.current = null;
         }
@@ -94,7 +94,7 @@ export function GlobalBarcodeScanner() {
           initScanner(cameraId); // try anyway
         });
       } catch (err) {
-        console.error("Sync error stopping before restart:", err);
+        console.warn("Sync error stopping before restart:", err);
         try { html5QrCode.current?.clear(); } catch(e) {}
         initScanner(cameraId);
       }

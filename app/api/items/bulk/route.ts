@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
@@ -9,9 +10,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No items provided for upload." }, { status: 400 });
     }
 
-    const business = await prisma.businessProfile.findFirst();
-    if (!business) {
-      return NextResponse.json({ error: "Business profile not found" }, { status: 404 });
+    const user = await getCurrentUser();
+    const activeProfileId = user?.businessProfiles[0]?.id || user?.businessMembers[0]?.businessProfileId;
+    if (!user || !activeProfileId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const results = [];
@@ -27,7 +29,7 @@ export async function POST(req: Request) {
         const sku = row.sku || `SKU-${Date.now().toString().slice(-6)}-${i}`;
         
         // Ensure SKU is unique (or we could use upsert if we want to update existing items)
-        const existing = await prisma.item.findFirst({ where: { sku, businessProfileId: business.id } });
+        const existing = await prisma.item.findFirst({ where: { sku, businessProfileId: activeProfileId } });
         if (existing) {
           throw new Error(`Item with SKU ${sku} already exists.`);
         }
@@ -36,7 +38,7 @@ export async function POST(req: Request) {
 
         const item = await prisma.item.create({
           data: {
-            businessProfileId: business.id,
+            businessProfileId: activeProfileId,
             sku,
             name: row.name,
             category: row.category || "General",

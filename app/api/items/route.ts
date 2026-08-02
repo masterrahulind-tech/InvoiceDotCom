@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
@@ -8,14 +9,15 @@ export async function GET(req: Request) {
     const category = searchParams.get("category") || "";
     const lowStockOnly = searchParams.get("lowStock") === "true";
 
-    const business = await prisma.businessProfile.findFirst();
-    if (!business) {
-      return NextResponse.json({ error: "Business profile not found" }, { status: 404 });
+    const user = await getCurrentUser();
+    const activeProfileId = user?.businessProfiles[0]?.id || user?.businessMembers[0]?.businessProfileId;
+    if (!user || !activeProfileId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const items = await prisma.item.findMany({
       where: {
-        businessProfileId: business.id,
+        businessProfileId: activeProfileId,
         ...(search ? { name: { contains: search } } : {}),
         ...(category ? { category } : {}),
       },
@@ -63,14 +65,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Item name is required" }, { status: 400 });
     }
 
-    const business = await prisma.businessProfile.findFirst();
-    if (!business) {
-      return NextResponse.json({ error: "Business profile not found" }, { status: 404 });
+    const user = await getCurrentUser();
+    const activeProfileId = user?.businessProfiles[0]?.id || user?.businessMembers[0]?.businessProfileId;
+    if (!user || !activeProfileId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const item = await prisma.item.create({
       data: {
-        businessProfileId: business.id,
+        businessProfileId: activeProfileId,
         sku: sku || `SKU-${Date.now().toString().slice(-6)}`,
         name,
         category: category || "General",

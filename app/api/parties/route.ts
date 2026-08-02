@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
@@ -7,14 +8,15 @@ export async function GET(req: Request) {
     const search = searchParams.get("search") || "";
     const partyType = searchParams.get("type") || ""; // customer | supplier
 
-    const business = await prisma.businessProfile.findFirst();
-    if (!business) {
-      return NextResponse.json({ error: "Business profile not found" }, { status: 404 });
+    const user = await getCurrentUser();
+    const activeProfileId = user?.businessProfiles[0]?.id || user?.businessMembers[0]?.businessProfileId;
+    if (!user || !activeProfileId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const parties = await prisma.client.findMany({
       where: {
-        businessProfileId: business.id,
+        businessProfileId: activeProfileId,
         ...(search ? {
           OR: [
             { name: { contains: search } },
@@ -102,21 +104,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Party name is required" }, { status: 400 });
     }
 
-    const business = await prisma.businessProfile.findFirst();
-    if (!business) {
-      return NextResponse.json({ error: "Business profile not found" }, { status: 404 });
+    const user = await getCurrentUser();
+    const activeProfileId = user?.businessProfiles[0]?.id || user?.businessMembers[0]?.businessProfileId;
+    if (!user || !activeProfileId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const party = await prisma.client.create({
       data: {
-        businessProfileId: business.id,
+        businessProfileId: activeProfileId,
         name,
         partyType: partyType || "customer",
         phone: phone || null,
         email: email || null,
         address: address || null,
         gstin: gstin || null,
-        stateCode: stateCode || business.stateCode || "27",
+        stateCode: stateCode || user.businessProfiles[0]?.stateCode || "27",
         openingBalance: parseFloat(openingBalance) || 0,
         balanceType: balanceType || "receivable",
         creditLimit: creditLimit ? parseFloat(creditLimit) : null,

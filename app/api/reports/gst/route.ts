@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function GET() {
   try {
-    const business = await prisma.businessProfile.findFirst();
+    const user = await getCurrentUser();
+    const activeProfileId = user?.businessProfiles[0]?.id || user?.businessMembers[0]?.businessProfileId;
+    if (!user || !activeProfileId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const business = await prisma.businessProfile.findUnique({
+      where: { id: activeProfileId }
+    });
     if (!business) {
       return NextResponse.json({ error: "Business profile not found" }, { status: 404 });
     }
