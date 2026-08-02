@@ -20,6 +20,8 @@ import {
 import { usePhysicalBarcodeScanner } from "@/lib/usePhysicalBarcodeScanner";
 import { useScannerStore } from "@/lib/store/useScannerStore";
 
+const round2 = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
+
 function InvoiceBuilderForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -27,6 +29,7 @@ function InvoiceBuilderForm() {
 
   const [parties, setParties] = useState<any[]>([]);
   const [items, setItems] = useState<any[]>([]);
+  const [businessProfile, setBusinessProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const openScanner = useScannerStore(s => s.openScanner);
 
@@ -35,10 +38,12 @@ function InvoiceBuilderForm() {
   const [billingType, setBillingType] = useState<"B2B" | "B2C" | "EXPORT">("B2B");
   const [placeOfSupply, setPlaceOfSupply] = useState("27");
   const [invoiceNo, setInvoiceNo] = useState("");
-  const [documentType, setDocumentType] = useState<"INVOICE" | "QUOTATION" | "PROFORMA" | "CHALLAN">("INVOICE");
+  const [documentType, setDocumentType] = useState<"INVOICE" | "QUOTATION" | "PROFORMA" | "CHALLAN" | "BILL_OF_SUPPLY">("INVOICE");
   const [notes, setNotes] = useState("Thank you for your business!");
   const [terms, setTerms] = useState("Payment due within 15 days.");
   const [paidAmount, setPaidAmount] = useState("0");
+
+  const hasGst = !!businessProfile?.gstin;
   
   // Logistics
   const [vehicleNo, setVehicleNo] = useState("");
@@ -63,15 +68,24 @@ function InvoiceBuilderForm() {
     async function loadData() {
       try {
         setLoading(true);
-        const [partiesRes, itemsRes] = await Promise.all([
+        const [partiesRes, itemsRes, profileRes] = await Promise.all([
           fetch("/api/parties"),
           fetch("/api/items"),
+          fetch("/api/business-profiles"),
         ]);
         const pData = await partiesRes.json();
         const iData = await itemsRes.json();
+        const profileData = await profileRes.json();
 
         setParties(pData.parties || []);
         setItems(iData.items || []);
+        
+        const bProfile = profileData.profiles?.[0] || null;
+        setBusinessProfile(bProfile);
+        
+        if (!bProfile?.gstin) {
+          setDocumentType("INVOICE"); // fallback to invoice
+        }
 
         if (preselectedClientId) {
           setSelectedClientId(preselectedClientId);
@@ -100,7 +114,7 @@ function InvoiceBuilderForm() {
         hsnCode: invItem.hsnCode || "8517",
         unit: invItem.unit || "Pcs",
         rate: invItem.salePrice || 0,
-        taxPercent: invItem.taxRate || 18,
+        taxPercent: hasGst ? (invItem.taxRate || 18) : 0,
         amount: (invItem.salePrice || 0) * (updated[index].qty || 1),
       };
     } else {
@@ -117,8 +131,8 @@ function InvoiceBuilderForm() {
     const rate = parseFloat(updated[index].rate) || 0;
     const disc = parseFloat(updated[index].discountPercent) || 0;
 
-    const base = qty * rate;
-    const taxable = base - (base * (disc / 100));
+    const base = rate * qty;
+    const taxable = round2(base - (base * (disc / 100)));
     updated[index].amount = taxable;
 
     setLineItems(updated);
@@ -135,7 +149,7 @@ function InvoiceBuilderForm() {
         unit: "Pcs",
         rate: 0,
         discountPercent: 0,
-        taxPercent: 18,
+        taxPercent: hasGst ? 18 : 0,
         amount: 0,
       }
     ]);
@@ -157,7 +171,7 @@ function InvoiceBuilderForm() {
         unit: invItem.unit || "Pcs",
         rate: invItem.salePrice || 0,
         discountPercent: 0,
-        taxPercent: invItem.taxRate || 18,
+        taxPercent: hasGst ? (invItem.taxRate || 18) : 0,
         amount: invItem.salePrice || 0,
       };
       
@@ -174,16 +188,16 @@ function InvoiceBuilderForm() {
 
   usePhysicalBarcodeScanner(handleBarcodeScan);
 
-  const totalTaxable = lineItems.reduce((acc, item) => acc + (item.amount || 0), 0);
+  const totalTaxable = round2(lineItems.reduce((acc, item) => acc + (item.amount || 0), 0));
   const supplierStateCode = "27";
   const partyStateCode = selectedParty?.stateCode || placeOfSupply || supplierStateCode;
   const isIntraState = supplierStateCode === partyStateCode;
 
-  const totalTax = lineItems.reduce((acc, item) => {
+  const totalTax = round2(lineItems.reduce((acc, item) => {
     return acc + ((item.amount || 0) * ((item.taxPercent || 0) / 100));
-  }, 0);
+  }, 0));
 
-  const grandTotal = totalTaxable + totalTax;
+  const grandTotal = round2(totalTaxable + totalTax);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -287,7 +301,9 @@ function InvoiceBuilderForm() {
                   onChange={(e) => setDocumentType(e.target.value as any)}
                   className="w-full appearance-none bg-slate-50/50 border border-slate-200 hover:border-indigo-300 rounded-xl pl-4 pr-10 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all cursor-pointer"
                 >
-                  <option value="INVOICE">Tax Invoice</option>
+                  {hasGst && <option value="INVOICE">Tax Invoice</option>}
+                  {!hasGst && <option value="INVOICE">Invoice</option>}
+                  {!hasGst && <option value="BILL_OF_SUPPLY">Bill of Supply</option>}
                   <option value="QUOTATION">Quotation / Estimate</option>
                   <option value="PROFORMA">Proforma Invoice</option>
                 </select>
@@ -352,7 +368,7 @@ function InvoiceBuilderForm() {
                   <th className="px-3 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-[12%]">HSN</th>
                   <th className="px-3 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-[12%]">Qty</th>
                   <th className="px-3 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-[15%]">Rate</th>
-                  <th className="px-3 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-[12%]">Tax %</th>
+                  {hasGst && <th className="px-3 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-[12%]">Tax %</th>}
                   <th className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right w-[14%]">Amount</th>
                 </tr>
               </thead>
@@ -405,19 +421,21 @@ function InvoiceBuilderForm() {
                         className="w-full bg-transparent border-0 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-600/20 rounded-lg px-2 py-2 text-sm font-bold text-slate-700 transition-all text-right"
                       />
                     </td>
-                    <td className="p-2">
-                      <select
-                        value={item.taxPercent}
-                        onChange={(e) => handleLineChange(idx, "taxPercent", parseFloat(e.target.value))}
-                        className="w-full bg-transparent border-0 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-600/20 rounded-lg px-1 py-2 text-sm font-bold text-slate-700 transition-all appearance-none cursor-pointer text-center"
-                      >
-                        <option value="0">0%</option>
-                        <option value="5">5%</option>
-                        <option value="12">12%</option>
-                        <option value="18">18%</option>
-                        <option value="28">28%</option>
-                      </select>
-                    </td>
+                    {hasGst && (
+                      <td className="p-2">
+                        <select
+                          value={item.taxPercent}
+                          onChange={(e) => handleLineChange(idx, "taxPercent", parseFloat(e.target.value))}
+                          className="w-full bg-transparent border-0 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-600/20 rounded-lg px-1 py-2 text-sm font-bold text-slate-700 transition-all appearance-none cursor-pointer text-center"
+                        >
+                          <option value="0">0%</option>
+                          <option value="5">5%</option>
+                          <option value="12">12%</option>
+                          <option value="18">18%</option>
+                          <option value="28">28%</option>
+                        </select>
+                      </td>
+                    )}
                     <td className="p-2 pr-4 relative">
                       <div className="text-sm font-black text-slate-800 text-right pr-6">
                         {(item.amount || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}
@@ -518,22 +536,24 @@ function InvoiceBuilderForm() {
                 <span className="font-mono">₹{totalTaxable.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
               </div>
               
-              {isIntraState ? (
-                <>
+              {hasGst && (
+                isIntraState ? (
+                  <>
+                    <div className="flex justify-between text-white/70 text-sm">
+                      <span>CGST</span>
+                      <span className="font-mono">₹{(totalTax / 2).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
+                    </div>
+                    <div className="flex justify-between text-white/70 text-sm">
+                      <span>SGST</span>
+                      <span className="font-mono">₹{(totalTax / 2).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
+                    </div>
+                  </>
+                ) : (
                   <div className="flex justify-between text-white/70 text-sm">
-                    <span>CGST</span>
-                    <span className="font-mono">₹{(totalTax / 2).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
+                    <span>IGST</span>
+                    <span className="font-mono">₹{totalTax.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
                   </div>
-                  <div className="flex justify-between text-white/70 text-sm">
-                    <span>SGST</span>
-                    <span className="font-mono">₹{(totalTax / 2).toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
-                  </div>
-                </>
-              ) : (
-                <div className="flex justify-between text-white/70 text-sm">
-                  <span>IGST</span>
-                  <span className="font-mono">₹{totalTax.toLocaleString("en-IN", { maximumFractionDigits: 2 })}</span>
-                </div>
+                )
               )}
             </div>
 
@@ -581,7 +601,9 @@ function InvoiceBuilderForm() {
             
             <div className="flex justify-between items-start mb-8 pt-2">
               <div>
-                <h1 className="text-xl font-black text-slate-900 tracking-tighter uppercase">{documentType}</h1>
+                <h1 className="text-xl font-black text-slate-900 tracking-tighter uppercase">
+                  {documentType === "INVOICE" && hasGst ? "Tax Invoice" : documentType === "BILL_OF_SUPPLY" ? "Bill of Supply" : documentType}
+                </h1>
                 <p className="text-slate-400 font-mono mt-0.5">{invoiceNo || "INV-XXXX"}</p>
               </div>
               <div className="text-right text-[10px] text-slate-500 max-w-[140px]">
@@ -616,10 +638,12 @@ function InvoiceBuilderForm() {
                   <span>Subtotal</span>
                   <span>{totalTaxable.toLocaleString("en-IN")}</span>
                 </div>
-                <div className="flex justify-between text-slate-500 font-medium">
-                  <span>GST Tax</span>
-                  <span>{totalTax.toLocaleString("en-IN")}</span>
-                </div>
+                {hasGst && (
+                  <div className="flex justify-between text-slate-500 font-medium">
+                    <span>GST Tax</span>
+                    <span>{totalTax.toLocaleString("en-IN")}</span>
+                  </div>
+                )}
                 <div className="flex justify-between font-black text-indigo-600 text-sm border-t border-slate-200 pt-2 mt-2">
                   <span>Total</span>
                   <span>₹{grandTotal.toLocaleString("en-IN")}</span>

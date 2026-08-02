@@ -66,6 +66,7 @@ export default function GstInvoiceTemplate({ invoice }: GstInvoiceProps) {
   const isPaid = invoice.status === "paid";
   const isPartiallyPaid = invoice.status === "partially_paid";
   const dueAmount = invoice.totalAmount - invoice.paidAmount;
+  const hasGst = !!businessProfile.gstin;
 
   // HSN Tax Breakdown Map
   const hsnMap: Record<string, { hsnCode: string; taxable: number; taxRate: number; cgst: number; sgst: number; igst: number; totalTax: number }> = {};
@@ -111,15 +112,19 @@ export default function GstInvoiceTemplate({ invoice }: GstInvoiceProps) {
               <span className="text-xs font-extrabold uppercase text-indigo-700 tracking-wider">
                 {invoice.documentType === "QUOTATION" ? "QUOTATION" : 
                  invoice.documentType === "PROFORMA" ? "PROFORMA INVOICE" : 
-                 invoice.documentType === "CHALLAN" ? "DELIVERY CHALLAN" : "TAX INVOICE"}
+                 invoice.documentType === "CHALLAN" ? "DELIVERY CHALLAN" : 
+                 invoice.documentType === "BILL_OF_SUPPLY" ? "BILL OF SUPPLY" :
+                 (hasGst ? "TAX INVOICE" : "INVOICE")}
               </span>
             </div>
           </div>
           <div className="mt-3 text-xs text-slate-600 space-y-0.5 max-w-sm">
             {businessProfile.address && <p>{businessProfile.address}</p>}
-            <p className="font-semibold text-slate-900">
-              GSTIN: <span className="font-mono text-indigo-900">{businessProfile.gstin || "27AAACA1234A1Z5"}</span> | State Code: {businessProfile.stateCode || "27"}
-            </p>
+            {hasGst && (
+              <p className="font-semibold text-slate-900">
+                GSTIN: <span className="font-mono text-indigo-900">{businessProfile.gstin}</span> | State Code: {businessProfile.stateCode || "27"}
+              </p>
+            )}
             {businessProfile.pan && <p>PAN: {businessProfile.pan}</p>}
           </div>
         </div>
@@ -211,8 +216,8 @@ export default function GstInvoiceTemplate({ invoice }: GstInvoiceProps) {
               {lineItems.some(item => item.discountPercent && item.discountPercent > 0) && (
                 <th className="py-2.5 px-2 text-right">Disc %</th>
               )}
-              <th className="py-2.5 px-2 text-right">GST %</th>
-              <th className="py-2.5 px-3 text-right rounded-r-lg">Taxable Value</th>
+              {hasGst && <th className="py-2.5 px-2 text-right">GST %</th>}
+              <th className="py-2.5 px-3 text-right rounded-r-lg">{hasGst ? "Taxable Value" : "Amount"}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
@@ -226,7 +231,7 @@ export default function GstInvoiceTemplate({ invoice }: GstInvoiceProps) {
                 {lineItems.some(i => i.discountPercent && i.discountPercent > 0) && (
                   <td className="py-3 px-2 text-right text-rose-600 font-semibold">{item.discountPercent || 0}%</td>
                 )}
-                <td className="py-3 px-2 text-right font-semibold text-emerald-700">{item.taxPercent}%</td>
+                {hasGst && <td className="py-3 px-2 text-right font-semibold text-emerald-700">{item.taxPercent}%</td>}
                 <td className="py-3 px-3 text-right font-black text-slate-900">₹{item.amount.toLocaleString("en-IN")}</td>
               </tr>
             ))}
@@ -237,38 +242,40 @@ export default function GstInvoiceTemplate({ invoice }: GstInvoiceProps) {
       {/* Tax Computation & Totals Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-slate-200 text-xs">
         {/* HSN Summary Mini Table */}
-        <div>
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">
-            HSN Tax Breakdown Summary
-          </span>
-          <div className="border border-slate-200 rounded-lg overflow-hidden">
-            <table className="w-full text-left text-[11px]">
-              <thead className="bg-slate-100 font-bold text-slate-700 border-b border-slate-200">
-                <tr>
-                  <th className="p-1.5">HSN</th>
-                  <th className="p-1.5 text-right">Taxable</th>
-                  <th className="p-1.5 text-right">CGST</th>
-                  <th className="p-1.5 text-right">SGST</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 text-slate-600 font-mono">
-                {hsnList.map((h, i) => (
-                  <tr key={i}>
-                    <td className="p-1.5 font-bold text-slate-900">{h.hsnCode}</td>
-                    <td className="p-1.5 text-right">₹{h.taxable.toLocaleString("en-IN")}</td>
-                    <td className="p-1.5 text-right">₹{h.cgst.toLocaleString("en-IN")}</td>
-                    <td className="p-1.5 text-right">₹{h.sgst.toLocaleString("en-IN")}</td>
+        {hasGst ? (
+          <div>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">
+              HSN Tax Breakdown Summary
+            </span>
+            <div className="border border-slate-200 rounded-lg overflow-hidden">
+              <table className="w-full text-left text-[11px]">
+                <thead className="bg-slate-100 font-bold text-slate-700 border-b border-slate-200">
+                  <tr>
+                    <th className="p-1.5">HSN</th>
+                    <th className="p-1.5 text-right">Taxable</th>
+                    <th className="p-1.5 text-right">CGST</th>
+                    <th className="p-1.5 text-right">SGST</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-200 text-slate-600 font-mono">
+                  {hsnList.map((h, i) => (
+                    <tr key={i}>
+                      <td className="p-1.5 font-bold text-slate-900">{h.hsnCode}</td>
+                      <td className="p-1.5 text-right">₹{h.taxable.toLocaleString("en-IN")}</td>
+                      <td className="p-1.5 text-right">₹{h.cgst.toLocaleString("en-IN")}</td>
+                      <td className="p-1.5 text-right">₹{h.sgst.toLocaleString("en-IN")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        ) : <div />}
 
         {/* Calculation Totals Card */}
         <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2 font-medium text-slate-700">
           <div className="flex justify-between">
-            <span>Total Taxable Amount:</span>
+            <span>{hasGst ? "Total Taxable Amount:" : "Subtotal:"}</span>
             <span className="font-bold text-slate-900">₹{invoice.taxableAmount.toLocaleString("en-IN")}</span>
           </div>
 
@@ -294,7 +301,7 @@ export default function GstInvoiceTemplate({ invoice }: GstInvoiceProps) {
           )}
 
           <div className="flex justify-between text-base font-black text-slate-900 pt-2 border-t-2 border-slate-900">
-            <span>Grand Total (Incl. GST):</span>
+            <span>Grand Total{hasGst ? " (Incl. GST)" : ""}:</span>
             <span className="text-indigo-900">₹{invoice.totalAmount.toLocaleString("en-IN")}</span>
           </div>
 

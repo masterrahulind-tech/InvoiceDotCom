@@ -3,7 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { invoiceCreateSchema } from "@/lib/validators/invoice";
 
-// GET — list all invoices with GST & Client details
+// GET - list all invoices with GST & Client details
+const round2 = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -128,6 +130,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Determine GST Tax Logic: Intra-state (CGST + SGST) vs Inter-state (IGST)
+    const hasGst = !!businessProfile.gstin;
     const supplierStateCode = businessProfile.stateCode || "27";
     const placeOfSupplyCode = placeOfSupply || client.stateCode || supplierStateCode;
     const isIntraState = supplierStateCode === placeOfSupplyCode;
@@ -137,34 +140,32 @@ export async function POST(request: NextRequest) {
     let totalSgstAmount = 0;
     let totalIgstAmount = 0;
 
-    const computedLineItems = lineItems.map((item) => {
-      const rate = item.rate;
-      const qty = item.qty;
-      const discountPercent = item.discountPercent || 0;
-      const taxPercent = item.taxPercent || 0;
+    const computedLineItems = lineItems.map((item: any) => {
+      const rate = parseFloat(item.rate) || 0;
+      const qty = parseFloat(item.qty) || 0;
+      const discountPercent = parseFloat(item.discountPercent) || 0;
+      const taxPercent = hasGst ? (parseFloat(item.taxPercent) || 0) : 0;
 
       const baseAmount = rate * qty;
       const discountAmount = baseAmount * (discountPercent / 100);
-      const taxableValue = baseAmount - discountAmount;
-      totalTaxableAmount += taxableValue;
+      const taxableValue = round2(baseAmount - discountAmount);
+      totalTaxableAmount = round2(totalTaxableAmount + taxableValue);
 
-      const taxValue = taxableValue * (taxPercent / 100);
+      const taxValue = round2(taxableValue * (taxPercent / 100));
 
       let cgst = 0;
       let sgst = 0;
       let igst = 0;
 
       if (isIntraState) {
-        cgst = taxValue / 2;
-        sgst = taxValue / 2;
-        totalCgstAmount += cgst;
-        totalSgstAmount += sgst;
+        cgst = round2(taxValue / 2);
+        sgst = round2(taxValue / 2);
+        totalCgstAmount = round2(totalCgstAmount + cgst);
+        totalSgstAmount = round2(totalSgstAmount + sgst);
       } else {
         igst = taxValue;
-        totalIgstAmount += igst;
+        totalIgstAmount = round2(totalIgstAmount + igst);
       }
-
-      const totalItemAmount = taxableValue + taxValue;
 
       return {
         itemId: item.itemId || null,
@@ -182,7 +183,7 @@ export async function POST(request: NextRequest) {
       };
     });
 
-    const grandTotal = totalTaxableAmount + totalCgstAmount + totalSgstAmount + totalIgstAmount;
+    const grandTotal = round2(totalTaxableAmount + totalCgstAmount + totalSgstAmount + totalIgstAmount);
 
     // Create Invoice with LineItems, CustomFields, Stock Deductions, and Khatabook Transaction in a Transaction
     const invoice = await prisma.$transaction(async (tx) => {
