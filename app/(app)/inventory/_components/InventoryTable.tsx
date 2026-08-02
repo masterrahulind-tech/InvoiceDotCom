@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Package, Search, Filter, Printer } from "lucide-react";
+import { Package, Search, Filter, Printer, Edit, Trash2 } from "lucide-react";
 import { PrintBarcodeModal } from "./PrintBarcodeModal";
 
-export function InventoryTable({ items }: { items: any[] }) {
+export function InventoryTable({ items, onEdit, onDelete }: { items: any[], onEdit?: (item: any) => void, onDelete?: (item: any) => void }) {
   const [printItem, setPrintItem] = useState<any>(null);
   if (!items || items.length === 0) {
     return (
@@ -84,13 +84,33 @@ export function InventoryTable({ items }: { items: any[] }) {
                   )}
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <button 
-                    onClick={() => setPrintItem(item)}
-                    className="p-1.5 text-gray-400 hover:text-black hover:bg-gray-100 rounded-lg transition-colors"
-                    title="Print Barcode Labels"
-                  >
-                    <Printer className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center justify-end gap-2">
+                    <button 
+                      onClick={() => setPrintItem(item)}
+                      className="p-1.5 text-gray-400 hover:text-black hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Print Barcode Labels"
+                    >
+                      <Printer className="w-4 h-4" />
+                    </button>
+                    {onEdit && (
+                      <button 
+                        onClick={() => onEdit(item)}
+                        className="p-1.5 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Edit Item"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                    )}
+                    {onDelete && (
+                      <button 
+                        onClick={() => onDelete(item)}
+                        className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete Item"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

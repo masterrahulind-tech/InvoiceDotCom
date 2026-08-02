@@ -10,11 +10,13 @@ export function AddItemModal({
   onClose,
   onSuccess,
   initialSku,
+  editingItem,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
   initialSku?: string;
+  editingItem?: any;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -43,10 +45,40 @@ export function AddItemModal({
 
   // When initialSku changes or modal opens, update sku
   useEffect(() => {
-    if (isOpen && initialSku) {
-      setFormData(prev => ({ ...prev, sku: initialSku }));
+    if (isOpen) {
+      if (editingItem) {
+        setFormData({
+          name: editingItem.name || "",
+          sku: editingItem.sku || "",
+          category: editingItem.category || "General",
+          unit: editingItem.unit || "Pcs",
+          hsnCode: editingItem.hsnCode || "",
+          mrp: editingItem.mrp ? String(editingItem.mrp) : "",
+          salePrice: editingItem.salePrice ? String(editingItem.salePrice) : "",
+          purchasePrice: editingItem.purchasePrice ? String(editingItem.purchasePrice) : "",
+          taxRate: editingItem.taxRate ? String(editingItem.taxRate) : "18",
+          stockQty: editingItem.stockQty ? String(editingItem.stockQty) : "0",
+          lowStockThreshold: editingItem.lowStockThreshold ? String(editingItem.lowStockThreshold) : "10",
+        });
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          name: "",
+          sku: initialSku || "",
+          category: "General",
+          unit: "Pcs",
+          hsnCode: "",
+          mrp: "",
+          salePrice: "",
+          purchasePrice: "",
+          taxRate: "18",
+          stockQty: "0",
+          lowStockThreshold: "10",
+        }));
+      }
+      setError("");
     }
-  }, [isOpen, initialSku]);
+  }, [isOpen, initialSku, editingItem]);
 
   if (!isOpen) return null;
 
@@ -56,8 +88,11 @@ export function AddItemModal({
     setError("");
 
     try {
-      const res = await fetch("/api/inventory", {
-        method: "POST",
+      const url = editingItem ? `/api/items/${editingItem.id}` : "/api/items";
+      const method = editingItem ? "PUT" : "POST";
+      
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
@@ -72,7 +107,7 @@ export function AddItemModal({
 
       if (!res.ok) {
         const errData = await res.json();
-        setError(errData.error || "Failed to create item");
+        setError(errData.error || `Failed to ${editingItem ? "update" : "create"} item`);
       } else {
         onSuccess();
         onClose();
@@ -107,10 +142,12 @@ export function AddItemModal({
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       
       <div className="relative w-full max-w-[95vw] sm:max-w-lg overflow-hidden rounded-2xl bg-white shadow-xl flex flex-col max-h-[90vh]">
-        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">Add New Item</h2>
-          <button onClick={onClose} className="rounded-full p-1 hover:bg-gray-100">
-            <X className="h-5 w-5 text-gray-500" />
+        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+          <h2 className="text-lg font-bold text-gray-900">
+            {editingItem ? "Edit Item" : "Add New Item"}
+          </h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -277,23 +314,24 @@ export function AddItemModal({
           </form>
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t border-gray-100 px-6 py-4 bg-gray-50">
-          <button 
-            type="button"
-            onClick={onClose}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
-          >
-            Cancel
-          </button>
-          <button 
-            type="submit"
-            form="add-item-form"
-            disabled={loading}
-            className="flex items-center gap-2 rounded-lg bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {loading ? "Saving..." : <><Check className="h-4 w-4" /> Save Item</>}
-          </button>
-        </div>
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 p-6">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="add-item-form"
+                disabled={loading}
+                className="flex items-center justify-center gap-2 rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50"
+              >
+                <Check className="h-4 w-4" />
+                {loading ? "Saving..." : (editingItem ? "Update Item" : "Save Item")}
+              </button>
+            </div>
       </div>
     </div>
   );

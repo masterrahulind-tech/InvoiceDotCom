@@ -13,6 +13,7 @@ export default function InventoryPage() {
   const [loading, setLoading] = useState(true);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<any>(null);
   const openScanner = useScannerStore(s => s.openScanner);
   const [scannedSku, setScannedSku] = useState("");
 
@@ -36,6 +37,21 @@ export default function InventoryPage() {
       console.error("Failed to fetch inventory:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (item: any) => {
+    if (confirm(`Are you sure you want to delete ${item.name}?`)) {
+      try {
+        const res = await fetch(`/api/items/${item.id}`, { method: "DELETE" });
+        if (res.ok) {
+          fetchItems();
+        } else {
+          alert("Failed to delete item.");
+        }
+      } catch (error) {
+        alert("An error occurred while deleting.");
+      }
     }
   };
 
@@ -89,7 +105,14 @@ export default function InventoryPage() {
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-black"></div>
         </div>
       ) : (
-        <InventoryTable items={items} />
+        <InventoryTable 
+          items={items} 
+          onEdit={(item) => {
+            setEditingItem(item);
+            setIsAddModalOpen(true);
+          }}
+          onDelete={handleDelete}
+        />
       )}
 
       <BulkImportModal 
@@ -104,9 +127,14 @@ export default function InventoryPage() {
       <AddItemModal
         isOpen={isAddModalOpen}
         initialSku={scannedSku}
-        onClose={() => setIsAddModalOpen(false)}
+        editingItem={editingItem}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setEditingItem(null);
+        }}
         onSuccess={() => {
           setIsAddModalOpen(false);
+          setEditingItem(null);
           fetchItems();
         }}
       />
