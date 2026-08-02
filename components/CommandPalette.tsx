@@ -67,7 +67,7 @@ export function CommandPalette() {
 
             <Command.Group heading="Quick Actions" className="px-2 py-1.5 text-xs font-medium text-gray-500">
               <Command.Item 
-                onSelect={() => runCommand(() => router.push("/invoices/new"))}
+                onSelect={() => { router.push("/invoices/new?clear=true"); setOpen(false); }}
                 className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-2.5 text-sm outline-none aria-selected:bg-gray-100 aria-selected:text-gray-900 hover:bg-gray-100"
               >
                 <Plus className="mr-2 h-4 w-4" />

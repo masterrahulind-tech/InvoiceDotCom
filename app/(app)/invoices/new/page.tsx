@@ -71,6 +71,11 @@ function InvoiceBuilderForm() {
 
   // Draft persistence
   useEffect(() => {
+    if (searchParams.get("clear") === "true") {
+      localStorage.removeItem("invoiceDraft");
+      router.replace("/invoices/new");
+      return;
+    }
     const saved = localStorage.getItem("invoiceDraft");
     if (saved) {
       try {

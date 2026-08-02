@@ -227,7 +227,7 @@ export default function AppLayout({
                 <span className="hidden sm:inline">Logout</span>
               </button>
               <Link
-                href="/invoices/new"
+                href="/invoices/new?clear=true"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
