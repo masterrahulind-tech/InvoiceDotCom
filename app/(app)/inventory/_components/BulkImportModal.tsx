@@ -207,34 +207,36 @@ export function BulkImportModal({
                     </span>
                   </div>
                   <div className="rounded-lg border border-gray-200 overflow-hidden">
-                    <div className="overflow-x-auto max-h-[250px]">
+                    <div className="overflow-auto max-h-[300px]">
                       <table className="w-full text-left text-sm whitespace-nowrap min-w-[500px]">
-                        <thead className="bg-gray-50 text-gray-500 sticky top-0">
+                        <thead className="bg-gray-50 text-gray-500 sticky top-0 z-10 shadow-sm">
                           <tr>
                             <th className="px-4 py-2 font-medium">Name</th>
                             <th className="px-4 py-2 font-medium">Category</th>
-                            <th className="px-4 py-2 font-medium text-right">Price</th>
+                            <th className="px-4 py-2 font-medium text-right">MRP</th>
+                            <th className="px-4 py-2 font-medium text-right">Sale Price</th>
                             <th className="px-4 py-2 font-medium text-right">Stock</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                          {parsedData.slice(0, 5).map((item, i) => (
-                            <tr key={i}>
+                          {parsedData.map((item, i) => (
+                            <tr key={i} className="hover:bg-gray-50">
                               <td className="px-4 py-2 text-gray-900 truncate max-w-[150px]">{item.name}</td>
                               <td className="px-4 py-2 text-gray-600">{item.category}</td>
-                              <td className="px-4 py-2 text-gray-900 text-right">₹{item.salePrice}</td>
+                              <td className="px-4 py-2 text-gray-400 line-through text-right text-xs">₹{item.mrp?.toFixed(2)}</td>
+                              <td className="px-4 py-2 text-gray-900 text-right font-medium">₹{item.salePrice?.toFixed(2)}</td>
                               <td className="px-4 py-2 text-gray-900 text-right">{item.stockQty} {item.unit}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
-                    {parsedData.length > 5 && (
-                      <div className="bg-gray-50 px-4 py-2 text-center text-xs text-gray-500 border-t border-gray-200">
-                        Showing 5 of {parsedData.length} items
-                      </div>
-                    )}
                   </div>
+                  {parsedData.length > 50 && (
+                    <p className="mt-2 text-center text-xs text-gray-500">
+                      Scroll to see all {parsedData.length} items
+                    </p>
+                  )}
                 </div>
               )}
             </div>
