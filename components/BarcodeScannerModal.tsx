@@ -181,12 +181,10 @@ export function GlobalBarcodeScanner() {
               <p className="text-sm">{error}</p>
             </div>
           ) : (
-            <div 
-              id="global-qr-reader" 
-              className="w-full bg-black rounded-xl overflow-hidden border-2 border-dashed border-[#6730e3]/40 min-h-[250px] flex items-center justify-center"
-            >
+            <div className="relative w-full bg-black rounded-xl overflow-hidden border-2 border-dashed border-[#6730e3]/40 min-h-[250px] flex items-center justify-center">
+              <div id="global-qr-reader" className="absolute inset-0 w-full h-full"></div>
               {isStarting && (
-                <div className="text-white text-sm animate-pulse flex flex-col items-center">
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white text-sm animate-pulse bg-black/50 backdrop-blur-sm">
                   <Camera className="w-8 h-8 mb-2 opacity-50" />
                   Starting Camera...
                 </div>
