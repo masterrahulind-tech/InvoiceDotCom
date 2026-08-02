@@ -20,7 +20,7 @@ async function verifyInvoiceOwnership(invoiceId: string, userId: string) {
   return invoice;
 }
 
-// GET — get a single invoice
+// GET â€” get a single invoice
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -39,7 +39,7 @@ export async function GET(
   return NextResponse.json({ invoice });
 }
 
-// PUT — update an invoice
+// PUT â€” update an invoice
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -154,7 +154,7 @@ export async function PUT(
   }
 }
 
-// DELETE — delete an invoice
+// DELETE â€” delete an invoice
 export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -190,7 +190,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Failed to delete invoice" }, { status: 500 });
   }
 }
-// PATCH � record a payment settlement
+// PATCH — record a payment settlement
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -227,19 +227,8 @@ export async function PATCH(
         }
       });
 
-      // 2. Record Party Transaction for Ledger
-      await tx.partyTransaction.create({
-        data: {
-          businessProfileId: existing.businessProfileId,
-          clientId: existing.clientId,
-          type: "GOT",
-          amount: amount,
-          paymentMode: paymentMode || "upi",
-          notes: "Settlement received for Invoice #$",
-          date: new Date(),
-        }
-      });
-
+      // 2. We do NOT create PartyTransaction here anymore.
+      // Ledger handles invoice payments dynamically.
       return inv;
     });
 

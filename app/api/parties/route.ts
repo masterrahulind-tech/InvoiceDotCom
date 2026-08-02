@@ -28,8 +28,7 @@ export async function GET(req: Request) {
       },
       include: {
         partyTransactions: {
-          orderBy: { date: "desc" },
-          take: 3,
+          where: { invoiceId: null },
         },
         invoices: {
           select: {
@@ -51,11 +50,11 @@ export async function GET(req: Request) {
       // Calculate net balance from initial opening balance + invoice unpaid totals + manual transactions
       let netBalance = party.openingBalance * (party.balanceType === "receivable" ? 1 : -1);
 
-      // Add unpaid invoice balance
+      // Add unpaid invoice balance (underpaid means they owe us -> increases netBalance)
       party.invoices.forEach(inv => {
-        const unpaid = inv.totalAmount - inv.paidAmount;
-        if (unpaid > 0 && inv.status !== "refunded") {
-          netBalance += unpaid;
+        if (inv.status !== "refunded") {
+          const unpaid = inv.totalAmount - inv.paidAmount;
+          netBalance += unpaid; // positive if they owe us, negative if we owe them refund
         }
       });
 

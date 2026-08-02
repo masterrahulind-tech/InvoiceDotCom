@@ -26,7 +26,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     });
 
     const transactions = await prisma.partyTransaction.findMany({
-      where: { clientId: id },
+      where: { clientId: id, invoiceId: null },
       orderBy: { date: "asc" }
     });
 

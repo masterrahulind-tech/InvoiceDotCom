@@ -252,39 +252,10 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // 2. Record Khatabook Party Udhaar Entry (GAVE) for full invoice amount (ONLY FOR INVOICES)
-      if (documentType === "INVOICE") {
-        await tx.partyTransaction.create({
-          data: {
-            businessProfileId,
-            clientId,
-            invoiceId: createdInvoice.id,
-            type: "GAVE", // Bill Issued
-            amount: grandTotal,
-            paymentMode: "Invoice",
-            notes: `Invoice #${finalInvoiceNo} issued`,
-            date: new Date(),
-          }
-        });
-      }
-
-      // 3. Record Khatabook Payment Entry (GOT) if upfront paidAmount exists (ONLY FOR INVOICES)
-      if (documentType === "INVOICE" && paidAmount > 0) {
-        await tx.partyTransaction.create({
-          data: {
-            businessProfileId,
-            clientId,
-            invoiceId: createdInvoice.id,
-            type: "GOT",
-            amount: paidAmount,
-            paymentMode: "upi",
-            notes: `Upfront payment received for Invoice #${finalInvoiceNo}`,
-            date: new Date(),
-          }
-        });
-      }
-
-      return createdInvoice;
+        // NOTE: We no longer create PartyTransaction entries for invoices here.
+        // Ledger balances are calculated dynamically from invoices and manual transactions.
+        
+        return createdInvoice;
     });
 
     return NextResponse.json({ invoice }, { status: 201 });
