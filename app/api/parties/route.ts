@@ -110,6 +110,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Check for duplicate entity (Name + PartyType + B2B/B2C scope)
+    const existingParty = await prisma.client.findFirst({
+      where: {
+        businessProfileId: activeProfileId,
+        name: { equals: name, mode: "insensitive" },
+        partyType: partyType || "customer",
+        gstin: gstin ? { not: null } : null,
+      }
+    });
+
+    if (existingParty) {
+      const category = gstin ? "B2B (Registered)" : "B2C (Unregistered)";
+      return NextResponse.json(
+        { error: `A ${category} ${partyType || "customer"} named "${name}" already exists.` }, 
+        { status: 409 }
+      );
+    }
+
     const party = await prisma.client.create({
       data: {
         businessProfileId: activeProfileId,
