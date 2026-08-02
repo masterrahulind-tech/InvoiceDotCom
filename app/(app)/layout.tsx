@@ -17,7 +17,12 @@ import {
   LogOut
 } from "lucide-react";
 import { CommandPalette } from "@/components/CommandPalette";
-import { GlobalBarcodeScanner } from "@/components/BarcodeScannerModal";
+import dynamic from "next/dynamic";
+
+const GlobalBarcodeScanner = dynamic(
+  () => import("@/components/BarcodeScannerModal").then((mod) => mod.GlobalBarcodeScanner),
+  { ssr: false }
+);
 
 export default function AppLayout({
   children,
