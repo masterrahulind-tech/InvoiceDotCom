@@ -310,10 +310,17 @@ export default function GstInvoiceTemplate({ invoice }: GstInvoiceProps) {
             <span className="font-bold text-emerald-700">₹{invoice.paidAmount.toLocaleString("en-IN")}</span>
           </div>
 
-          <div className="flex justify-between text-xs font-bold text-rose-700 pt-1 border-t border-slate-200">
-            <span>Balance Payable:</span>
-            <span>₹{dueAmount.toLocaleString("en-IN")}</span>
-          </div>
+          {dueAmount <= 0 ? (
+            <div className="flex justify-between text-xs font-black text-emerald-600 pt-1 border-t border-slate-200">
+              <span>Status:</span>
+              <span>PAID IN FULL</span>
+            </div>
+          ) : (
+            <div className="flex justify-between text-xs font-bold text-rose-700 pt-1 border-t border-slate-200">
+              <span>Balance Payable:</span>
+              <span>₹{dueAmount.toLocaleString("en-IN")}</span>
+            </div>
+          )}
         </div>
       </div>
 
